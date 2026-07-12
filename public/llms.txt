@@ -1,0 +1,15 @@
+# EyeX Technologies
+
+> Foundational intelligence infrastructure for the next generation of global enterprise — secured by design, engineered for scale.
+
+EyeX Technologies builds the QORX platform: a unified orchestration layer for enterprise-grade AI compute, storage, and networking with zero-trust security and sub-4ms latency.
+
+## Pages
+
+- [Platform](/): Overview of the QORX intelligence platform and capabilities.
+- [Dashboard](/dashboard): Operations dashboard preview with telemetry and workloads.
+- [AI Chat](/ai-chat): Enterprise AI assistant workspace.
+- [Documents](/documents): Document intelligence and secure knowledge workflows.
+- [API](/api): API platform, keys management, and real-time traffic logs.
+- [Analytics](/analytics): Usage analytics — token consumption and system latency.
+- [About](/about): EyeX origin story, team, and principles.

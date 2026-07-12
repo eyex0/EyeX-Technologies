@@ -1,0 +1,145 @@
+import { supabase } from "@/lib/supabase/client";
+import type { Database } from "@/lib/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type Dataset = Database["public"]["Tables"]["datasets"]["Row"];
+type UploadedFile = Database["public"]["Tables"]["uploaded_files"]["Row"];
+type Dashboard = Database["public"]["Tables"]["dashboards"]["Row"];
+type ChatMessage = Database["public"]["Tables"]["chat_messages"]["Row"];
+
+export const DatabaseService = {
+  // Profiles
+  async getProfile(userId: string): Promise<Profile | null> {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    
+    if (error) {
+      console.error("Error fetching profile", error);
+      return null;
+    }
+    return data;
+  },
+
+  async updateProfile(userId: string, updates: Partial<Profile>) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(updates)
+      .eq("id", userId)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  },
+
+  // Datasets
+  async getDatasets(): Promise<Dataset[]> {
+    const { data, error } = await supabase
+      .from("datasets")
+      .select("*")
+      .order("created_at", { ascending: false });
+      
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createDataset(name: string, description?: string): Promise<Dataset> {
+    const { data, error } = await supabase
+      .from("datasets")
+      .insert({ name, description })
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteDataset(id: string) {
+    const { error } = await supabase.from("datasets").delete().eq("id", id);
+    if (error) throw error;
+  },
+
+  // Uploaded Files
+  async getFilesByDataset(datasetId: string): Promise<UploadedFile[]> {
+    const { data, error } = await supabase
+      .from("uploaded_files")
+      .select("*")
+      .eq("dataset_id", datasetId)
+      .order("created_at", { ascending: false });
+      
+    if (error) throw error;
+    return data || [];
+  },
+
+  async recordFileMetadata(fileData: Omit<Database["public"]["Tables"]["uploaded_files"]["Insert"], "user_id">): Promise<UploadedFile> {
+    const { data, error } = await supabase
+      .from("uploaded_files")
+      .insert(fileData)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  },
+
+  // Dashboards
+  async getDashboards(): Promise<Dashboard[]> {
+    const { data, error } = await supabase
+      .from("dashboards")
+      .select("*")
+      .order("created_at", { ascending: false });
+      
+    if (error) throw error;
+    return data || [];
+  },
+
+  async saveDashboard(title: string, layout: any): Promise<Dashboard> {
+    const { data, error } = await supabase
+      .from("dashboards")
+      .insert({ title, layout })
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  },
+
+  async updateDashboard(id: string, updates: Partial<Dashboard>): Promise<Dashboard> {
+    const { data, error } = await supabase
+      .from("dashboards")
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  },
+
+  // Chat Messages
+  async getChatHistory(sessionId?: string): Promise<ChatMessage[]> {
+    let query = supabase.from("chat_messages").select("*").order("created_at", { ascending: true });
+    
+    if (sessionId) {
+      query = query.eq("session_id", sessionId);
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  },
+
+  async saveChatMessage(role: "user" | "assistant" | "system", content: string, sessionId?: string): Promise<ChatMessage> {
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .insert({ role, content, session_id: sessionId })
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  }
+};
