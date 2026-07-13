@@ -56,5 +56,17 @@ export const AuthService = {
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
     const { data } = supabase.auth.onAuthStateChange(callback);
     return data.subscription;
-  }
+  },
+  /**
+   * Request a password‑reset email from Supabase.
+   * The user will receive a link that redirects back to the app.
+   */
+  async resetPassword(email: string) {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      // After the user clicks the link in the email they will be sent back here.
+      redirectTo: `${window.location.origin}/auth?type=reset`,
+    });
+    if (error) throw error;
+    return data;
+  },
 };

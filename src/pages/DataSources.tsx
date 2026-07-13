@@ -7,7 +7,8 @@ import { UploadService } from "@/services/upload.service";
 import { DynamicDashboard, DashboardConfig } from "@/components/dashboard/DynamicDashboard";
 
 export function DataSourcesPage() {
-  const [uploading, setUploading] = useState(false);
+  // Workflow states: idle, uploading, processing, completed, failed
+  const [status, setStatus] = useState<'idle' | 'uploading' | 'processing' | 'completed' | 'failed'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [generatedDashboard, setGeneratedDashboard] = useState<DashboardConfig | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -16,23 +17,31 @@ export function DataSourcesPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
+        setStatus('uploading');
     setError(null);
     setGeneratedDashboard(null);
 
-    try {
-      const result = await UploadService.processUpload(file, file.name);
-      // The analysis service now returns { widgets: [...] }
-      setGeneratedDashboard(result.dashboard.layout as DashboardConfig);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Failed to process upload");
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+      try {
+        // Upload file and create dataset + metadata
+        const result = await UploadService.processUpload(file, file.name);
+        // After successful upload, move to processing state for analysis
+        setStatus('processing');
+        // The analysis service already ran inside processUpload and returned a dashboard
+        // The dashboard layout returned from the backend is typed as generic JSON.
+        // Cast it to the expected DashboardConfig shape for the UI.
+        const layout = result.dashboard.layout as unknown as DashboardConfig;
+        setGeneratedDashboard(layout);
+        setStatus('completed');
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || "Failed to process upload");
+        setStatus('failed');
+      } finally {
+        // Reset file input regardless of outcome
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
-    }
   };
 
   return (
@@ -51,12 +60,18 @@ export function DataSourcesPage() {
         </div>
       )}
 
-      {uploading && (
-        <div className="mb-6 p-4 border border-eye-border bg-surface rounded flex items-center gap-3">
-          <span className="material-symbols-outlined animate-spin text-primary">sync</span>
-          <span className="text-sm text-eye-white">Processing and analyzing data...</span>
-        </div>
-      )}
+        {status === 'uploading' && (
+          <div className="mb-6 p-4 border border-eye-border bg-surface rounded flex items-center gap-3">
+            <span className="material-symbols-outlined animate-spin text-primary">sync</span>
+            <span className="text-sm text-eye-white">Uploading file...</span>
+          </div>
+        )}
+        {status === 'processing' && (
+          <div className="mb-6 p-4 border border-eye-border bg-surface rounded flex items-center gap-3">
+            <span className="material-symbols-outlined animate-spin text-primary">sync</span>
+            <span className="text-sm text-eye-white">Processing and analyzing data...</span>
+          </div>
+        )}
 
       {generatedDashboard ? (
         <div className="mb-8">

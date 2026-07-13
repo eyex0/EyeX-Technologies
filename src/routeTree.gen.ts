@@ -24,6 +24,7 @@ import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CrmRouteImport } from './routes/crm'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApiRouteImport } from './routes/api'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AiCopilotRouteImport } from './routes/ai-copilot'
@@ -106,6 +107,11 @@ const CrmRoute = CrmRouteImport.update({
   path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRoute = ApiRouteImport.update({
   id: '/api',
   path: '/api',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/auth': typeof AuthRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/auth': typeof AuthRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/auth': typeof AuthRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/auth'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/auth'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/auth'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   AiCopilotRoute: typeof AiCopilotRoute
   AnalyticsRoute: typeof AnalyticsRoute
   ApiRoute: typeof ApiRoute
+  AuthRoute: typeof AuthRoute
   CrmRoute: typeof CrmRoute
   DashboardRoute: typeof DashboardRoute
   DataSourcesRoute: typeof DataSourcesRoute
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api': {
       id: '/api'
       path: '/api'
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiCopilotRoute: AiCopilotRoute,
   AnalyticsRoute: AnalyticsRoute,
   ApiRoute: ApiRoute,
+  AuthRoute: AuthRoute,
   CrmRoute: CrmRoute,
   DashboardRoute: DashboardRoute,
   DataSourcesRoute: DataSourcesRoute,

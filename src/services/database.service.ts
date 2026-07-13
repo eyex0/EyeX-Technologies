@@ -74,13 +74,17 @@ export const DatabaseService = {
     return data || [];
   },
 
-  async recordFileMetadata(fileData: Omit<Database["public"]["Tables"]["uploaded_files"]["Insert"], "user_id">): Promise<UploadedFile> {
+  // Records file metadata, including the uploading user.
+  // The previous implementation omitted the `user_id` column, which is required by the
+  // MVP specification. We now accept the full Insert type so the caller can provide the
+  // user identifier.
+  async recordFileMetadata(fileData: Database["public"]["Tables"]["uploaded_files"]["Insert"]): Promise<UploadedFile> {
     const { data, error } = await supabase
       .from("uploaded_files")
       .insert(fileData)
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },

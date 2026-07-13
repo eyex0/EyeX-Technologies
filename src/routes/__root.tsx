@@ -157,8 +157,8 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-eye-bg text-eye-text">
-        {!isApp && <SiteHeader />}
-        <main className={isApp ? "" : "pt-16"}>
+        <SiteHeader />
+        <main className="pt-16">
           <Outlet />
         </main>
         {!isApp && <SiteFooter />}

@@ -31,13 +31,15 @@ export const UploadService = {
     const dataset = await DatabaseService.createDataset(datasetName, description);
 
     // 3. Save file metadata
-    const uploadedFile = await DatabaseService.recordFileMetadata({
-      dataset_id: dataset.id,
-      file_name: file.name,
-      file_size: file.size,
-      file_type: file.type,
-      storage_path: storagePath,
-    });
+      // Include the uploading user ID in the metadata record as required by the MVP.
+      const uploadedFile = await DatabaseService.recordFileMetadata({
+        dataset_id: dataset.id,
+        file_name: file.name,
+        file_size: file.size,
+        file_type: file.type,
+        storage_path: storagePath,
+        user_id: userId,
+      });
 
     // 4. Analyze data to generate dashboard JSON
     const dashboardJson = await AnalysisService.processAndAnalyze(file);
