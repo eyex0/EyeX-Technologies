@@ -14,14 +14,16 @@ export function IntegrationsPage() {
               <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-[20px]">{i.icon}</span>
               </div>
-              <Badge tone={i.status==="Connected"?"success":"info"}>{i.status}</Badge>
+              <Badge tone={i.status === "Connected" ? "success" : "info"}>{i.status}</Badge>
             </div>
             <div>
               <div className="text-white font-medium text-sm">{i.name}</div>
               <div className="text-muted-foreground text-xs mt-1">{i.desc}</div>
             </div>
-            <button className={`mt-2 text-[10px] font-bold uppercase tracking-widest px-3 py-2 rounded ${i.status==="Connected"?"border border-border text-white hover:bg-secondary/40":"bg-white text-black"}`}>
-              {i.status==="Connected"?"Manage":"Connect"}
+            <button
+              className={`mt-2 text-[10px] font-bold uppercase tracking-widest px-3 py-2 rounded ${i.status === "Connected" ? "border border-border text-white hover:bg-secondary/40" : "bg-white text-black"}`}
+            >
+              {i.status === "Connected" ? "Manage" : "Connect"}
             </button>
           </div>
         ))}
@@ -29,4 +31,3 @@ export function IntegrationsPage() {
     </AppShell>
   );
 }
-

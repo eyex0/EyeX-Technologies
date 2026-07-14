@@ -10,12 +10,8 @@ type ChatMessage = Database["public"]["Tables"]["chat_messages"]["Row"];
 export const DatabaseService = {
   // Profiles
   async getProfile(userId: string): Promise<Profile | null> {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+
     if (error) {
       console.error("Error fetching profile", error);
       return null;
@@ -30,7 +26,7 @@ export const DatabaseService = {
       .eq("id", userId)
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },
@@ -41,7 +37,7 @@ export const DatabaseService = {
       .from("datasets")
       .select("*")
       .order("created_at", { ascending: false });
-      
+
     if (error) throw error;
     return data || [];
   },
@@ -52,7 +48,7 @@ export const DatabaseService = {
       .insert({ name, description })
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },
@@ -69,7 +65,17 @@ export const DatabaseService = {
       .select("*")
       .eq("dataset_id", datasetId)
       .order("created_at", { ascending: false });
-      
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllUploadedFiles(): Promise<any[]> {
+    const { data, error } = await supabase
+      .from("uploaded_files")
+      .select("*, datasets(name)")
+      .order("created_at", { ascending: false });
+
     if (error) throw error;
     return data || [];
   },
@@ -78,7 +84,9 @@ export const DatabaseService = {
   // The previous implementation omitted the `user_id` column, which is required by the
   // MVP specification. We now accept the full Insert type so the caller can provide the
   // user identifier.
-  async recordFileMetadata(fileData: Database["public"]["Tables"]["uploaded_files"]["Insert"]): Promise<UploadedFile> {
+  async recordFileMetadata(
+    fileData: Database["public"]["Tables"]["uploaded_files"]["Insert"],
+  ): Promise<UploadedFile> {
     const { data, error } = await supabase
       .from("uploaded_files")
       .insert(fileData)
@@ -95,7 +103,7 @@ export const DatabaseService = {
       .from("dashboards")
       .select("*")
       .order("created_at", { ascending: false });
-      
+
     if (error) throw error;
     return data || [];
   },
@@ -106,7 +114,7 @@ export const DatabaseService = {
       .insert({ title, layout })
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },
@@ -118,7 +126,7 @@ export const DatabaseService = {
       .eq("id", id)
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },
@@ -126,24 +134,58 @@ export const DatabaseService = {
   // Chat Messages
   async getChatHistory(sessionId?: string): Promise<ChatMessage[]> {
     let query = supabase.from("chat_messages").select("*").order("created_at", { ascending: true });
-    
+
     if (sessionId) {
       query = query.eq("session_id", sessionId);
     }
-    
+
     const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
 
-  async saveChatMessage(role: "user" | "assistant" | "system", content: string, sessionId?: string): Promise<ChatMessage> {
+  async saveChatMessage(
+    role: "user" | "assistant" | "system",
+    content: string,
+    sessionId?: string,
+  ): Promise<ChatMessage> {
     const { data, error } = await supabase
       .from("chat_messages")
       .insert({ role, content, session_id: sessionId })
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
-  }
+  },
+
+  // Organization Members
+  async getOrganizationMembers(): Promise<any[]> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return [];
+
+    const profile = await DatabaseService.getProfile(session.user.id);
+    if (!profile || !profile.active_org_id) return [];
+
+    const { data, error } = await supabase
+      .from("organization_members")
+      .select("*, profiles(full_name, email, avatar_url)")
+      .eq("organization_id", profile.active_org_id);
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getOrganization(orgId: string): Promise<any> {
+    const { data, error } = await supabase
+      .from("organizations")
+      .select("*")
+      .eq("id", orgId)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
 };

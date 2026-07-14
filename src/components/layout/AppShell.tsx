@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 
 type NavItem = { to: string; label: string; icon: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -62,12 +63,14 @@ export function AppShell({
       >
         <div className="px-6 mb-8 flex items-center gap-2">
           <div className="h-7 w-7 flex items-center justify-center rounded-sm bg-white overflow-hidden">
-            <img src="/logo.png" alt="EyeX Logo" className="h-full w-full object-cover" />
+            <img src="/favicon.png" alt="EyeX Logo" className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-sm tracking-tight text-white leading-none">EYEX</span>
-            <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider leading-none mt-1">
-              Business OS
+            <span className="font-semibold text-xs tracking-tight text-white leading-none">
+              EyeX Technologies
+            </span>
+            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider leading-none mt-1">
+              QORX OS
             </span>
           </div>
         </div>
@@ -80,26 +83,30 @@ export function AppShell({
               </div>
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const active =
-                    pathname === item.to || pathname.startsWith(item.to + "/");
+                  const active = pathname === item.to || pathname.startsWith(item.to + "/");
                   return (
                     <Link
                       key={item.to}
                       to={item.to}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs transition-colors ${
-                        active
-                          ? "bg-white/5 text-white"
-                          : "text-muted-foreground hover:text-white hover:bg-white/[0.03]"
+                      className={`relative flex items-center gap-3 px-3 py-2 rounded-md text-xs transition-colors ${
+                        active ? "text-white" : "text-muted-foreground hover:text-white"
                       }`}
                     >
+                      {active && (
+                        <motion.div
+                          layoutId="sidebarActive"
+                          className="absolute inset-0 bg-white/[0.03] border-l border-sky-400 rounded-md"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
                       <span
-                        className="material-symbols-outlined text-[18px]"
+                        className="material-symbols-outlined text-[18px] relative z-10"
                         style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
                       >
                         {item.icon}
                       </span>
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium relative z-10">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -133,7 +140,9 @@ export function AppShell({
               <span className="material-symbols-outlined text-[18px]">menu</span>
             </button>
             <div>
-              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">{title}</h1>
+              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">
+                {title}
+              </h1>
               {subtitle && (
                 <p className="text-muted-foreground mt-0.5 font-mono text-[10px] uppercase tracking-wider">
                   {subtitle}

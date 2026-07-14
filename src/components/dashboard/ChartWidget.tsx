@@ -28,19 +28,13 @@ export function ChartWidget({ widget }: { widget: WidgetConfig }) {
         return (
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={widget.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-              <XAxis
-                dataKey="name"
-                stroke="#666"
-                tick={{ fill: "#888" }}
-                tickLine={false}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(255,255,255,0.1)"
+                vertical={false}
               />
-              <YAxis
-                stroke="#666"
-                tick={{ fill: "#888" }}
-                tickLine={false}
-                axisLine={false}
-              />
+              <XAxis dataKey="name" stroke="#666" tick={{ fill: "#888" }} tickLine={false} />
+              <YAxis stroke="#666" tick={{ fill: "#888" }} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "rgba(0,0,0,0.8)",
@@ -63,19 +57,13 @@ export function ChartWidget({ widget }: { widget: WidgetConfig }) {
         return (
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={widget.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-              <XAxis
-                dataKey="name"
-                stroke="#666"
-                tick={{ fill: "#888" }}
-                tickLine={false}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(255,255,255,0.1)"
+                vertical={false}
               />
-              <YAxis
-                stroke="#666"
-                tick={{ fill: "#888" }}
-                tickLine={false}
-                axisLine={false}
-              />
+              <XAxis dataKey="name" stroke="#666" tick={{ fill: "#888" }} tickLine={false} />
+              <YAxis stroke="#666" tick={{ fill: "#888" }} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "rgba(0,0,0,0.8)",
@@ -109,10 +97,7 @@ export function ChartWidget({ widget }: { widget: WidgetConfig }) {
                 dataKey="value"
               >
                 {widget.data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
             </PieChart>
@@ -130,9 +115,7 @@ export function ChartWidget({ widget }: { widget: WidgetConfig }) {
           {widget.title}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        {renderChart()}
-      </CardContent>
+      <CardContent>{renderChart()}</CardContent>
     </Card>
   );
 }

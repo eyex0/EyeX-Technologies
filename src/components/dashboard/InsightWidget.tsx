@@ -44,4 +44,3 @@ export function InsightWidget({ widget }: { widget: WidgetConfig }) {
     </Card>
   );
 }
-
