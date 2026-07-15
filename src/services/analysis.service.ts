@@ -128,19 +128,16 @@ export const AnalysisService = {
    * Validates, reads, and sends file data to the server function for AI analysis.
    */
   async processAndAnalyze(file: File, accessToken?: string): Promise<unknown> {
-    // ── Security: Validate file type BEFORE reading (extension + MIME) ─────────
+    // ── Security: Validate file type BEFORE reading (extension only) ─────────
     const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     if (!ALLOWED_EXTENSIONS.includes(ext)) {
       throw new Error("Unsupported file format. Please upload CSV or Excel (.xlsx/.xls).");
     }
-    if (file.type && !ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error("Invalid file type detected. Please upload a valid CSV or Excel file.");
-    }
 
-    // ── Security: Cap file size at 10 MB ──────────────────────────────────────
-    const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+    // ── Security: Cap file size at 500 MB ──────────────────────────────────────
+    const MAX_SIZE_BYTES = 500 * 1024 * 1024;
     if (file.size > MAX_SIZE_BYTES) {
-      throw new Error("File is too large. Maximum allowed size is 10 MB.");
+      throw new Error("File is too large. Maximum allowed size is 500 MB.");
     }
 
     return new Promise((resolve, reject) => {
