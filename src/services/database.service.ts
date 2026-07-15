@@ -115,7 +115,7 @@ export const DatabaseService = {
     return data || [];
   },
 
-  async saveDashboard(title: string, layout: any): Promise<Dashboard> {
+  async saveDashboard(title: string, layout: Record<string, unknown>): Promise<Dashboard> {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Must be logged in to save a dashboard");
 

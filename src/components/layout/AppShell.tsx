@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
 
 type NavItem = { to: string; label: string; icon: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -52,6 +53,21 @@ export function AppShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useAuth();
+
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : user?.email
+    ? user.email.slice(0, 2).toUpperCase()
+    : "?";
+
+  const displayName = user?.user_metadata?.full_name ?? user?.email ?? "User";
+  const displaySub = user?.email ?? "";
 
   return (
     <div className="fixed inset-0 top-0 bg-background flex overflow-hidden">
@@ -135,12 +151,12 @@ export function AppShell({
 
         <div className="px-3 mt-4">
           <div className="flex items-center gap-3 p-3 border-t border-border">
-            <div className="w-8 h-8 rounded-sm bg-secondary flex items-center justify-center border border-border">
-              <span className="text-[10px] font-mono font-bold text-white">AU</span>
+            <div className="w-8 h-8 rounded-sm bg-secondary flex items-center justify-center border border-border flex-shrink-0">
+              <span className="text-[10px] font-mono font-bold text-white">{initials}</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-medium text-xs text-white">Admin User</span>
-              <span className="text-muted-foreground text-[10px] font-mono">ID: EX-8921</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-medium text-xs text-white truncate">{displayName}</span>
+              <span className="text-muted-foreground text-[10px] font-mono truncate">{displaySub}</span>
             </div>
           </div>
         </div>
