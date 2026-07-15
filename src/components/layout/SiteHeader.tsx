@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/use-auth";
 import { Menu, X } from "lucide-react";
 import { BrandMark } from "./BrandMark";
 
@@ -16,6 +17,7 @@ const NAV = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6">
@@ -39,12 +41,26 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
-            onClick={() => navigate({ to: "/auth" })}
-          >
-            Sign in
-          </button>
+          {user ? (
+            <>
+              <span className="text-[10px] font-medium uppercase tracking-widest text-eye-text">
+                {user.user_metadata?.full_name ?? user.email}
+              </span>
+              <button
+                className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
+                onClick={signOut}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <button
+              className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
+              onClick={() => navigate({ to: "/auth" })}
+            >
+              Sign in
+            </button>
+          )}
           <button className="luminous-btn-primary px-5 py-2 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex">
             Request Access
           </button>

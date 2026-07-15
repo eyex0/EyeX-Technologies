@@ -65,9 +65,12 @@ export function AppShell({
             <img src="/logo.png" alt="EyeX Logo" className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-sm tracking-tight text-white leading-none">EYEX</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-sm tracking-tight text-white leading-none">QORX</span>
+              <span className="text-[8px] text-text-muted font-light tracking-wide">by EyeX</span>
+            </div>
             <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider leading-none mt-1">
-              Business OS
+              AI Business OS
             </span>
           </div>
         </div>

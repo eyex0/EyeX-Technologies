@@ -4,6 +4,9 @@ export function HomePage() {
 {/* Hero Section */}
 <header className="relative min-h-[85vh] w-full flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
 <div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center fade-up visible">
+<span className="font-label-mono text-label-mono text-primary tracking-[0.2em] uppercase mb-4 block">
+  EyeX Technologies
+</span>
 <h1 className="text-6xl md:text-8xl font-display font-medium text-eye-white tracking-[-0.03em] leading-[1.05] mb-8">
                 Intelligence,<br />Architected.
             </h1>
@@ -60,7 +63,10 @@ export function HomePage() {
 {/* Suite */}
 <div className="bento-card md:col-span-3 p-10 flex flex-col md:flex-row items-center gap-12 fade-up visible">
 <div className="flex-1">
-<h4 className="text-2xl font-medium text-eye-white mb-4 tracking-tight">Integrated QORX Ecosystem</h4>
+<div className="flex items-center gap-3 mb-4 flex-wrap">
+  <h4 className="text-2xl font-medium text-eye-white tracking-tight">QORX</h4>
+  <span className="text-[10px] font-mono px-2.5 py-1 border border-eye-border rounded text-eye-text uppercase tracking-widest bg-eye-surface">AI Business OS</span>
+</div>
 <p className="text-sm text-eye-text max-w-xl mb-8 font-light leading-relaxed">From fine-tuning pipelines to real-time telemetry, our unified suite provides a single point of orchestration for the entire intelligence lifecycle.</p>
 <button className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-white hover:opacity-70 transition-opacity flex items-center gap-2">
                             View Ecosystem <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
