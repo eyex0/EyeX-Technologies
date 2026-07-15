@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "vinxi/http";
 import { GoogleGenAI, Type } from "@google/genai";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
@@ -43,6 +42,7 @@ export const analyzeDataFn = createServerFn({ method: "POST" })
       const { sampleData, headers, fileName } = data;
 
       // ── Security: Read auth token from HTTP Authorization header only ─────────
+      const { getWebRequest } = await import("vinxi/http");
       const request = getWebRequest();
       const authHeader = request.headers.get("authorization");
       const token = authHeader?.replace(/^Bearer\s+/i, "").trim();

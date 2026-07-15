@@ -33,15 +33,15 @@ export function BrandMark({ className = "" }: { className?: string }) {
       </div>
 
       {/* Brand text */}
-      <div className="flex flex-col">
+      <div className="flex flex-col min-w-0">
         <motion.span
-          className="font-display font-medium text-[14px] leading-tight text-white tracking-tight"
+          className="font-display font-medium text-[14px] leading-tight text-white tracking-tight truncate"
           animate={{ opacity: [0.85, 1, 0.85] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
           EyeX Technologies
         </motion.span>
-        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest leading-none mt-0.5">
+        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest leading-none mt-1 truncate">
           QORX · AI Business OS
         </span>
       </div>

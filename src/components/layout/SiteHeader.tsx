@@ -3,6 +3,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { BrandMark } from "./BrandMark";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
+import { UserNav } from "./UserNav";
 
 const NAV = [
   { to: "/", label: "Platform" },
@@ -18,6 +20,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
 
   return (
     <motion.nav
@@ -37,8 +40,8 @@ export function SiteHeader() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <div className="max-w-[1200px] w-full flex items-center justify-between">
-        <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
+      <div className="max-w-[1200px] w-full flex items-center justify-between gap-6">
+        <Link to="/" className="shrink-0 flex items-center" onClick={() => setOpen(false)}>
           <BrandMark />
         </Link>
 
@@ -71,24 +74,41 @@ export function SiteHeader() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
-          <motion.button
-            className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors cursor-pointer"
-            onClick={() => navigate({ to: "/auth" })}
-            whileHover={{ scale: 1.02 }}
-          >
-            Sign in
-          </motion.button>
+        <div className="flex items-center gap-4 shrink-0">
+          {!isLoading && user ? (
+            <>
+              <motion.button
+                onClick={() => navigate({ to: "/dashboard" })}
+                className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+              >
+                Open Dashboard
+              </motion.button>
+              <UserNav />
+            </>
+          ) : (
+            !isLoading && (
+              <>
+                <motion.button
+                  className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors cursor-pointer"
+                  onClick={() => navigate({ to: "/auth" })}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  Sign in
+                </motion.button>
 
-          <motion.button
-            onClick={() => navigate({ to: "/auth" })}
-            className="luminous-btn-primary px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex cursor-pointer"
-            whileHover={{ scale: 1.04, y: -1 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          >
-            Request Access
-          </motion.button>
+                <motion.button
+                  onClick={() => navigate({ to: "/auth" })}
+                  className="luminous-btn-primary px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex cursor-pointer"
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  Request Access
+                </motion.button>
+              </>
+            )
+          )}
 
           <button
             aria-label="Toggle menu"
@@ -152,19 +172,37 @@ export function SiteHeader() {
                   </Link>
                 </motion.div>
               ))}
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ delay: NAV.length * 0.05 + 0.05 }}
-                onClick={() => {
-                  setOpen(false);
-                  navigate({ to: "/auth" });
-                }}
-                className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
-              >
-                Request Access
-              </motion.button>
+              {!isLoading && user ? (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ delay: NAV.length * 0.05 + 0.05 }}
+                  onClick={() => {
+                    setOpen(false);
+                    navigate({ to: "/dashboard" });
+                  }}
+                  className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
+                >
+                  Open Dashboard
+                </motion.button>
+              ) : (
+                !isLoading && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ delay: NAV.length * 0.05 + 0.05 }}
+                    onClick={() => {
+                      setOpen(false);
+                      navigate({ to: "/auth" });
+                    }}
+                    className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
+                  >
+                    Request Access
+                  </motion.button>
+                )
+              )}
             </div>
           </motion.div>
         )}

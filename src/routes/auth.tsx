@@ -218,7 +218,7 @@ function AuthPage() {
                 placeholder="Sarah Chen"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-lg px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 transition-colors"
+                className="w-full rounded-xl px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-white/20"
               />
             </div>
           )}
@@ -232,7 +232,7 @@ function AuthPage() {
               placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 transition-colors"
+              className="w-full rounded-xl px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-white/20"
             />
           </div>
 
@@ -246,7 +246,7 @@ function AuthPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 transition-colors"
+                className="w-full rounded-xl px-4 py-3 bg-[#08080A]/60 border border-white/[0.05] text-white text-sm focus:outline-none focus:border-sky-500/40 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-white/20"
               />
             </div>
           )}

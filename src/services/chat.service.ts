@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "vinxi/http";
 import { GoogleGenAI } from "@google/genai";
 import { supabase } from "@/lib/supabase/client";
 
@@ -29,6 +28,7 @@ export const chatWithCopilotFn = createServerFn({ method: "POST" })
 
       // ── Security: Read auth token from the incoming HTTP Authorization header ──
       // Never accept auth tokens from the request body (prevents token injection).
+      const { getWebRequest } = await import("vinxi/http");
       const request = getWebRequest();
       const authHeader = request.headers.get("authorization");
       const token = authHeader?.replace(/^Bearer\s+/i, "").trim();
