@@ -78,6 +78,10 @@ ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
 -- Profiles Policies
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+-- Security: direct client inserts are blocked — the trigger (handle_new_user) handles profile creation with SECURITY DEFINER
+CREATE POLICY "Profiles are created by trigger only" ON profiles FOR INSERT WITH CHECK (false);
+-- Allow users to delete their own profile
+CREATE POLICY "Users can delete own profile" ON profiles FOR DELETE USING (auth.uid() = id);
 
 -- Organizations Policies
 CREATE POLICY "Users can view organizations they belong to" ON organizations
@@ -96,6 +100,37 @@ CREATE POLICY "Users can view members in their organizations" ON organization_me
       SELECT 1 FROM organization_members m
       WHERE m.organization_id = organization_members.organization_id 
       AND m.user_id = auth.uid()
+    )
+  );
+
+-- Security: only org owners can add, update, or remove members
+CREATE POLICY "Owners can insert members" ON organization_members
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM organization_members m
+      WHERE m.organization_id = organization_members.organization_id
+      AND m.user_id = auth.uid()
+      AND m.role = 'owner'
+    )
+  );
+
+CREATE POLICY "Owners can update member roles" ON organization_members
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM organization_members m
+      WHERE m.organization_id = organization_members.organization_id
+      AND m.user_id = auth.uid()
+      AND m.role = 'owner'
+    )
+  );
+
+CREATE POLICY "Owners can remove members" ON organization_members
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM organization_members m
+      WHERE m.organization_id = organization_members.organization_id
+      AND m.user_id = auth.uid()
+      AND m.role = 'owner'
     )
   );
 

@@ -23,6 +23,9 @@ const cardVariants = {
   },
 };
 
+const LOCKOUT_DURATION_S = 30;
+const MAX_ATTEMPTS = 5;
+
 function AuthPage() {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
@@ -35,6 +38,27 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // ── Security: Brute-force rate limiting ───────────────────────────────────
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+  const isLockedOut = lockoutSeconds > 0;
+
+  useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setTimeout(() => setLockoutSeconds((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [lockoutSeconds]);
+
+  const registerFailedAttempt = () => {
+    const next = failedAttempts + 1;
+    setFailedAttempts(next);
+    if (next >= MAX_ATTEMPTS) {
+      setLockoutSeconds(LOCKOUT_DURATION_S);
+      setFailedAttempts(0);
+      setError(`Too many failed attempts. Please wait ${LOCKOUT_DURATION_S} seconds.`);
+    }
+  };
+
   // Redirect if already authenticated
   useEffect(() => {
     if (!authLoading && user) {
@@ -46,6 +70,7 @@ function AuthPage() {
   const isValidPassword = (p: string) => p.length >= 6;
 
   const handleSignIn = async () => {
+    if (isLockedOut) return;
     setError(null);
     if (!isValidEmail(email) || !isValidPassword(password)) {
       setError("Please provide a valid email and password (min 6 characters).");
@@ -54,9 +79,11 @@ function AuthPage() {
     setLoading(true);
     try {
       await AuthService.signIn(email, password);
+      setFailedAttempts(0);
       navigate({ to: "/dashboard" });
     } catch (e: any) {
-      setError(e.message ?? "Sign‑in failed");
+      registerFailedAttempt();
+      if (!isLockedOut) setError(e.message ?? "Sign‑in failed");
     } finally {
       setLoading(false);
     }
@@ -226,21 +253,27 @@ function AuthPage() {
         </div>
 
         <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
+          whileHover={isLockedOut ? {} : { scale: 1.01 }}
+          whileTap={isLockedOut ? {} : { scale: 0.99 }}
           onClick={
             mode === "signIn" ? handleSignIn : mode === "signUp" ? handleSignUp : handleForgot
           }
-          disabled={loading}
-          className="w-full luminous-btn-primary h-12 text-[10px] font-bold uppercase tracking-widest cursor-pointer disabled:opacity-50"
+          disabled={loading || isLockedOut}
+          className={`w-full luminous-btn-primary h-12 text-[10px] font-bold uppercase tracking-widest cursor-pointer disabled:opacity-50 ${
+            isLockedOut
+              ? "!bg-red-900/40 !border-red-500/30 !text-red-400 !shadow-none cursor-not-allowed"
+              : ""
+          }`}
         >
-          {loading
-            ? "Processing…"
-            : mode === "signIn"
-              ? "Sign In"
-              : mode === "signUp"
-                ? "Sign Up"
-                : "Send Reset Link"}
+          {isLockedOut
+            ? `Locked — wait ${lockoutSeconds}s`
+            : loading
+              ? "Processing…"
+              : mode === "signIn"
+                ? "Sign In"
+                : mode === "signUp"
+                  ? "Sign Up"
+                  : "Send Reset Link"}
         </motion.button>
 
         {/* Mode Selector Links */}
