@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { AuthService } from "@/services/auth.service";
 import { useAuth } from "@/hooks/use-auth";
 import { motion, AnimatePresence } from "framer-motion";
+import { ParticleField } from "@/components/effects/ParticleField";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -110,12 +111,25 @@ function AuthPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-eye-bg overflow-hidden p-6 bg-radial-mesh">
-      {/* Background grid overlay */}
-      <div className="absolute inset-0 ambient-grid pointer-events-none opacity-30" />
+      {/* Particle background */}
+      <ParticleField count={50} color="56, 189, 248" />
 
-      {/* Glow Orbs */}
-      <div className="absolute top-[20%] right-[10%] w-[350px] h-[350px] bg-sky-500/10 blur-[130px] rounded-full pointer-events-none animate-pulse duration-[10s]" />
-      <div className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] bg-purple-500/5 blur-[130px] rounded-full pointer-events-none" />
+      {/* Background grid overlay */}
+      <div className="absolute inset-0 ambient-grid pointer-events-none opacity-20" />
+
+      {/* Animated Glow Orbs */}
+      <motion.div
+        className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)", filter: "blur(60px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)", filter: "blur(80px)" }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      />
 
       <motion.div
         variants={cardVariants}
@@ -124,8 +138,27 @@ function AuthPage() {
         className="w-full max-w-md relative z-10 bento-card rounded-2xl p-8 bg-eye-surface/90 border border-white/[0.05] shadow-2xl backdrop-blur-xl"
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="relative h-12 w-12 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-4 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
-            <img src="/favicon.png" alt="EyeX Logo" className="h-8 w-8 object-contain" />
+          {/* Animated logo with pulsing rings */}
+          <div className="relative h-16 w-16 flex items-center justify-center mb-5">
+            {/* Outer rotating ring */}
+            <motion.div
+              className="absolute inset-0 rounded-xl"
+              style={{
+                border: "1px solid transparent",
+                backgroundImage: "linear-gradient(#0A0A0C, #0A0A0C), conic-gradient(from 0deg, rgba(56,189,248,0.5), transparent 60%, rgba(167,139,250,0.3))",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+            />
+            {/* Inner glow pulse */}
+            <motion.div
+              className="absolute inset-1 rounded-lg bg-sky-500/5"
+              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <img src="/Logo.png" alt="EyeX Logo" className="h-9 w-9 object-contain relative z-10" />
           </div>
           <h1 className="text-2xl font-display font-medium text-white tracking-tight text-center">
             {mode === "signIn"

@@ -61,9 +61,22 @@ export function AppShell({
           mobileOpen ? "flex" : "hidden"
         } md:flex w-[240px] flex-shrink-0 border-r border-border bg-background flex-col h-full py-6 absolute md:relative z-40 inset-y-0 left-0`}
       >
-        <div className="px-6 mb-8 flex items-center gap-2">
-          <div className="h-7 w-7 flex items-center justify-center rounded-sm bg-white overflow-hidden">
-            <img src="/favicon.png" alt="EyeX Logo" className="h-full w-full object-cover" />
+        <div className="px-6 mb-8 flex items-center gap-2 relative">
+          {/* Scan line across logo bar */}
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-px"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent)" }}
+            animate={{ opacity: [0, 0.8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div className="h-7 w-7 flex items-center justify-center rounded-sm overflow-hidden relative">
+            {/* Glow ring */}
+            <motion.div
+              className="absolute inset-0 rounded-sm"
+              animate={{ boxShadow: ["0 0 0px rgba(56,189,248,0)", "0 0 8px rgba(56,189,248,0.4)", "0 0 0px rgba(56,189,248,0)"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <img src="/Logo.png" alt="EyeX Logo" className="h-full w-full object-cover relative z-10" />
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-xs tracking-tight text-white leading-none">
@@ -94,11 +107,16 @@ export function AppShell({
                       }`}
                     >
                       {active && (
-                        <motion.div
-                          layoutId="sidebarActive"
-                          className="absolute inset-0 bg-white/[0.03] border-l border-sky-400 rounded-md"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
+                      <motion.div
+                        layoutId="sidebarActive"
+                        className="absolute inset-0 rounded-md"
+                        style={{
+                          background: "linear-gradient(90deg, rgba(56,189,248,0.06) 0%, rgba(56,189,248,0.01) 100%)",
+                          borderLeft: "2px solid rgba(56,189,248,0.7)",
+                          boxShadow: "inset 0 0 20px rgba(56,189,248,0.03)",
+                        }}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
                       )}
                       <span
                         className="material-symbols-outlined text-[18px] relative z-10"

@@ -20,14 +20,30 @@ export function SiteHeader() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6 border-b border-white/[0.04]">
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6"
+      initial={{ y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* Animated top border highlight */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.5) 30%, rgba(167,139,250,0.3) 70%, transparent 100%)",
+        }}
+        animate={{ opacity: [0.3, 0.7, 0.3] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
       <div className="max-w-[1200px] w-full flex items-center justify-between">
         <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
           <BrandMark />
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest">
+        <div className="hidden lg:flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest">
           {NAV.map((item) => (
             <Link
               key={item.to}
@@ -42,8 +58,13 @@ export function SiteHeader() {
               {hoveredTab === item.to && (
                 <motion.div
                   layoutId="navHover"
-                  className="absolute inset-0 bg-white/[0.03] border border-white/[0.05] rounded-md"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 rounded-md"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(56,189,248,0.05) 0%, rgba(255,255,255,0.03) 100%)",
+                    border: "1px solid rgba(56,189,248,0.12)",
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
             </Link>
@@ -51,24 +72,52 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
+          <motion.button
             className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors cursor-pointer"
             onClick={() => navigate({ to: "/auth" })}
+            whileHover={{ scale: 1.02 }}
           >
             Sign in
-          </button>
-          <button
+          </motion.button>
+
+          <motion.button
             onClick={() => navigate({ to: "/auth" })}
             className="luminous-btn-primary px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex cursor-pointer"
+            whileHover={{ scale: 1.04, y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             Request Access
-          </button>
+          </motion.button>
+
           <button
             aria-label="Toggle menu"
             className="lg:hidden inline-flex items-center justify-center h-9 w-9 border border-white/[0.08] rounded-md text-eye-white hover:bg-white/[0.02]"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X size={16} /> : <Menu size={16} />}
+            <AnimatePresence mode="wait">
+              {open ? (
+                <motion.span
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={16} />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={16} />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>
@@ -77,26 +126,37 @@ export function SiteHeader() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, height: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, height: "auto", backdropFilter: "blur(20px)" }}
+            exit={{ opacity: 0, height: 0, backdropFilter: "blur(0px)" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="absolute top-16 left-0 right-0 lg:hidden bg-eye-bg border-b border-white/[0.06] backdrop-blur-xl"
+            className="absolute top-16 left-0 right-0 lg:hidden bg-eye-bg/90 border-b border-white/[0.06] overflow-hidden"
           >
-            <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-4">
-              {NAV.map((item) => (
-                <Link
+            <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-3">
+              {NAV.map((item, i) => (
+                <motion.div
                   key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className="text-eye-text hover:text-eye-white transition-colors text-xs uppercase tracking-widest font-medium py-1"
-                  activeProps={{ className: "text-eye-white" }}
-                  activeOptions={{ exact: item.to === "/" }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ delay: i * 0.05, duration: 0.25 }}
                 >
-                  {item.label}
-                </Link>
+                  <Link
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="text-eye-text hover:text-eye-white transition-colors text-xs uppercase tracking-widest font-medium py-1 block"
+                    activeProps={{ className: "text-eye-white" }}
+                    activeOptions={{ exact: item.to === "/" }}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
               ))}
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ delay: NAV.length * 0.05 + 0.05 }}
                 onClick={() => {
                   setOpen(false);
                   navigate({ to: "/auth" });
@@ -104,11 +164,11 @@ export function SiteHeader() {
                 className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
               >
                 Request Access
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 }

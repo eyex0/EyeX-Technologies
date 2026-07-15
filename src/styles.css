@@ -233,3 +233,122 @@
     "opsz" 24;
   vertical-align: middle;
 }
+
+/* ============================================================
+   ANTIGRAVITY-STYLE GLOBAL ANIMATIONS
+   ============================================================ */
+
+/* Shimmer sweep — for skeleton loaders and highlight effects */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Floating / levitation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Glow pulse — for logo rings, active indicators */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(56, 189, 248, 0.2), 0 0 20px rgba(56, 189, 248, 0.05); }
+  50% { box-shadow: 0 0 16px rgba(56, 189, 248, 0.5), 0 0 40px rgba(56, 189, 248, 0.15); }
+}
+
+/* Scan line — moves downward through an element */
+@keyframes scan-line {
+  0% { top: -2px; opacity: 0.8; }
+  80% { opacity: 0.8; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Cursor blink */
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Gradient shift — for animated gradient backgrounds */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Spin slow */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Counter spin (for layered rings) */
+@keyframes spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Entrance: blur fade up */
+@keyframes blur-fade-up {
+  0% { opacity: 0; transform: translateY(24px); filter: blur(12px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+
+/* Typing cursor helper class */
+@utility type-cursor {
+  border-right: 2px solid rgba(56, 189, 248, 0.8);
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Float animation utility */
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Shimmer gradient text utility */
+@utility shimmer-text {
+  background: linear-gradient(90deg, #A1A1AA 0%, #FAFAFA 30%, #38BDF8 50%, #FAFAFA 70%, #A1A1AA 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 6s linear infinite;
+}
+
+/* Glow pulse ring utility */
+@utility glow-ring {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Scan overlay — place inside position:relative container */
+@utility scan-overlay {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.6), transparent);
+    animation: scan-line 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* Slow spin ring utility */
+@utility spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* Blur fade in entry animation */
+@utility blur-in {
+  animation: blur-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Gradient animated background */
+@utility bg-gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
