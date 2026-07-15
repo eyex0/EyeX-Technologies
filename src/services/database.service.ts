@@ -43,15 +43,17 @@ export const DatabaseService = {
   },
 
   async createDataset(name: string, description?: string): Promise<Dataset> {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) throw new Error("Must be logged in to create a dataset");
-    
+
     const { data, error } = await supabase
       .from("datasets")
-      .insert({ 
-        name, 
+      .insert({
+        name,
         description,
-        user_id: session.user.id
+        user_id: session.user.id,
       })
       .select()
       .single();
@@ -116,15 +118,17 @@ export const DatabaseService = {
   },
 
   async saveDashboard(title: string, layout: Record<string, unknown>): Promise<Dashboard> {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) throw new Error("Must be logged in to save a dashboard");
 
     const { data, error } = await supabase
       .from("dashboards")
-      .insert({ 
-        title, 
+      .insert({
+        title,
         layout,
-        user_id: session.user.id
+        user_id: session.user.id,
       })
       .select()
       .single();

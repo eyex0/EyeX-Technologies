@@ -63,8 +63,8 @@ export function AppShell({
         .toUpperCase()
         .slice(0, 2)
     : user?.email
-    ? user.email.slice(0, 2).toUpperCase()
-    : "?";
+      ? user.email.slice(0, 2).toUpperCase()
+      : "?";
 
   const displayName = user?.user_metadata?.full_name ?? user?.email ?? "User";
   const displaySub = user?.email ?? "";
@@ -81,7 +81,9 @@ export function AppShell({
           {/* Scan line across logo bar */}
           <motion.div
             className="absolute bottom-0 left-0 right-0 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent)" }}
+            style={{
+              background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent)",
+            }}
             animate={{ opacity: [0, 0.8, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -89,10 +91,20 @@ export function AppShell({
             {/* Glow ring */}
             <motion.div
               className="absolute inset-0 rounded-sm"
-              animate={{ boxShadow: ["0 0 0px rgba(56,189,248,0)", "0 0 8px rgba(56,189,248,0.4)", "0 0 0px rgba(56,189,248,0)"] }}
+              animate={{
+                boxShadow: [
+                  "0 0 0px rgba(56,189,248,0)",
+                  "0 0 8px rgba(56,189,248,0.4)",
+                  "0 0 0px rgba(56,189,248,0)",
+                ],
+              }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             />
-            <img src="/Logo.png" alt="EyeX Logo" className="h-full w-full object-cover relative z-10" />
+            <img
+              src="/Logo.png"
+              alt="EyeX Logo"
+              className="h-full w-full object-cover relative z-10"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-xs tracking-tight text-white leading-none">
@@ -123,16 +135,17 @@ export function AppShell({
                       }`}
                     >
                       {active && (
-                      <motion.div
-                        layoutId="sidebarActive"
-                        className="absolute inset-0 rounded-md"
-                        style={{
-                          background: "linear-gradient(90deg, rgba(56,189,248,0.06) 0%, rgba(56,189,248,0.01) 100%)",
-                          borderLeft: "2px solid rgba(56,189,248,0.7)",
-                          boxShadow: "inset 0 0 20px rgba(56,189,248,0.03)",
-                        }}
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
+                        <motion.div
+                          layoutId="sidebarActive"
+                          className="absolute inset-0 rounded-md"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(56,189,248,0.06) 0%, rgba(56,189,248,0.01) 100%)",
+                            borderLeft: "2px solid rgba(56,189,248,0.7)",
+                            boxShadow: "inset 0 0 20px rgba(56,189,248,0.03)",
+                          }}
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
                       )}
                       <span
                         className="material-symbols-outlined text-[18px] relative z-10"
@@ -156,7 +169,9 @@ export function AppShell({
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-medium text-xs text-white truncate">{displayName}</span>
-              <span className="text-muted-foreground text-[10px] font-mono truncate">{displaySub}</span>
+              <span className="text-muted-foreground text-[10px] font-mono truncate">
+                {displaySub}
+              </span>
             </div>
           </div>
         </div>

@@ -55,8 +55,7 @@ export function FloatingOrbs() {
       <motion.div
         className="absolute w-[300px] h-[300px] rounded-full"
         style={{
-          background:
-            "radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 60%)",
+          background: "radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 60%)",
           filter: "blur(40px)",
           top: "40%",
           left: "50%",

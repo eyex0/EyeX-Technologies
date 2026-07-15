@@ -83,9 +83,7 @@ export function UserNav() {
           )}
         </div>
         <div className="hidden md:flex flex-col items-start max-w-[120px]">
-          <span className="text-[11px] font-medium text-eye-white truncate w-full">
-            {userName}
-          </span>
+          <span className="text-[11px] font-medium text-eye-white truncate w-full">{userName}</span>
         </div>
         <ChevronDown
           size={14}

@@ -1,1 +1,1 @@
-declare module 'vinxi/http';
+declare module "vinxi/http";
