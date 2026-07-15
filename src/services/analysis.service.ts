@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { GoogleGenAI, Type } from "@google/genai";
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabase/client";
 
 // ── Security: Allowed file types (extension + MIME) ───────────────────────────
@@ -157,6 +156,7 @@ export const AnalysisService = {
             sampleData = (result.data as Record<string, unknown>[]).slice(0, 20);
             headers = result.meta.fields || [];
           } else {
+            const XLSX = await import("xlsx");
             const data = new Uint8Array(content as ArrayBuffer);
             const workbook = XLSX.read(data, { type: "array" });
             const firstSheetName = workbook.SheetNames[0];

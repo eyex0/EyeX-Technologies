@@ -1,11 +1,11 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
 import { ParticleField } from "@/components/effects/ParticleField";
 import { FloatingOrbs } from "@/components/effects/FloatingOrbs";
 import { GradientText } from "@/components/effects/GradientText";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -16,7 +16,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 40, opacity: 0, filter: "blur(10px)" },
   visible: {
     y: 0,
@@ -30,7 +30,7 @@ const itemVariants = {
   },
 };
 
-const cardHover = {
+const cardHover: Variants = {
   rest: { scale: 1, y: 0 },
   hover: {
     scale: 1.02,

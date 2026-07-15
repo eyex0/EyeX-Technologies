@@ -2,14 +2,14 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { AuthService } from "@/services/auth.service";
 import { useAuth } from "@/hooks/use-auth";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { ParticleField } from "@/components/effects/ParticleField";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 30, scale: 0.98 },
   visible: {
     opacity: 1,
