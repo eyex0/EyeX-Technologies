@@ -7,6 +7,13 @@ type UploadedFile = Database["public"]["Tables"]["uploaded_files"]["Row"];
 type Dashboard = Database["public"]["Tables"]["dashboards"]["Row"];
 type ChatMessage = Database["public"]["Tables"]["chat_messages"]["Row"];
 
+async function getActiveOrgId(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return null;
+  const profile = await supabase.from("profiles").select("active_org_id").eq("id", session.user.id).single();
+  return profile.data?.active_org_id ?? null;
+}
+
 export const DatabaseService = {
   // Profiles
   async getProfile(userId: string): Promise<Profile | null> {
@@ -48,12 +55,15 @@ export const DatabaseService = {
     } = await supabase.auth.getSession();
     if (!session) throw new Error("Must be logged in to create a dataset");
 
+    const orgId = await getActiveOrgId();
+
     const { data, error } = await supabase
       .from("datasets")
       .insert({
         name,
         description,
         user_id: session.user.id,
+        organization_id: orgId,
       })
       .select()
       .single();
@@ -123,12 +133,15 @@ export const DatabaseService = {
     } = await supabase.auth.getSession();
     if (!session) throw new Error("Must be logged in to save a dashboard");
 
+    const orgId = await getActiveOrgId();
+
     const { data, error } = await supabase
       .from("dashboards")
       .insert({
         title,
         layout,
         user_id: session.user.id,
+        organization_id: orgId,
       })
       .select()
       .single();
@@ -167,9 +180,11 @@ export const DatabaseService = {
     content: string,
     sessionId?: string,
   ): Promise<ChatMessage> {
+    const { data: { session } } = await supabase.auth.getSession();
+
     const { data, error } = await supabase
       .from("chat_messages")
-      .insert({ role, content, session_id: sessionId })
+      .insert({ role, content, session_id: sessionId, user_id: session?.user.id })
       .select()
       .single();
 

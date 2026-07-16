@@ -41,6 +41,7 @@ export interface Database {
         Row: {
           id: string;
           user_id: string | null;
+          organization_id: string | null;
           name: string;
           description: string | null;
           created_at: string;
@@ -49,6 +50,7 @@ export interface Database {
         Insert: {
           id?: string;
           user_id?: string | null;
+          organization_id?: string | null;
           name: string;
           description?: string | null;
           created_at?: string;
@@ -57,6 +59,7 @@ export interface Database {
         Update: {
           id?: string;
           user_id?: string | null;
+          organization_id?: string | null;
           name?: string;
           description?: string | null;
           created_at?: string;
@@ -64,7 +67,7 @@ export interface Database {
         };
         Relationships: [
           {
-            foreignKeyName: "datasets_user_id_fkey";
+            foreignKeyName: "datasets_user_id_fkey",
             columns: ["user_id"];
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -121,6 +124,7 @@ export interface Database {
         Row: {
           id: string;
           user_id: string | null;
+          organization_id: string | null;
           title: string;
           layout: Json | null;
           created_at: string;
@@ -129,6 +133,7 @@ export interface Database {
         Insert: {
           id?: string;
           user_id?: string | null;
+          organization_id?: string | null;
           title: string;
           layout?: Json | null;
           created_at?: string;
@@ -137,6 +142,7 @@ export interface Database {
         Update: {
           id?: string;
           user_id?: string | null;
+          organization_id?: string | null;
           title?: string;
           layout?: Json | null;
           created_at?: string;
