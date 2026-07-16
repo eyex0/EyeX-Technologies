@@ -5,7 +5,14 @@ import { Card, BarChart, Kpi } from "@/components/common/primitives";
 import { DatabaseService } from "@/services/database.service";
 
 export function AnalyticsPage() {
-  const [metrics, setMetrics] = useState({ customers: 0, invoices: 0, deals: 0, projects: 0, employees: 0, revenue: 0 });
+  const [metrics, setMetrics] = useState({
+    customers: 0,
+    invoices: 0,
+    deals: 0,
+    projects: 0,
+    employees: 0,
+    revenue: 0,
+  });
 
   useEffect(() => {
     Promise.all([
@@ -31,7 +38,12 @@ export function AnalyticsPage() {
     <AppShell title="Analytics" subtitle="Cross-module intelligence">
       <KpiRow
         items={[
-          { label: "Customers", value: metrics.customers.toString(), delta: `+${metrics.customers}`, icon: "groups" },
+          {
+            label: "Customers",
+            value: metrics.customers.toString(),
+            delta: `+${metrics.customers}`,
+            icon: "groups",
+          },
           { label: "Invoices", value: metrics.invoices.toString(), icon: "receipt" },
           { label: "Deals", value: metrics.deals.toString(), icon: "trending_up" },
           { label: "Revenue", value: `$${(metrics.revenue / 1000).toFixed(0)}K`, icon: "payments" },

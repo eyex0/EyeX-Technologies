@@ -14,14 +14,17 @@ export function InventoryPage() {
       DatabaseService.getProducts(),
       DatabaseService.getStockItems(),
       DatabaseService.getSuppliers(),
-    ]).then(([prod, stock, sup]) => {
-      setProducts(prod);
-      setStockItems(stock);
-      setSuppliers(sup);
-    }).catch(console.error).finally(() => setLoading(false));
+    ])
+      .then(([prod, stock, sup]) => {
+        setProducts(prod);
+        setStockItems(stock);
+        setSuppliers(sup);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  const lowStock = stockItems.filter(s => s.quantity <= s.min_stock).length;
+  const lowStock = stockItems.filter((s) => s.quantity <= s.min_stock).length;
   const totalStock = stockItems.reduce((s, i) => s + Number(i.quantity || 0), 0);
 
   return (
@@ -40,11 +43,17 @@ export function InventoryPage() {
                 { key: "name", label: "Product" },
                 { key: "unit", label: "Unit" },
                 { key: "price", label: "Price", align: "right" },
-                { key: "active", label: "Status", render: (r: any) => (
-                  <Badge tone={r.active ? "success" : "warn"}>{r.active ? "Active" : "Inactive"}</Badge>
-                )},
+                {
+                  key: "active",
+                  label: "Status",
+                  render: (r: any) => (
+                    <Badge tone={r.active ? "success" : "warn"}>
+                      {r.active ? "Active" : "Inactive"}
+                    </Badge>
+                  ),
+                },
               ]}
-              rows={products.map(p => ({ ...p, price: `$${Number(p.price).toLocaleString()}` }))}
+              rows={products.map((p) => ({ ...p, price: `$${Number(p.price).toLocaleString()}` }))}
             />
           ),
         },
@@ -58,21 +67,45 @@ export function InventoryPage() {
                   { label: "Products", value: products.length.toString(), icon: "inventory_2" },
                   { label: "Total Stock", value: totalStock.toString(), icon: "check_circle" },
                   { label: "Low Stock", value: lowStock.toString(), icon: "warning" },
-                  { label: "Suppliers", value: suppliers.length.toString(), icon: "local_shipping" },
+                  {
+                    label: "Suppliers",
+                    value: suppliers.length.toString(),
+                    icon: "local_shipping",
+                  },
                 ]}
               />
               <TableCard
                 title={`Stock levels (${stockItems.length})`}
                 columns={[
-                  { key: "product_name", label: "Product", render: (r: any) => r.products?.name || "-" },
+                  {
+                    key: "product_name",
+                    label: "Product",
+                    render: (r: any) => r.products?.name || "-",
+                  },
                   { key: "sku", label: "SKU", render: (r: any) => r.products?.sku || "-" },
                   { key: "quantity", label: "Qty", align: "right" },
-                  { key: "warehouse_name", label: "Warehouse", render: (r: any) => r.warehouses?.name || "-" },
-                  { key: "status", label: "Status", render: (r: any) => (
-                    <Badge tone={r.quantity <= r.min_stock ? "danger" : r.quantity <= r.max_stock * 0.3 ? "warn" : "success"}>
-                      {r.quantity <= r.min_stock ? "Low" : "OK"}
-                    </Badge>
-                  )},
+                  {
+                    key: "warehouse_name",
+                    label: "Warehouse",
+                    render: (r: any) => r.warehouses?.name || "-",
+                  },
+                  {
+                    key: "status",
+                    label: "Status",
+                    render: (r: any) => (
+                      <Badge
+                        tone={
+                          r.quantity <= r.min_stock
+                            ? "danger"
+                            : r.quantity <= r.max_stock * 0.3
+                              ? "warn"
+                              : "success"
+                        }
+                      >
+                        {r.quantity <= r.min_stock ? "Low" : "OK"}
+                      </Badge>
+                    ),
+                  },
                 ]}
                 rows={stockItems}
               />
@@ -86,12 +119,18 @@ export function InventoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {["SF-01", "NYC-02", "AMS-03"].map((id, i) => (
                 <div key={id} className="bento-card rounded-lg p-5">
-                  <div className="text-white text-sm">{["San Francisco", "New York", "Amsterdam"][i]}</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase mt-1">{id}</div>
+                  <div className="text-white text-sm">
+                    {["San Francisco", "New York", "Amsterdam"][i]}
+                  </div>
+                  <div className="text-[10px] font-mono text-muted-foreground uppercase mt-1">
+                    {id}
+                  </div>
                   <div className="mt-4 h-1 bg-border rounded">
                     <div className="h-full bg-white" style={{ width: `${[82, 64, 41][i]}%` }} />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2">Capacity {[82, 64, 41][i]}%</div>
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Capacity {[82, 64, 41][i]}%
+                  </div>
                 </div>
               ))}
             </div>
@@ -109,7 +148,7 @@ export function InventoryPage() {
                 { key: "phone", label: "Phone" },
                 { key: "lead_time", label: "Lead time", align: "right" },
               ]}
-              rows={suppliers.map(s => ({ ...s, lead_time: `${s.lead_time} days` }))}
+              rows={suppliers.map((s) => ({ ...s, lead_time: `${s.lead_time} days` }))}
             />
           ),
         },

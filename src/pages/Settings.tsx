@@ -17,7 +17,8 @@ export function SettingsPage() {
 
   const { data: organization } = useQuery({
     queryKey: ["organization", profile?.active_org_id],
-    queryFn: () => profile?.active_org_id ? DatabaseService.getOrganization(profile.active_org_id) : null,
+    queryFn: () =>
+      profile?.active_org_id ? DatabaseService.getOrganization(profile.active_org_id) : null,
     enabled: !!profile?.active_org_id,
   });
 
@@ -29,14 +30,15 @@ export function SettingsPage() {
 
   const currentUserRole = orgMembers?.find((m: any) => m.user_id === user?.id)?.role || "Owner";
 
-  const memberRows = orgMembers && orgMembers.length > 0
-    ? orgMembers.map((mem: any) => ({
-        name: mem.profiles?.full_name || "Anonymous",
-        email: mem.profiles?.email || "N/A",
-        role: mem.role.charAt(0).toUpperCase() + mem.role.slice(1),
-        status: "Active",
-      }))
-    : [];
+  const memberRows =
+    orgMembers && orgMembers.length > 0
+      ? orgMembers.map((mem: any) => ({
+          name: mem.profiles?.full_name || "Anonymous",
+          email: mem.profiles?.email || "N/A",
+          role: mem.role.charAt(0).toUpperCase() + mem.role.slice(1),
+          status: "Active",
+        }))
+      : [];
 
   return (
     <ModulePage
@@ -51,7 +53,10 @@ export function SettingsPage() {
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="Name" value={profile?.full_name || "Admin User"} />
                 <Field label="Email" value={profile?.email || user?.email || "admin@eyex.io"} />
-                <Field label="Role" value={currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)} />
+                <Field
+                  label="Role"
+                  value={currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}
+                />
                 <Field label="Timezone" value="America/Los_Angeles" />
               </div>
             </Card>
@@ -79,20 +84,27 @@ export function SettingsPage() {
               {memberRows.length > 0 ? (
                 <div className="p-2">
                   {memberRows.map((m: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-border last:border-0 hover:bg-secondary/40">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between px-4 py-3 border-b border-border last:border-0 hover:bg-secondary/40"
+                    >
                       <div>
                         <div className="text-sm text-white">{m.name}</div>
                         <div className="text-[10px] font-mono text-muted-foreground">{m.email}</div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono text-muted-foreground uppercase">{m.role}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                          {m.role}
+                        </span>
                         <Badge tone="success">Active</Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-8 text-center text-muted-foreground text-sm">No team members found</div>
+                <div className="p-8 text-center text-muted-foreground text-sm">
+                  No team members found
+                </div>
               )}
             </Card>
           ),
@@ -114,8 +126,17 @@ export function SettingsPage() {
           render: () => (
             <Card title="Security">
               <div className="p-5 space-y-3 text-sm">
-                {["Two-factor authentication", "SSO (SAML)", "Session timeout", "IP allowlist", "Audit log"].map(s => (
-                  <div key={s} className="flex justify-between border-b border-border pb-3 last:border-0">
+                {[
+                  "Two-factor authentication",
+                  "SSO (SAML)",
+                  "Session timeout",
+                  "IP allowlist",
+                  "Audit log",
+                ].map((s) => (
+                  <div
+                    key={s}
+                    className="flex justify-between border-b border-border pb-3 last:border-0"
+                  >
                     <span className="text-white">{s}</span>
                     <span className="text-muted-foreground text-xs">Configured</span>
                   </div>
@@ -132,8 +153,12 @@ export function SettingsPage() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">{label}</div>
-      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">{value}</div>
+      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+        {label}
+      </div>
+      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">
+        {value}
+      </div>
     </div>
   );
 }

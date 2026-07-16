@@ -17,8 +17,10 @@ function getGenAI(): GoogleGenAI {
 // ── Security: Sanitize errors — never leak internal stack traces to clients ───
 function safeErrorMessage(error: unknown): string {
   if (import.meta.env.DEV && error instanceof Error) return error.message;
-  if (error instanceof Error && error.message?.includes("API_KEY_INVALID")) return "Invalid API key configuration.";
-  if (error instanceof Error && error.message?.includes("quota")) return "API quota exceeded. Please try again later.";
+  if (error instanceof Error && error.message?.includes("API_KEY_INVALID"))
+    return "Invalid API key configuration.";
+  if (error instanceof Error && error.message?.includes("quota"))
+    return "API quota exceeded. Please try again later.";
   return "An internal error occurred. Please try again.";
 }
 
