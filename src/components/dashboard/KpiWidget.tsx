@@ -16,17 +16,11 @@ export function KpiWidget({ widget }: { widget: WidgetConfig }) {
         )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-display font-bold text-eye-white">
-          {widget.value}
-        </div>
+        <div className="text-2xl font-display font-bold text-eye-white">{widget.value}</div>
         {widget.delta && (
           <p
             className={`text-xs mt-1 font-mono ${
-              isPositive
-                ? "text-green-500"
-                : isNegative
-                ? "text-red-500"
-                : "text-eye-text"
+              isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-eye-text"
             }`}
           >
             {widget.delta}
@@ -36,4 +30,3 @@ export function KpiWidget({ widget }: { widget: WidgetConfig }) {
     </Card>
   );
 }
-

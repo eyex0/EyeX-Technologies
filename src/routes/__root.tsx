@@ -101,12 +101,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "EyeX Technologies is the foundational intelligence infrastructure for the next generation of global enterprise — secured by design, engineered for scale.",
       },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png" },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", type: "image/png", href: "/Logo.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
@@ -143,16 +151,53 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { useAuth } from "../hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
+
 const APP_ROUTES = [
-  "/dashboard","/analytics","/data-sources","/ai-copilot","/reports",
-  "/crm","/sales","/marketing","/finance","/inventory","/hr","/projects",
-  "/documents","/integrations","/notifications","/settings",
+  "/dashboard",
+  "/analytics",
+  "/data-sources",
+  "/ai-copilot",
+  "/reports",
+  "/crm",
+  "/sales",
+  "/marketing",
+  "/finance",
+  "/inventory",
+  "/hr",
+  "/projects",
+  "/documents",
+  "/integrations",
+  "/notifications",
+  "/settings",
 ];
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterLocation();
   const isApp = APP_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"));
+  const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isApp && !user) {
+      navigate({ to: "/auth" });
+    }
+  }, [isLoading, isApp, user, pathname, navigate]);
+
+  if (isLoading && isApp) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-eye-bg text-eye-white">
+        <div className="flex flex-col items-center gap-3">
+          <span className="material-symbols-outlined animate-spin text-3xl text-white">sync</span>
+          <span className="text-xs font-mono uppercase tracking-widest text-eye-text">
+            Verifying Session...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

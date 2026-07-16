@@ -52,7 +52,7 @@ export const AuthService = {
     if (error) throw error;
     return data.user;
   },
-  
+
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
     const { data } = supabase.auth.onAuthStateChange(callback);
     return data.subscription;

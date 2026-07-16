@@ -70,12 +70,20 @@ export function DataTable<T extends Record<string, any>>({
   columns,
   rows,
 }: {
-  columns: { key: keyof T; label: string; align?: "left" | "right"; render?: (row: T) => ReactNode }[];
+  columns: {
+    key: keyof T;
+    label: string;
+    align?: "left" | "right";
+    render?: (row: T) => ReactNode;
+  }[];
   rows: T[];
 }) {
   return (
     <div className="w-full">
-      <div className="grid gap-4 px-5 py-3 border-b border-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider bg-background" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}>
+      <div
+        className="grid gap-4 px-5 py-3 border-b border-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider bg-background"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+      >
         {columns.map((c) => (
           <div key={String(c.key)} className={c.align === "right" ? "text-right" : ""}>
             {c.label}
@@ -90,7 +98,10 @@ export function DataTable<T extends Record<string, any>>({
             style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
           >
             {columns.map((c) => (
-              <div key={String(c.key)} className={`${c.align === "right" ? "text-right font-mono text-muted-foreground" : "text-white truncate"}`}>
+              <div
+                key={String(c.key)}
+                className={`${c.align === "right" ? "text-right font-mono text-muted-foreground" : "text-white truncate"}`}
+              >
                 {c.render ? c.render(row) : String(row[c.key] ?? "")}
               </div>
             ))}
@@ -129,7 +140,13 @@ export function Tabs({
   );
 }
 
-export function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "success" | "warn" | "danger" | "info" }) {
+export function Badge({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "neutral" | "success" | "warn" | "danger" | "info";
+}) {
   const map: Record<string, string> = {
     neutral: "bg-white/5 text-white border-border",
     success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -138,7 +155,9 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
     info: "bg-sky-500/10 text-sky-400 border-sky-500/20",
   };
   return (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-mono border ${map[tone]}`}>
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-mono border ${map[tone]}`}
+    >
       {children}
     </span>
   );

@@ -1,4 +1,10 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+
 # Logs
+
 logs
 *.log
 npm-debug.log*

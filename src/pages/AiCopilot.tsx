@@ -2,12 +2,40 @@ import { useState, useRef, useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Card } from "@/components/common/primitives";
 import { ChatService } from "@/services/chat.service";
+import { DatabaseService } from "@/services/database.service";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 15, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring" as const,
+      stiffness: 85,
+      damping: 15,
+    },
+  },
+};
 
 export function AiCopilotPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", text: "Hi — I'm your Copilot. Ask about revenue, customers, forecasts, or generate a report based on your connected datasets." },
+    {
+      role: "assistant",
+      text: "Hi — I'm your Copilot. Ask about revenue, customers, forecasts, or generate a report based on your connected datasets.",
+    },
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -19,6 +47,21 @@ export function AiCopilotPage() {
     scrollToBottom();
   }, [messages]);
 
+  // Load chat history from Supabase on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const history = await DatabaseService.getChatHistory();
+        if (history && history.length > 0) {
+          setMessages(history.map((m) => ({ role: m.role, text: m.content })));
+        }
+      } catch (err) {
+        console.error("Failed to load chat history", err);
+      }
+    };
+    loadHistory();
+  }, []);
+
   const suggested = [
     "Why did revenue drop?",
     "Show customer growth.",
@@ -29,18 +72,34 @@ export function AiCopilotPage() {
 
   const send = async (t: string) => {
     if (!t.trim() || loading) return;
-    
-    const newHistory = [...messages, { role: "user", text: t }];
+
+    // Save user's message locally first
+    const userMessage = { role: "user" as const, text: t };
+    const newHistory = [...messages, userMessage];
     setMessages(newHistory);
     setInput("");
     setLoading(true);
 
     try {
+      // Save user message to database
+      await DatabaseService.saveChatMessage("user", t);
+
+      // Call ChatService to get the assistant response
       const responseText = await ChatService.sendMessage(t, messages);
+
+      // Save assistant message to database
+      await DatabaseService.saveChatMessage("assistant", responseText);
+
       setMessages([...newHistory, { role: "assistant", text: responseText }]);
     } catch (error: any) {
       console.error(error);
-      setMessages([...newHistory, { role: "assistant", text: `Error: ${error.message || 'Failed to communicate with Copilot.'}` }]);
+      setMessages([
+        ...newHistory,
+        {
+          role: "assistant",
+          text: `Error: ${error.message || "Failed to communicate with Copilot."}`,
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -48,70 +107,147 @@ export function AiCopilotPage() {
 
   return (
     <AppShell title="AI Copilot" subtitle="Ask · Analyze · Generate">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-14rem)]">
-        <div className="lg:col-span-3 bento-card rounded-lg flex flex-col overflow-hidden relative">
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-14rem)]"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div
+          variants={itemVariants}
+          className="lg:col-span-3 bento-card rounded-lg flex flex-col overflow-hidden relative"
+        >
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap ${
-                  msg.role === "user" ? "bg-white text-black" : "text-white bg-white/5 border border-white/10"
-                }`}>{msg.text}</div>
-              </div>
-            ))}
+            <AnimatePresence initial={false}>
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed shadow-sm ${
+                      msg.role === "user"
+                        ? "bg-white text-black font-medium"
+                        : "text-white bg-white/5 border border-white/10"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
             {loading && (
-               <div className="flex justify-start">
-                 <div className="max-w-[70%] rounded-lg px-4 py-3 text-sm text-white bg-white/5 border border-white/10 flex items-center gap-2">
-                   <span className="material-symbols-outlined animate-spin h-4 w-4">sync</span>
-                   Analyzing...
-                 </div>
-               </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start"
+              >
+                <div className="max-w-[70%] rounded-lg px-4 py-3 text-sm text-white bg-white/5 border border-white/10 flex items-center gap-3">
+                  {/* Custom pulsing loader */}
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Thinking...</span>
+                </div>
+              </motion.div>
             )}
             <div ref={messagesEndRef} />
           </div>
           <div className="border-t border-border p-4 bg-background/50 backdrop-blur-md">
             <div className="flex gap-2 flex-wrap mb-3">
               {suggested.map((s) => (
-                <button key={s} onClick={() => send(s)} disabled={loading} className="text-[11px] px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-white hover:bg-secondary/40 disabled:opacity-50">{s}</button>
+                <motion.button
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.03)" }}
+                  whileTap={{ scale: 0.98 }}
+                  key={s}
+                  onClick={() => send(s)}
+                  disabled={loading}
+                  className="text-[11px] px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-white hover:bg-secondary/40 disabled:opacity-50 cursor-pointer"
+                >
+                  {s}
+                </motion.button>
               ))}
             </div>
             <div className="flex items-center gap-2 border border-border rounded-md px-4 py-3 bg-background focus-within:border-primary/50 transition-colors">
-              <span className="material-symbols-outlined text-muted-foreground text-[18px]">chat</span>
-              <input 
-                value={input} 
-                onChange={(e)=>setInput(e.target.value)} 
-                onKeyDown={(e)=>e.key==="Enter"&&send(input)} 
+              <span className="material-symbols-outlined text-muted-foreground text-[18px]">
+                chat
+              </span>
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && send(input)}
                 disabled={loading}
-                className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground disabled:opacity-50" 
-                placeholder="Ask Copilot anything..." 
+                className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground disabled:opacity-50"
+                placeholder="Ask Copilot anything..."
               />
-              <button 
-                onClick={()=>send(input)} 
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => send(input)}
                 disabled={loading || !input.trim()}
-                className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Send
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col gap-4">
+        </motion.div>
+        <motion.div variants={itemVariants} className="flex flex-col gap-4">
           <Card title="Quick actions" icon="bolt">
             <div className="p-4 space-y-2">
-              {["Summarize P&L","Draft weekly update","Find at-risk deals","Explain churn spike"].map((q) => (
-                <button key={q} onClick={() => send(q)} disabled={loading} className="w-full text-left text-xs text-white px-3 py-2 rounded border border-border hover:bg-secondary/40 disabled:opacity-50">{q}</button>
+              {[
+                "Summarize P&L",
+                "Draft weekly update",
+                "Find at-risk deals",
+                "Explain churn spike",
+              ].map((q) => (
+                <motion.button
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.03)" }}
+                  whileTap={{ scale: 0.98 }}
+                  key={q}
+                  onClick={() => send(q)}
+                  disabled={loading}
+                  className="w-full text-left text-xs text-white px-3 py-2 rounded border border-border hover:bg-secondary/40 disabled:opacity-50 cursor-pointer"
+                >
+                  {q}
+                </motion.button>
               ))}
             </div>
           </Card>
           <Card title="Recent" icon="history">
             <div className="p-4 space-y-2 text-xs">
-              {["MoM revenue analysis","Forecast Q4 cash","Top 10 accounts","Marketing ROAS report"].map((c) => (
-                <div key={c} className="border-b border-border pb-2 last:border-0 text-muted-foreground hover:text-white cursor-pointer">{c}</div>
+              {[
+                "MoM revenue analysis",
+                "Forecast Q4 cash",
+                "Top 10 accounts",
+                "Marketing ROAS report",
+              ].map((c) => (
+                <motion.div
+                  whileHover={{ x: 3, color: "#FFFFFF" }}
+                  key={c}
+                  className="border-b border-border pb-2 last:border-0 text-muted-foreground cursor-pointer transition-colors"
+                >
+                  {c}
+                </motion.div>
               ))}
             </div>
           </Card>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }
-

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/hooks/use-auth";
 import { Menu, X } from "lucide-react";
 import { BrandMark } from "./BrandMark";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
+import { UserNav } from "./UserNav";
+
+const { user, isLoading } = useAuth();
 
 const NAV = [
   { to: "/", label: "Platform" },
@@ -16,85 +20,168 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6">
-      <div className="max-w-[1200px] w-full flex items-center justify-between">
-        <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6"
+      initial={{ y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* Animated top border highlight */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.5) 30%, rgba(167,139,250,0.3) 70%, transparent 100%)",
+        }}
+        animate={{ opacity: [0.3, 0.7, 0.3] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="max-w-[1200px] w-full flex items-center justify-between gap-6">
+        <Link to="/" className="shrink-0 flex items-center" onClick={() => setOpen(false)}>
           <BrandMark />
         </Link>
 
-        <div className="hidden lg:flex items-center gap-8 text-[10px] font-medium uppercase tracking-widest">
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest">
           {NAV.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="text-eye-text hover:text-eye-white transition-colors"
+              onMouseEnter={() => setHoveredTab(item.to)}
+              onMouseLeave={() => setHoveredTab(null)}
+              className="relative text-eye-text hover:text-eye-white transition-colors px-3 py-1.5 rounded-md"
               activeProps={{ className: "text-eye-white" }}
               activeOptions={{ exact: item.to === "/" }}
             >
-              {item.label}
+              <span className="relative z-10">{item.label}</span>
+              {hoveredTab === item.to && (
+                <motion.div
+                  layoutId="navHover"
+                  className="absolute inset-0 rounded-md"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(56,189,248,0.05) 0%, rgba(255,255,255,0.03) 100%)",
+                    border: "1px solid rgba(56,189,248,0.12)",
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
             </Link>
           ))}
         </div>
 
         <div className="flex items-center gap-4">
-          {user ? (
-            <>
-              <span className="text-[10px] font-medium uppercase tracking-widest text-eye-text">
-                {user.user_metadata?.full_name ?? user.email}
-              </span>
-              <button
-                className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
-                onClick={signOut}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <button
-              className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
-              onClick={() => navigate({ to: "/auth" })}
-            >
-              Sign in
-            </button>
-          )}
+          <button
+            className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
+            onClick={() => navigate({ to: "/auth" })}
+          >
+            Sign in
+          </button>
           <button className="luminous-btn-primary px-5 py-2 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex">
             Request Access
           </button>
           <button
             aria-label="Toggle menu"
-            className="lg:hidden inline-flex items-center justify-center h-9 w-9 border border-eye-border text-eye-white"
+            className="lg:hidden inline-flex items-center justify-center h-9 w-9 border border-white/[0.08] rounded-md text-eye-white hover:bg-white/[0.02]"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X size={16} /> : <Menu size={16} />}
+            <AnimatePresence mode="wait">
+              {open ? (
+                <motion.span
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={16} />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={16} />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>
 
-      {open && (
-        <div className="absolute top-16 left-0 right-0 lg:hidden bg-eye-bg border-b border-eye-border">
-          <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-4">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="text-eye-text hover:text-eye-white transition-colors text-sm uppercase tracking-widest font-medium"
-                activeProps={{ className: "text-eye-white" }}
-                activeOptions={{ exact: item.to === "/" }}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <button className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start">
-              Request Access
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
+      {/* Mobile Nav */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, height: "auto", backdropFilter: "blur(20px)" }}
+            exit={{ opacity: 0, height: 0, backdropFilter: "blur(0px)" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="absolute top-16 left-0 right-0 lg:hidden bg-eye-bg/90 border-b border-white/[0.06] overflow-hidden"
+          >
+            <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-3">
+              {NAV.map((item, i) => (
+                <motion.div
+                  key={item.to}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ delay: i * 0.05, duration: 0.25 }}
+                >
+                  <Link
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="text-eye-text hover:text-eye-white transition-colors text-xs uppercase tracking-widest font-medium py-1 block"
+                    activeProps={{ className: "text-eye-white" }}
+                    activeOptions={{ exact: item.to === "/" }}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+              {!isLoading && user ? (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ delay: NAV.length * 0.05 + 0.05 }}
+                  onClick={() => {
+                    setOpen(false);
+                    navigate({ to: "/dashboard" });
+                  }}
+                  className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
+                >
+                  Open Dashboard
+                </motion.button>
+              ) : (
+                !isLoading && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ delay: NAV.length * 0.05 + 0.05 }}
+                    onClick={() => {
+                      setOpen(false);
+                      navigate({ to: "/auth" });
+                    }}
+                    className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
+                  >
+                    Request Access
+                  </motion.button>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }

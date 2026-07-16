@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
 
 type NavItem = { to: string; label: string; icon: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -51,6 +53,21 @@ export function AppShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useAuth();
+
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : user?.email
+    ? user.email.slice(0, 2).toUpperCase()
+    : "?";
+
+  const displayName = user?.user_metadata?.full_name ?? user?.email ?? "User";
+  const displaySub = user?.email ?? "";
 
   return (
     <div className="fixed inset-0 top-0 bg-background flex overflow-hidden">
@@ -60,17 +77,38 @@ export function AppShell({
           mobileOpen ? "flex" : "hidden"
         } md:flex w-[240px] flex-shrink-0 border-r border-border bg-background flex-col h-full py-6 absolute md:relative z-40 inset-y-0 left-0`}
       >
-        <div className="px-6 mb-8 flex items-center gap-2">
-          <div className="h-7 w-7 flex items-center justify-center rounded-sm bg-white overflow-hidden">
-            <img src="/logo.png" alt="EyeX Logo" className="h-full w-full object-cover" />
+        <div className="px-6 mb-8 flex items-center gap-2 relative">
+          {/* Scan line across logo bar */}
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-px"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent)" }}
+            animate={{ opacity: [0, 0.8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div className="h-7 w-7 flex items-center justify-center rounded-sm overflow-hidden relative">
+            {/* Glow ring */}
+            <motion.div
+              className="absolute inset-0 rounded-sm"
+              animate={{ boxShadow: ["0 0 0px rgba(56,189,248,0)", "0 0 8px rgba(56,189,248,0.4)", "0 0 0px rgba(56,189,248,0)"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <img src="/Logo.png" alt="EyeX Logo" className="h-full w-full object-cover relative z-10" />
           </div>
           <div className="flex flex-col">
+<<<<<<< HEAD
             <div className="flex items-center gap-1.5">
               <span className="font-semibold text-sm tracking-tight text-white leading-none">QORX</span>
               <span className="text-[8px] text-text-muted font-light tracking-wide">by EyeX</span>
             </div>
             <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider leading-none mt-1">
               AI Business OS
+=======
+            <span className="font-semibold text-xs tracking-tight text-white leading-none">
+              EyeX Technologies
+            </span>
+            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider leading-none mt-1">
+              QORX OS
+>>>>>>> origin/main
             </span>
           </div>
         </div>
@@ -83,26 +121,35 @@ export function AppShell({
               </div>
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const active =
-                    pathname === item.to || pathname.startsWith(item.to + "/");
+                  const active = pathname === item.to || pathname.startsWith(item.to + "/");
                   return (
                     <Link
                       key={item.to}
                       to={item.to}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs transition-colors ${
-                        active
-                          ? "bg-white/5 text-white"
-                          : "text-muted-foreground hover:text-white hover:bg-white/[0.03]"
+                      className={`relative flex items-center gap-3 px-3 py-2 rounded-md text-xs transition-colors ${
+                        active ? "text-white" : "text-muted-foreground hover:text-white"
                       }`}
                     >
+                      {active && (
+                      <motion.div
+                        layoutId="sidebarActive"
+                        className="absolute inset-0 rounded-md"
+                        style={{
+                          background: "linear-gradient(90deg, rgba(56,189,248,0.06) 0%, rgba(56,189,248,0.01) 100%)",
+                          borderLeft: "2px solid rgba(56,189,248,0.7)",
+                          boxShadow: "inset 0 0 20px rgba(56,189,248,0.03)",
+                        }}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                      )}
                       <span
-                        className="material-symbols-outlined text-[18px]"
+                        className="material-symbols-outlined text-[18px] relative z-10"
                         style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
                       >
                         {item.icon}
                       </span>
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium relative z-10">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -113,12 +160,12 @@ export function AppShell({
 
         <div className="px-3 mt-4">
           <div className="flex items-center gap-3 p-3 border-t border-border">
-            <div className="w-8 h-8 rounded-sm bg-secondary flex items-center justify-center border border-border">
-              <span className="text-[10px] font-mono font-bold text-white">AU</span>
+            <div className="w-8 h-8 rounded-sm bg-secondary flex items-center justify-center border border-border flex-shrink-0">
+              <span className="text-[10px] font-mono font-bold text-white">{initials}</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-medium text-xs text-white">Admin User</span>
-              <span className="text-muted-foreground text-[10px] font-mono">ID: EX-8921</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-medium text-xs text-white truncate">{displayName}</span>
+              <span className="text-muted-foreground text-[10px] font-mono truncate">{displaySub}</span>
             </div>
           </div>
         </div>
@@ -136,7 +183,9 @@ export function AppShell({
               <span className="material-symbols-outlined text-[18px]">menu</span>
             </button>
             <div>
-              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">{title}</h1>
+              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">
+                {title}
+              </h1>
               {subtitle && (
                 <p className="text-muted-foreground mt-0.5 font-mono text-[10px] uppercase tracking-wider">
                   {subtitle}

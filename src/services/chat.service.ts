@@ -1,108 +1,102 @@
 import { createServerFn } from "@tanstack/react-start";
 import { GoogleGenAI } from "@google/genai";
-import { DatabaseService } from "./database.service";
 import { supabase } from "@/lib/supabase/client";
 
-const getGenAI = () => {
+// ── Security: Fail fast if API key is missing at startup ──────────────────────
+function getGenAI(): GoogleGenAI {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Server misconfiguration: GEMINI_API_KEY is not set.");
+  }
   return new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY || "",
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      }
-    }
+    apiKey,
+    httpOptions: { headers: { "User-Agent": "aistudio-build" } },
   });
-};
+}
+
+// ── Security: Sanitize errors — never leak internal stack traces to clients ───
+function safeErrorMessage(error: unknown): string {
+  if (import.meta.env.DEV && error instanceof Error) return error.message;
+  return "An internal error occurred. Please try again.";
+}
 
 export const chatWithCopilotFn = createServerFn({ method: "POST" })
-  .validator((data: { message: string, history: any[] }) => data)
+  .validator((data: { message: string; history: { role: string; text: string }[] }) => data)
   .handler(async ({ data }) => {
     try {
       const { message, history } = data;
-      
-      // Get auth to check if user is logged in
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // We will skip user specific data retrieval for demo if not logged in, 
-      // but let's try to get dashboards to give context
-      let dashboards: any[] = [];
+
+      // ── Security: Read auth token from the incoming HTTP Authorization header ──
+      // Never accept auth tokens from the request body (prevents token injection).
+      const { getWebRequest } = await import("vinxi/http");
+      const request = getWebRequest();
+      const authHeader = request.headers.get("authorization");
+      const token = authHeader?.replace(/^Bearer\s+/i, "").trim();
+
+      if (token) {
+        await supabase.auth.setSession({ access_token: token, refresh_token: "" });
+      }
+
+      // Fetch dashboards as AI context (fails gracefully if not authed)
+      let dashboards: { title: string; layout: unknown }[] = [];
       try {
-        const { data: dbData } = await supabase.from("dashboards").select("*").order("created_at", { ascending: false }).limit(5);
-        if (dbData) {
-            dashboards = dbData;
-        }
-      } catch (e) {
-          console.warn("Could not fetch dashboards for context", e);
-      }
-      
-      let context = "";
-      if (dashboards.length > 0) {
-        context = `
-Here is the data from the user's recent uploaded datasets (parsed as dashboard configs):
-${JSON.stringify(dashboards.map(d => ({ title: d.title, layout: d.layout })), null, 2)}
-`;
-      } else {
-        context = `The user hasn't uploaded any datasets recently. You can answer general business questions.`;
+        const { data: dbData } = await supabase
+          .from("dashboards")
+          .select("title, layout")
+          .order("created_at", { ascending: false })
+          .limit(5);
+        if (dbData) dashboards = dbData;
+      } catch {
+        // Non-fatal — AI can still answer without context
       }
 
-      const systemInstruction = `
-You are an AI Business Copilot named EyeX Copilot.
+      const context =
+        dashboards.length > 0
+          ? `Here is the data from the user's recent dashboards:\n${JSON.stringify(dashboards, null, 2)}`
+          : `The user hasn't uploaded any datasets recently. Answer general business questions.`;
+
+      const systemInstruction = `You are an AI Business Copilot named EyeX Copilot.
 You help the user understand their data, answer questions about revenue, customer growth, and generate insights.
-Base your answers primarily on the provided context from their datasets. If the data isn't sufficient, you can provide a reasonable business perspective or ask for more data.
-Keep your answers professional, analytical, and concise.
-
-${context}
-`;
+Base your answers primarily on the provided context from their datasets.
+Keep your answers professional, analytical, and concise.\n\n${context}`;
 
       const ai = getGenAI();
       const chat = ai.chats.create({
-        model: "gemini-3.5-flash",
-        config: {
-            systemInstruction: systemInstruction,
-        }
-      });
-      
-      // replay history
-      if (history && history.length > 0) {
-         // skip for now or we can implement history if needed. 
-         // since GenAI SDK doesn't let us seed history easily like this without passing it in create,
-         // let's just pass the history as part of the prompt for simplicity.
-      }
-
-      const formattedHistory = history.map(h => `${h.role === 'user' ? 'User' : 'Copilot'}: ${h.text}`).join('\n');
-      
-      const prompt = `
-Recent conversation history:
-${formattedHistory}
-
-User's new message:
-${message}
-`;
-
-      const response = await chat.sendMessage({
-        message: prompt
+        model: "gemini-2.0-flash",
+        config: { systemInstruction },
       });
 
-      return { success: true, text: response.text || "I'm sorry, I couldn't generate a response." };
-    } catch (error: any) {
-      console.error("Chat Error:", error);
-      return { success: false, error: error.message };
+      const formattedHistory = history
+        .map((h) => `${h.role === "user" ? "User" : "Copilot"}: ${h.text}`)
+        .join("\n");
+
+      const prompt = `Recent conversation:\n${formattedHistory}\n\nUser's new message:\n${message}`;
+
+      const response = await chat.sendMessage({ message: prompt });
+      return { success: true, text: response.text || "I couldn't generate a response." };
+    } catch (error: unknown) {
+      if (import.meta.env.DEV) console.error("Chat Error:", error);
+      return { success: false, error: safeErrorMessage(error) };
     }
   });
 
 export const ChatService = {
-  async sendMessage(message: string, history: any[]) {
+  async sendMessage(message: string, history: { role: string; text: string }[]) {
+    // ── Security: Pass the auth token via Authorization header, NOT request body ──
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     const response = await chatWithCopilotFn({
-      data: {
-        message,
-        history
-      }
-    });
+      data: { message, history },
+      headers: session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : undefined,
+    } as any);
 
     if (!response.success) {
-      throw new Error(response.error);
+      throw new Error(response.error ?? "Chat failed");
     }
-
     return response.text;
-  }
+  },
 };
