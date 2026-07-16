@@ -1,15 +1,16 @@
 import { supabase } from "@/lib/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
+const REDIRECT_BASE = typeof window !== "undefined" ? window.location.origin : "";
+
 export const AuthService = {
   async signUp(email: string, password: string, fullName?: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          full_name: fullName,
-        },
+        emailRedirectTo: `${REDIRECT_BASE}/dashboard`,
+        data: { full_name: fullName },
       },
     });
     if (error) throw error;
@@ -29,7 +30,7 @@ export const AuthService = {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: window.location.origin + "/dashboard",
+        redirectTo: `${REDIRECT_BASE}/dashboard`,
       },
     });
     if (error) throw error;
@@ -57,14 +58,18 @@ export const AuthService = {
     const { data } = supabase.auth.onAuthStateChange(callback);
     return data.subscription;
   },
-  /**
-   * Request a password‑reset email from Supabase.
-   * The user will receive a link that redirects back to the app.
-   */
+
   async resetPassword(email: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      // After the user clicks the link in the email they will be sent back here.
-      redirectTo: `${window.location.origin}/auth?type=reset`,
+      redirectTo: `${REDIRECT_BASE}/auth?type=reset`,
+    });
+    if (error) throw error;
+    return data;
+  },
+
+  async updatePassword(newPassword: string) {
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
     });
     if (error) throw error;
     return data;
