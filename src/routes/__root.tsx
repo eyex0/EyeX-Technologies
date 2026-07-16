@@ -157,6 +157,7 @@ import { useNavigate } from "@tanstack/react-router";
 const APP_ROUTES = [
   "/dashboard",
   "/analytics",
+  "/ai-chat",
   "/data-sources",
   "/ai-copilot",
   "/reports",
@@ -173,20 +174,26 @@ const APP_ROUTES = [
   "/settings",
 ];
 
+const PUBLIC_ONLY_ROUTES = ["/auth"];
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterLocation();
   const isApp = APP_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"));
+  const isPublicOnly = PUBLIC_ONLY_ROUTES.some((r) => pathname === r);
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && isApp && !user) {
+    if (isLoading) return;
+    if (isApp && !user) {
       navigate({ to: "/auth" });
+    } else if (isPublicOnly && user) {
+      navigate({ to: "/dashboard" });
     }
-  }, [isLoading, isApp, user, pathname, navigate]);
+  }, [isLoading, isApp, isPublicOnly, user, pathname, navigate]);
 
-  if (isLoading && isApp) {
+  if (isLoading && (isApp || isPublicOnly)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-eye-bg text-eye-white">
         <div className="flex flex-col items-center gap-3">
