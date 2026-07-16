@@ -77,7 +77,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-4">
           <button
             className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
-            onClick={() => navigate({ to: "/auth" })}
+            onClick={() => navigate({ to: "/auth", search: { type: "signin" } })}
           >
             Sign in
           </button>
@@ -169,7 +169,7 @@ export function SiteHeader() {
                     transition={{ delay: NAV.length * 0.05 + 0.05 }}
                     onClick={() => {
                       setOpen(false);
-                      navigate({ to: "/auth" });
+                      navigate({ to: "/auth", search: { type: "signin" } });
                     }}
                     className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start w-full sm:w-auto"
                   >

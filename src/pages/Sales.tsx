@@ -1,10 +1,29 @@
-import { useState } from "react";
-import { AppShell } from "@/components/layout/AppShell";
+import { useEffect, useState } from "react";
 import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
-import * as m from "@/lib/mock";
+import { Card, Badge, BarChart } from "@/components/common/primitives";
+import { DatabaseService } from "@/services/database.service";
 
 export function SalesPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      DatabaseService.getOrders(),
+      DatabaseService.getProducts(),
+      DatabaseService.getInvoices(),
+    ]).then(([ord, prod, inv]) => {
+      setOrders(ord);
+      setProducts(prod);
+      setInvoices(inv);
+    }).catch(console.error).finally(() => setLoading(false));
+  }, []);
+
+  const totalRevenue = orders.reduce((s, o) => s + Number(o.total || 0), 0);
+  const pendingOrders = orders.filter(o => o.status === "pending" || o.status === "confirmed").length;
+
   return (
     <ModulePage
       title="Sales"
@@ -17,19 +36,14 @@ export function SalesPage() {
             <>
               <KpiRow
                 items={[
-                  { label: "Revenue MTD", value: "$4.82M", delta: "+12.4%", icon: "payments" },
-                  { label: "Orders", value: "1,284", delta: "+4.1%", icon: "shopping_bag" },
-                  { label: "AOV", value: "$3,750", delta: "+0.9%", icon: "receipt" },
+                  { label: "Total Revenue", value: `$${(totalRevenue / 1000).toFixed(0)}K`, delta: "+12.4%", icon: "payments" },
+                  { label: "Orders", value: orders.length.toString(), delta: `+${pendingOrders}`, icon: "shopping_bag" },
+                  { label: "Products", value: products.length.toString(), icon: "inventory_2" },
                   { label: "Win Rate", value: "34%", delta: "+2.1%", icon: "emoji_events" },
                 ]}
               />
-              <Card title="Revenue by week">
-                <BarChart
-                  data={Array.from({ length: 12 }, (_, i) => ({
-                    label: `W${i + 1}`,
-                    value: 30 + i * 5 + Math.random() * 10,
-                  }))}
-                />
+              <Card title="Revenue by order">
+                <BarChart data={orders.slice(0, 10).map((o, i) => ({ label: o.order_number || `O-${i + 1}`, value: Number(o.total || 0) / 1000 }))} />
               </Card>
             </>
           ),
@@ -39,31 +53,17 @@ export function SalesPage() {
           label: "Orders",
           render: () => (
             <TableCard
-              title="Recent orders"
+              title={`Orders (${orders.length})`}
               columns={[
-                { key: "id", label: "Order" },
-                { key: "customer", label: "Customer" },
-                { key: "amount", label: "Amount" },
-                {
-                  key: "status",
-                  label: "Status",
-                  render: (r: any) => (
-                    <Badge
-                      tone={
-                        r.status === "Fulfilled"
-                          ? "success"
-                          : r.status === "Pending"
-                            ? "warn"
-                            : "info"
-                      }
-                    >
-                      {r.status}
-                    </Badge>
-                  ),
-                },
-                { key: "date", label: "Date", align: "right" },
+                { key: "order_number", label: "Order" },
+                { key: "customer_name", label: "Customer", render: (r: any) => r.customers?.name || "-" },
+                { key: "total", label: "Amount", align: "right" },
+                { key: "status", label: "Status", render: (r: any) => (
+                  <Badge tone={r.status === "delivered" ? "success" : r.status === "shipped" ? "info" : r.status === "cancelled" ? "danger" : "warn"}>{r.status}</Badge>
+                )},
+                { key: "created_at", label: "Date", align: "right" },
               ]}
-              rows={m.orders}
+              rows={orders.map(o => ({ ...o, total: `$${Number(o.total).toLocaleString()}`, created_at: new Date(o.created_at).toLocaleDateString() }))}
             />
           ),
         },
@@ -72,27 +72,17 @@ export function SalesPage() {
           label: "Invoices",
           render: () => (
             <TableCard
-              title="Invoices"
+              title={`Invoices (${invoices.length})`}
               columns={[
-                { key: "id", label: "Invoice" },
-                { key: "customer", label: "Customer" },
-                { key: "amount", label: "Amount" },
-                {
-                  key: "status",
-                  label: "Status",
-                  render: (r: any) => (
-                    <Badge
-                      tone={
-                        r.status === "Paid" ? "success" : r.status === "Overdue" ? "danger" : "info"
-                      }
-                    >
-                      {r.status}
-                    </Badge>
-                  ),
-                },
-                { key: "due", label: "Due", align: "right" },
+                { key: "invoice_number", label: "Invoice" },
+                { key: "customer_id", label: "Customer" },
+                { key: "total", label: "Amount", align: "right" },
+                { key: "status", label: "Status", render: (r: any) => (
+                  <Badge tone={r.status === "paid" ? "success" : r.status === "overdue" ? "danger" : r.status === "sent" ? "info" : "warn"}>{r.status}</Badge>
+                )},
+                { key: "due_date", label: "Due", align: "right" },
               ]}
-              rows={m.invoices}
+              rows={invoices.map(i => ({ ...i, total: `$${Number(i.total).toLocaleString()}`, due_date: i.due_date ? new Date(i.due_date).toLocaleDateString() : "-" }))}
             />
           ),
         },
@@ -101,47 +91,18 @@ export function SalesPage() {
           label: "Products",
           render: () => (
             <TableCard
-              title="Product catalog"
+              title={`Products (${products.length})`}
               columns={[
                 { key: "sku", label: "SKU" },
                 { key: "name", label: "Product" },
-                { key: "category", label: "Category" },
-                { key: "stock", label: "Stock" },
+                { key: "unit", label: "Unit" },
                 { key: "price", label: "Price", align: "right" },
+                { key: "active", label: "Active", render: (r: any) => (
+                  <Badge tone={r.active ? "success" : "warn"}>{r.active ? "Yes" : "No"}</Badge>
+                )},
               ]}
-              rows={m.products}
+              rows={products.map(p => ({ ...p, price: `$${Number(p.price).toLocaleString()}` }))}
             />
-          ),
-        },
-        {
-          key: "revenue",
-          label: "Revenue",
-          render: () => (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card title="Revenue mix">
-                <BarChart
-                  data={[
-                    { label: "Sub", value: 82 },
-                    { label: "Pro", value: 56 },
-                    { label: "Ent", value: 120 },
-                    { label: "Serv", value: 38 },
-                  ]}
-                />
-              </Card>
-              <Card title="Top accounts">
-                <div className="p-5 space-y-3">
-                  {m.customers.slice(0, 6).map((c) => (
-                    <div
-                      key={c.name}
-                      className="flex justify-between text-xs border-b border-border pb-2"
-                    >
-                      <span className="text-white">{c.name}</span>
-                      <span className="font-mono text-muted-foreground">{c.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
           ),
         },
         {
@@ -149,41 +110,18 @@ export function SalesPage() {
           label: "Performance",
           render: () => (
             <TableCard
-              title="Sales reps"
+              title="Sales performance"
               columns={[
-                { key: "name", label: "Rep" },
-                { key: "quota", label: "Quota" },
-                { key: "actual", label: "Actual" },
-                { key: "pct", label: "%", align: "right" },
+                { key: "metric", label: "Metric" },
+                { key: "value", label: "Value" },
               ]}
               rows={[
-                { name: "Sarah Chen", quota: "$800K", actual: "$942K", pct: "118%" },
-                { name: "James Park", quota: "$600K", actual: "$548K", pct: "91%" },
-                { name: "Priya Rao", quota: "$500K", actual: "$612K", pct: "122%" },
-                { name: "Marco Silva", quota: "$500K", actual: "$402K", pct: "80%" },
+                { metric: "Total Revenue", value: `$${(totalRevenue / 1000).toFixed(0)}K` },
+                { metric: "Total Orders", value: orders.length.toString() },
+                { metric: "Products", value: products.length.toString() },
+                { metric: "Avg Order Value", value: orders.length > 0 ? `$${(totalRevenue / orders.length).toFixed(0)}` : "$0" },
               ]}
             />
-          ),
-        },
-        {
-          key: "forecast",
-          label: "Forecast",
-          render: () => (
-            <Card title="Q4 forecast">
-              <div className="p-5 space-y-4">
-                <div className="flex items-baseline gap-3">
-                  <div className="text-3xl text-white font-semibold">$14.2M</div>
-                  <Badge tone="success">+7% vs plan</Badge>
-                </div>
-                <BarChart
-                  data={[
-                    { label: "Oct", value: 38 },
-                    { label: "Nov", value: 52 },
-                    { label: "Dec", value: 64 },
-                  ]}
-                />
-              </div>
-            </Card>
           ),
         },
       ]}

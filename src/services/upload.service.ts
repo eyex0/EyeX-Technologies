@@ -49,7 +49,7 @@ export const UploadService = {
     // 5. Save generated dashboard
     const dashboard = await DatabaseService.saveDashboard(
       `Dashboard for ${datasetName}`,
-      dashboardJson,
+      dashboardJson as any,
     );
 
     return { dataset, file: uploadedFile, dashboard };

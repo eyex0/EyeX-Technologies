@@ -187,9 +187,9 @@ function RootComponent() {
   useEffect(() => {
     if (isLoading) return;
     if (isApp && !user) {
-      navigate({ to: "/auth" });
+      navigate({ to: "/auth", search: { type: "signin" } });
     } else if (isPublicOnly && user) {
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/dashboard", search: {} });
     }
   }, [isLoading, isApp, isPublicOnly, user, pathname, navigate]);
 
