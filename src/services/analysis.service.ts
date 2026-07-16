@@ -28,6 +28,9 @@ function getGenAI(): GoogleGenAI {
 // ── Security: Sanitize errors — never leak internals to clients ───────────────
 function safeErrorMessage(error: unknown): string {
   if (import.meta.env.DEV && error instanceof Error) return error.message;
+  if (error instanceof Error && error.message?.includes("API_KEY_INVALID")) return "Invalid API key configuration.";
+  if (error instanceof Error && error.message?.includes("quota")) return "API quota exceeded. Please try again later.";
+  if (error instanceof Error && error.message?.includes("not supported")) return "AI analysis temporarily unavailable.";
   return "An internal error occurred. Please try again.";
 }
 
@@ -68,7 +71,7 @@ ${JSON.stringify(safeSample, null, 2)}`;
 
       const ai = getGenAI();
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.0-flash-001",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
