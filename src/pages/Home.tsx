@@ -265,10 +265,7 @@ export function HomePage() {
           </motion.div>
 
           {/* Scroll indicator */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-20 flex flex-col items-center gap-2"
-          >
+          <motion.div variants={itemVariants} className="mt-20 flex flex-col items-center gap-2">
             <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-eye-text/50">
               scroll
             </span>

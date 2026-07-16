@@ -7,6 +7,7 @@ This guide outlines how to deploy the QORX AI Business OS platform to **Cloudfla
 ## 1. Prerequisites
 
 Before deploying, ensure you have:
+
 - A Cloudflare Account.
 - [Node.js](https://nodejs.org/) installed (v20+ recommended).
 - The Supabase project keys and Google/Gemini API credentials.
@@ -17,12 +18,12 @@ Before deploying, ensure you have:
 
 You must configure the following Environment Variables in your Cloudflare Pages/Workers Dashboard under **Settings ➜ Variables**:
 
-| Variable Name | Description | Value Example |
-| :--- | :--- | :--- |
-| `VITE_SUPABASE_URL` | Supabase API Endpoint | `https://your-project.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | Supabase Anon Key | `eyJh...` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Service Role Key (Server-only) | `eyJh...` |
-| `GEMINI_API_KEY` | Google Gemini API Key | `AIzaSy...` |
+| Variable Name               | Description                             | Value Example                      |
+| :-------------------------- | :-------------------------------------- | :--------------------------------- |
+| `VITE_SUPABASE_URL`         | Supabase API Endpoint                   | `https://your-project.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY`    | Supabase Anon Key                       | `eyJh...`                          |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Service Role Key (Server-only) | `eyJh...`                          |
+| `GEMINI_API_KEY`            | Google Gemini API Key                   | `AIzaSy...`                        |
 
 > [!IMPORTANT]
 > Make sure `SUPABASE_SERVICE_ROLE_KEY` and `GEMINI_API_KEY` are encrypted/secrets in your Cloudflare dashboard settings to ensure they are hidden from public client scripts.
@@ -34,12 +35,15 @@ You must configure the following Environment Variables in your Cloudflare Pages/
 To deploy the production-ready local build directly from your command line:
 
 1. **Build the application**:
+
    ```bash
    npm run build
    ```
-   *This generates the `.output` directory containing static public assets (`.output/public`) and the Nitro worker server (`.output/server`).*
+
+   _This generates the `.output` directory containing static public assets (`.output/public`) and the Nitro worker server (`.output/server`)._
 
 2. **Login to Cloudflare**:
+
    ```bash
    npx wrangler login
    ```
@@ -48,7 +52,7 @@ To deploy the production-ready local build directly from your command line:
    ```bash
    npx wrangler deploy .output/server/index.mjs --assets .output/public
    ```
-   *This uploads both the compiled Worker handler and static assets directly to your Cloudflare network.*
+   _This uploads both the compiled Worker handler and static assets directly to your Cloudflare network._
 
 ---
 

@@ -33,8 +33,7 @@ function safeErrorMessage(error: unknown): string {
 
 export const analyzeDataFn = createServerFn({ method: "POST" })
   .validator(
-    (data: { sampleData: Record<string, unknown>[]; headers: string[]; fileName: string }) =>
-      data,
+    (data: { sampleData: Record<string, unknown>[]; headers: string[]; fileName: string }) => data,
   )
   .handler(async ({ data }) => {
     try {
@@ -171,9 +170,7 @@ export const AnalysisService = {
           // Pass auth token via custom header (set by TanStack Start's fetch)
           const response = await analyzeDataFn({
             data: { sampleData, headers, fileName: file.name },
-            headers: accessToken
-              ? { Authorization: `Bearer ${accessToken}` }
-              : undefined,
+            headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
           } as any);
 
           if (response.success) {

@@ -147,13 +147,19 @@ function AuthPage() {
       {/* Animated Glow Orbs */}
       <motion.div
         className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)", filter: "blur(60px)" }}
+        style={{
+          background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)", filter: "blur(80px)" }}
+        style={{
+          background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
         animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
@@ -172,7 +178,8 @@ function AuthPage() {
               className="absolute inset-0 rounded-xl"
               style={{
                 border: "1px solid transparent",
-                backgroundImage: "linear-gradient(#0A0A0C, #0A0A0C), conic-gradient(from 0deg, rgba(56,189,248,0.5), transparent 60%, rgba(167,139,250,0.3))",
+                backgroundImage:
+                  "linear-gradient(#0A0A0C, #0A0A0C), conic-gradient(from 0deg, rgba(56,189,248,0.5), transparent 60%, rgba(167,139,250,0.3))",
                 backgroundOrigin: "border-box",
                 backgroundClip: "padding-box, border-box",
               }}
