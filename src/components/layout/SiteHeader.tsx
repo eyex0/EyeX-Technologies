@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { UserNav } from "./UserNav";
 
-const { user, isLoading } = useAuth();
-
 const NAV = [
   { to: "/", label: "Platform" },
   { to: "/dashboard", label: "Dashboard" },
@@ -22,6 +20,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
 
   return (
     <motion.nav

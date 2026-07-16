@@ -2,18 +2,8 @@ import { motion } from "framer-motion";
 
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
-<<<<<<< HEAD
-    <span className={`flex items-center gap-3 text-eye-white ${className}`}>
-      <img src="/favicon.png" alt="EyeX Logo" className="h-10 w-10 object-contain" />
-       <span className="font-display font-medium text-[15px] tracking-tight">
-         EyeX Technologies
-       </span>
-    </span>
-=======
     <div className={`flex items-center gap-3 ${className}`}>
-      {/* Logo with layered animated rings */}
       <div className="relative flex items-center justify-center w-10 h-10">
-        {/* Outer rotating dashed ring */}
         <motion.div
           className="absolute inset-0 rounded-full"
           style={{
@@ -26,13 +16,11 @@ export function BrandMark({ className = "" }: { className?: string }) {
           animate={{ rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
-        {/* Inner pulse glow */}
         <motion.div
           className="absolute inset-0 rounded-full bg-sky-500/5"
           animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
-        {/* Logo image */}
         <img
           src="/Logo.png"
           alt="EyeX Technologies Logo"
@@ -40,7 +28,6 @@ export function BrandMark({ className = "" }: { className?: string }) {
         />
       </div>
 
-      {/* Brand text */}
       <div className="flex flex-col min-w-0">
         <motion.span
           className="font-display font-medium text-[14px] leading-tight text-white tracking-tight truncate"
@@ -54,6 +41,5 @@ export function BrandMark({ className = "" }: { className?: string }) {
         </span>
       </div>
     </div>
->>>>>>> origin/main
   );
 }
