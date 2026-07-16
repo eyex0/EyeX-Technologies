@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, Sparkline, Kpi } from "@/components/common/primitives";
-import * as m from "@/lib/mock";
+import { Card, Badge, Kpi } from "@/components/common/primitives";
 import { useQuery } from "@tanstack/react-query";
 import { DatabaseService } from "@/services/database.service";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,8 +17,7 @@ export function SettingsPage() {
 
   const { data: organization } = useQuery({
     queryKey: ["organization", profile?.active_org_id],
-    queryFn: () =>
-      profile?.active_org_id ? DatabaseService.getOrganization(profile.active_org_id) : null,
+    queryFn: () => profile?.active_org_id ? DatabaseService.getOrganization(profile.active_org_id) : null,
     enabled: !!profile?.active_org_id,
   });
 
@@ -31,20 +29,14 @@ export function SettingsPage() {
 
   const currentUserRole = orgMembers?.find((m: any) => m.user_id === user?.id)?.role || "Owner";
 
-  const memberRows =
-    orgMembers && orgMembers.length > 0
-      ? orgMembers.map((mem: any) => ({
-          name: mem.profiles?.full_name || "Anonymous User",
-          email: mem.profiles?.email || "N/A",
-          role: mem.role.charAt(0).toUpperCase() + mem.role.slice(1),
-          status: "Active",
-        }))
-      : m.employees.slice(0, 5).map((e) => ({
-          name: e.name,
-          email: e.name.toLowerCase().replace(" ", ".") + "@eyex.io",
-          role: e.role,
-          status: e.status,
-        }));
+  const memberRows = orgMembers && orgMembers.length > 0
+    ? orgMembers.map((mem: any) => ({
+        name: mem.profiles?.full_name || "Anonymous",
+        email: mem.profiles?.email || "N/A",
+        role: mem.role.charAt(0).toUpperCase() + mem.role.slice(1),
+        status: "Active",
+      }))
+    : [];
 
   return (
     <ModulePage
@@ -59,10 +51,7 @@ export function SettingsPage() {
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="Name" value={profile?.full_name || "Admin User"} />
                 <Field label="Email" value={profile?.email || user?.email || "admin@eyex.io"} />
-                <Field
-                  label="Role"
-                  value={currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}
-                />
+                <Field label="Role" value={currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)} />
                 <Field label="Timezone" value="America/Los_Angeles" />
               </div>
             </Card>
@@ -76,7 +65,7 @@ export function SettingsPage() {
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="Company" value={organization?.name || "EyeX Technologies"} />
                 <Field label="Plan" value="Enterprise" />
-                <Field label="Seats" value="184 of 250" />
+                <Field label="Members" value={`${orgMembers?.length || 0}`} />
                 <Field label="Region" value="US-West" />
               </div>
             </Card>
@@ -86,49 +75,25 @@ export function SettingsPage() {
           key: "users",
           label: "Users",
           render: () => (
-            <TableCard
-              title="Users"
-              columns={[
-                { key: "name", label: "Name" },
-                { key: "email", label: "Email" },
-                { key: "role", label: "Role" },
-                { key: "status", label: "Status", align: "right" },
-              ]}
-              rows={memberRows}
-            />
-          ),
-        },
-        {
-          key: "roles",
-          label: "Roles",
-          render: () => (
-            <TableCard
-              title="Roles"
-              columns={
-                [
-                  { role: "Role", key: "role" },
-                  { role: "Members", key: "members" },
-                  { role: "Description", key: "desc", align: "right" },
-                ] as any
-              }
-              rows={[
-                { role: "Owner", members: 1, desc: "Primary organization owner" },
-                { role: "Admin", members: 4, desc: "Full workspace control" },
-                { role: "Analyst", members: 42, desc: "Read + reports" },
-                { role: "Viewer", members: 120, desc: "Read-only" },
-              ]}
-            />
-          ),
-        },
-        {
-          key: "perms",
-          label: "Permissions",
-          render: () => (
-            <Card title="Permissions matrix">
-              <div className="p-5 text-sm text-muted-foreground">
-                Configure module-level access per role. Fine-grained record permissions available on
-                the Enterprise plan.
-              </div>
+            <Card title={`Team members (${memberRows.length})`} icon="group">
+              {memberRows.length > 0 ? (
+                <div className="p-2">
+                  {memberRows.map((m: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-border last:border-0 hover:bg-secondary/40">
+                      <div>
+                        <div className="text-sm text-white">{m.name}</div>
+                        <div className="text-[10px] font-mono text-muted-foreground">{m.email}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase">{m.role}</span>
+                        <Badge tone="success">Active</Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-muted-foreground text-sm">No team members found</div>
+              )}
             </Card>
           ),
         },
@@ -138,58 +103,9 @@ export function SettingsPage() {
           render: () => (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <Kpi label="Plan" value="Enterprise" icon="workspace_premium" />
-              <Kpi label="MRR" value="$18,400" icon="payments" />
+              <Kpi label="Members" value={orgMembers?.length.toString() || "0"} icon="people" />
               <Kpi label="Next invoice" value="Dec 15" icon="event" />
             </div>
-          ),
-        },
-        {
-          key: "api",
-          label: "API Keys",
-          render: () => (
-            <TableCard
-              title="API keys"
-              columns={[
-                { key: "name", label: "Name" },
-                { key: "key", label: "Key" },
-                { key: "created", label: "Created" },
-                { key: "status", label: "Status", align: "right" },
-              ]}
-              rows={[
-                {
-                  name: "Production",
-                  key: "ex_live_••••8241",
-                  created: "Nov 12",
-                  status: "Active",
-                },
-                { name: "Staging", key: "ex_test_••••2941", created: "Oct 08", status: "Active" },
-              ]}
-            />
-          ),
-        },
-        {
-          key: "notif",
-          label: "Notifications",
-          render: () => (
-            <Card title="Preferences">
-              <div className="p-5 space-y-3 text-sm">
-                {[
-                  "Email digests",
-                  "Slack alerts",
-                  "Overdue invoices",
-                  "Deal updates",
-                  "System status",
-                ].map((s) => (
-                  <div
-                    key={s}
-                    className="flex justify-between border-b border-border pb-3 last:border-0"
-                  >
-                    <span className="text-white">{s}</span>
-                    <span className="text-muted-foreground text-xs">On</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
           ),
         },
         {
@@ -198,17 +114,8 @@ export function SettingsPage() {
           render: () => (
             <Card title="Security">
               <div className="p-5 space-y-3 text-sm">
-                {[
-                  "Two-factor authentication",
-                  "SSO (SAML)",
-                  "Session timeout",
-                  "IP allowlist",
-                  "Audit log",
-                ].map((s) => (
-                  <div
-                    key={s}
-                    className="flex justify-between border-b border-border pb-3 last:border-0"
-                  >
+                {["Two-factor authentication", "SSO (SAML)", "Session timeout", "IP allowlist", "Audit log"].map(s => (
+                  <div key={s} className="flex justify-between border-b border-border pb-3 last:border-0">
                     <span className="text-white">{s}</span>
                     <span className="text-muted-foreground text-xs">Configured</span>
                   </div>
@@ -225,12 +132,8 @@ export function SettingsPage() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
-        {label}
-      </div>
-      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">
-        {value}
-      </div>
+      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">{label}</div>
+      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">{value}</div>
     </div>
   );
 }
