@@ -1,0 +1,32 @@
+{
+  "name": "@eyex/agents",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./orchestrator": "./src/orchestrator.ts",
+    "./sql-agent": "./src/sql-agent.ts",
+    "./insight-agent": "./src/insight-agent.ts",
+    "./forecast-agent": "./src/forecast-agent.ts",
+    "./root-cause-agent": "./src/root-cause-agent.ts",
+    "./narrative-agent": "./src/narrative-agent.ts",
+    "./pre-mortem-agent": "./src/pre-mortem-agent.ts",
+    "./data-quality-agent": "./src/data-quality-agent.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "zod": "^3.22.4",
+    "langgraph": "^0.1.0",
+    "@langchain/core": "^0.1.0",
+    "@langchain/openai": "^0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vitest": "^2.0.0",
+    "@types/node": "^24.13.2"
+  }
+}

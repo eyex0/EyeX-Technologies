@@ -1,290 +1,1518 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
   public: {
     Tables: {
       organizations: {
         Row: {
-          id: string; name: string; slug: string; logo_url: string | null; plan: string; created_at: string; updated_at: string
-        }
+          id: string;
+          name: string;
+          slug: string;
+          logo_url: string | null;
+          plan: 'free' | 'pro' | 'team' | 'enterprise';
+          settings: Json;
+          billing_email: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
+          trial_ends_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; name: string; slug: string; logo_url?: string | null; plan?: string; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          name: string;
+          slug: string;
+          logo_url?: string | null;
+          plan?: 'free' | 'pro' | 'team' | 'enterprise';
+          settings?: Json;
+          billing_email?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          trial_ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; name?: string; slug?: string; logo_url?: string | null; plan?: string; created_at?: string; updated_at?: string
-        }
-      }
-      profiles: {
+          id?: string;
+          name?: string;
+          slug?: string;
+          logo_url?: string | null;
+          plan?: 'free' | 'pro' | 'team' | 'enterprise';
+          settings?: Json;
+          billing_email?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          trial_ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      users: {
         Row: {
-          id: string; email: string; full_name: string | null; avatar_url: string | null; role: string; organization_id: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          email: string;
+          full_name: string | null;
+          avatar_url: string | null;
+          role: 'owner' | 'admin' | 'analyst' | 'viewer';
+          organization_id: string;
+          team_id: string | null;
+          timezone: string;
+          locale: string;
+          last_active_at: string | null;
+          preferences: Json;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id: string; email: string; full_name?: string | null; avatar_url?: string | null; role?: string; organization_id?: string | null; created_at?: string; updated_at?: string
-        }
+          id: string;
+          email: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          role?: 'owner' | 'admin' | 'analyst' | 'viewer';
+          organization_id: string;
+          team_id?: string | null;
+          timezone?: string;
+          locale?: string;
+          last_active_at?: string | null;
+          preferences?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; email?: string; full_name?: string | null; avatar_url?: string | null; role?: string; organization_id?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      org_members: {
+          id?: string;
+          email?: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          role?: 'owner' | 'admin' | 'analyst' | 'viewer';
+          organization_id?: string;
+          team_id?: string | null;
+          timezone?: string;
+          locale?: string;
+          last_active_at?: string | null;
+          preferences?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      teams: {
         Row: {
-          id: string; organization_id: string; user_id: string; role: string; created_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          description: string | null;
+          parent_team_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; user_id: string; role?: string; created_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          description?: string | null;
+          parent_team_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; user_id?: string; role?: string; created_at?: string
-        }
-      }
-      finance_invoices: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          description?: string | null;
+          parent_team_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      team_members: {
         Row: {
-          id: string; organization_id: string; invoice_number: string; customer_name: string; amount: number; status: string; due_date: string; issued_date: string; description: string | null; created_at: string; updated_at: string
-        }
+          team_id: string;
+          user_id: string;
+          role: 'lead' | 'member';
+          joined_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; invoice_number: string; customer_name: string; amount: number; status?: string; due_date: string; issued_date?: string; description?: string | null; created_at?: string; updated_at?: string
-        }
+          team_id: string;
+          user_id: string;
+          role?: 'lead' | 'member';
+          joined_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; invoice_number?: string; customer_name?: string; amount?: number; status?: string; due_date?: string; issued_date?: string; description?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      finance_budgets: {
+          team_id?: string;
+          user_id?: string;
+          role?: 'lead' | 'member';
+          joined_at?: string;
+        };
+      };
+      api_keys: {
         Row: {
-          id: string; organization_id: string; department: string; category: string; allocated: number; spent: number; period: string; fiscal_year: number; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          key_hash: string;
+          key_prefix: string;
+          scopes: string[];
+          rate_limit: number;
+          last_used_at: string | null;
+          expires_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          revoked_at: string | null;
+        };
         Insert: {
-          id?: string; organization_id: string; department: string; category: string; allocated: number; spent?: number; period: string; fiscal_year: number; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          key_hash: string;
+          key_prefix: string;
+          scopes?: string[];
+          rate_limit?: number;
+          expires_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          revoked_at?: string | null;
+        };
         Update: {
-          id?: string; organization_id?: string; department?: string; category?: string; allocated?: number; spent?: number; period?: string; fiscal_year?: number; created_at?: string; updated_at?: string
-        }
-      }
-      finance_transactions: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          key_hash?: string;
+          key_prefix?: string;
+          scopes?: string[];
+          rate_limit?: number;
+          last_used_at?: string | null;
+          expires_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          revoked_at?: string | null;
+        };
+      };
+      audit_logs: {
         Row: {
-          id: string; organization_id: string; type: string; category: string; amount: number; description: string | null; transaction_date: string; created_at: string
-        }
+          id: string;
+          organization_id: string;
+          user_id: string | null;
+          api_key_id: string | null;
+          action: string;
+          resource_type: string;
+          resource_id: string | null;
+          old_values: Json | null;
+          new_values: Json | null;
+          ip_address: string | null;
+          user_agent: string | null;
+          request_id: string | null;
+          status: 'success' | 'failure';
+          error_message: string | null;
+          created_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; type: string; category: string; amount: number; description?: string | null; transaction_date?: string; created_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          user_id?: string | null;
+          api_key_id?: string | null;
+          action: string;
+          resource_type: string;
+          resource_id?: string | null;
+          old_values?: Json | null;
+          new_values?: Json | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          request_id?: string | null;
+          status?: 'success' | 'failure';
+          error_message?: string | null;
+          created_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; type?: string; category?: string; amount?: number; description?: string | null; transaction_date?: string; created_at?: string
-        }
-      }
-      crm_customers: {
+          id?: string;
+          organization_id?: string;
+          user_id?: string | null;
+          api_key_id?: string | null;
+          action?: string;
+          resource_type?: string;
+          resource_id?: string | null;
+          old_values?: Json | null;
+          new_values?: Json | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          request_id?: string | null;
+          status?: 'success' | 'failure';
+          error_message?: string | null;
+          created_at?: string;
+        };
+      };
+      metrics: {
         Row: {
-          id: string; organization_id: string; name: string; email: string | null; phone: string | null; company: string | null; status: string; lifetime_value: number; last_contacted: string | null; notes: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          display_name: string | null;
+          description: string | null;
+          sql_definition: string;
+          dimensions: string[];
+          default_dimensions: string[];
+          filters: Json;
+          unit: string | null;
+          format: Json;
+          owner_id: string | null;
+          status: 'draft' | 'certified' | 'deprecated';
+          version: number;
+          previous_version_id: string | null;
+          tags: string[];
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; email?: string | null; phone?: string | null; company?: string | null; status?: string; lifetime_value?: number; last_contacted?: string | null; notes?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          display_name?: string | null;
+          description?: string | null;
+          sql_definition: string;
+          dimensions?: string[];
+          default_dimensions?: string[];
+          filters?: Json;
+          unit?: string | null;
+          format?: Json;
+          owner_id?: string | null;
+          status?: 'draft' | 'certified' | 'deprecated';
+          version?: number;
+          previous_version_id?: string | null;
+          tags?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; email?: string | null; phone?: string | null; company?: string | null; status?: string; lifetime_value?: number; last_contacted?: string | null; notes?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      crm_leads: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          display_name?: string | null;
+          description?: string | null;
+          sql_definition?: string;
+          dimensions?: string[];
+          default_dimensions?: string[];
+          filters?: Json;
+          unit?: string | null;
+          format?: Json;
+          owner_id?: string | null;
+          status?: 'draft' | 'certified' | 'deprecated';
+          version?: number;
+          previous_version_id?: string | null;
+          tags?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      metric_versions: {
         Row: {
-          id: string; organization_id: string; name: string; email: string | null; phone: string | null; source: string | null; status: string; owner_id: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          metric_id: string;
+          version: number;
+          sql_definition: string;
+          dimensions: string[];
+          filters: Json | null;
+          unit: string | null;
+          format: Json | null;
+          changed_by: string | null;
+          change_reason: string | null;
+          created_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; email?: string | null; phone?: string | null; source?: string | null; status?: string; owner_id?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          metric_id: string;
+          version: number;
+          sql_definition: string;
+          dimensions: string[];
+          filters?: Json | null;
+          unit?: string | null;
+          format?: Json | null;
+          changed_by?: string | null;
+          change_reason?: string | null;
+          created_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; email?: string | null; phone?: string | null; source?: string | null; status?: string; owner_id?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      crm_deals: {
+          id?: string;
+          metric_id?: string;
+          version?: number;
+          sql_definition?: string;
+          dimensions?: string[];
+          filters?: Json | null;
+          unit?: string | null;
+          format?: Json | null;
+          changed_by?: string | null;
+          change_reason?: string | null;
+          created_at?: string;
+        };
+      };
+      metric_cache: {
         Row: {
-          id: string; organization_id: string; name: string; value: number; stage: string; probability: number; close_date: string | null; customer_id: string | null; owner_id: string | null; created_at: string; updated_at: string
-        }
+          metric_id: string;
+          dimension_values: Json;
+          granularity: 'day' | 'week' | 'month' | 'quarter';
+          period_start: string;
+          period_end: string;
+          value: number;
+          sample_size: number | null;
+          computed_at: string;
+          expires_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; value: number; stage?: string; probability?: number; close_date?: string | null; customer_id?: string | null; owner_id?: string | null; created_at?: string; updated_at?: string
-        }
+          metric_id: string;
+          dimension_values: Json;
+          granularity: 'day' | 'week' | 'month' | 'quarter';
+          period_start: string;
+          period_end: string;
+          value: number;
+          sample_size?: number | null;
+          computed_at?: string;
+          expires_at: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; value?: number; stage?: string; probability?: number; close_date?: string | null; customer_id?: string | null; owner_id?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      crm_activities: {
+          metric_id?: string;
+          dimension_values?: Json;
+          granularity?: 'day' | 'week' | 'month' | 'quarter';
+          period_start?: string;
+          period_end?: string;
+          value?: number;
+          sample_size?: number | null;
+          computed_at?: string;
+          expires_at?: string;
+        };
+      };
+      dashboards_v2: {
         Row: {
-          id: string; organization_id: string; type: string; subject: string; description: string | null; related_to: string | null; related_id: string | null; performed_by: string | null; completed_at: string | null; created_at: string
-        }
+          id: string;
+          organization_id: string;
+          slug: string;
+          name: string;
+          description: string | null;
+          spec: Json;
+          spec_version: number;
+          git_sync_enabled: boolean;
+          git_repo: string | null;
+          git_branch: string;
+          git_path: string | null;
+          last_synced_at: string | null;
+          sync_status: string | null;
+          is_public: boolean;
+          public_token: string;
+          allowed_embed_domains: string[];
+          view_count: number;
+          created_by: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; type: string; subject: string; description?: string | null; related_to?: string | null; related_id?: string | null; performed_by?: string | null; completed_at?: string | null; created_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          slug: string;
+          name: string;
+          description?: string | null;
+          spec: Json;
+          spec_version?: number;
+          git_sync_enabled?: boolean;
+          git_repo?: string | null;
+          git_branch?: string;
+          git_path?: string | null;
+          last_synced_at?: string | null;
+          sync_status?: string | null;
+          is_public?: boolean;
+          public_token?: string;
+          allowed_embed_domains?: string[];
+          view_count?: number;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; type?: string; subject?: string; description?: string | null; related_to?: string | null; related_id?: string | null; performed_by?: string | null; completed_at?: string | null; created_at?: string
-        }
-      }
-      sales_orders: {
+          id?: string;
+          organization_id?: string;
+          slug?: string;
+          name?: string;
+          description?: string | null;
+          spec?: Json;
+          spec_version?: number;
+          git_sync_enabled?: boolean;
+          git_repo?: string | null;
+          git_branch?: string;
+          git_path?: string | null;
+          last_synced_at?: string | null;
+          sync_status?: string | null;
+          is_public?: boolean;
+          public_token?: string;
+          allowed_embed_domains?: string[];
+          view_count?: number;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      dashboard_versions: {
         Row: {
-          id: string; organization_id: string; order_number: string; customer_id: string | null; total: number; status: string; order_date: string; created_at: string; updated_at: string
-        }
+          id: string;
+          dashboard_id: string;
+          version: number;
+          spec: Json;
+          commit_hash: string | null;
+          commit_message: string | null;
+          committed_by: string | null;
+          created_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; order_number: string; customer_id?: string | null; total: number; status?: string; order_date?: string; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          dashboard_id: string;
+          version: number;
+          spec: Json;
+          commit_hash?: string | null;
+          commit_message?: string | null;
+          committed_by?: string | null;
+          created_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; order_number?: string; customer_id?: string | null; total?: number; status?: string; order_date?: string; created_at?: string; updated_at?: string
-        }
-      }
-      sales_products: {
+          id?: string;
+          dashboard_id?: string;
+          version?: number;
+          spec?: Json;
+          commit_hash?: string | null;
+          commit_message?: string | null;
+          committed_by?: string | null;
+          created_at?: string;
+        };
+      };
+      dashboard_permissions: {
         Row: {
-          id: string; organization_id: string; name: string; sku: string; price: number; cost: number | null; category: string | null; created_at: string; updated_at: string
-        }
+          dashboard_id: string;
+          principal_type: 'user' | 'team' | 'public';
+          principal_id: string | null;
+          permission: 'view' | 'edit' | 'admin';
+          granted_by: string | null;
+          granted_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; sku: string; price: number; cost?: number | null; category?: string | null; created_at?: string; updated_at?: string
-        }
+          dashboard_id: string;
+          principal_type: 'user' | 'team' | 'public';
+          principal_id: string | null;
+          permission: 'view' | 'edit' | 'admin';
+          granted_by?: string | null;
+          granted_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; sku?: string; price?: number; cost?: number | null; category?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      hr_employees: {
+          dashboard_id?: string;
+          principal_type?: 'user' | 'team' | 'public';
+          principal_id?: string | null;
+          permission?: 'view' | 'edit' | 'admin';
+          granted_by?: string | null;
+          granted_at?: string;
+        };
+      };
+      alert_rules: {
         Row: {
-          id: string; organization_id: string; first_name: string; last_name: string; email: string; phone: string | null; position: string; department_id: string | null; salary: number; hire_date: string; status: string; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          description: string | null;
+          metric_id: string | null;
+          condition: Json;
+          evaluation: Json;
+          severity: 'info' | 'warning' | 'critical';
+          channels: Json;
+          schedule: Json;
+          runbook_url: string | null;
+          runbook_markdown: string | null;
+          owner_id: string | null;
+          anomaly_config: Json | null;
+          enabled: boolean;
+          created_by: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; first_name: string; last_name: string; email: string; phone?: string | null; position: string; department_id?: string | null; salary: number; hire_date?: string; status?: string; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          description?: string | null;
+          metric_id?: string | null;
+          condition: Json;
+          evaluation?: Json;
+          severity?: 'info' | 'warning' | 'critical';
+          channels: Json;
+          schedule?: Json;
+          runbook_url?: string | null;
+          runbook_markdown?: string | null;
+          owner_id?: string | null;
+          anomaly_config?: Json | null;
+          enabled?: boolean;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; first_name?: string; last_name?: string; email?: string; phone?: string | null; position?: string; department_id?: string | null; salary?: number; hire_date?: string; status?: string; created_at?: string; updated_at?: string
-        }
-      }
-      hr_departments: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          description?: string | null;
+          metric_id?: string | null;
+          condition?: Json;
+          evaluation?: Json;
+          severity?: 'info' | 'warning' | 'critical';
+          channels?: Json;
+          schedule?: Json;
+          runbook_url?: string | null;
+          runbook_markdown?: string | null;
+          owner_id?: string | null;
+          anomaly_config?: Json | null;
+          enabled?: boolean;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      alert_incidents: {
         Row: {
-          id: string; organization_id: string; name: string; description: string | null; head_id: string | null; created_at: string
-        }
+          id: string;
+          rule_id: string;
+          organization_id: string;
+          status: 'firing' | 'acknowledged' | 'resolved';
+          severity: string;
+          current_value: number;
+          threshold_value: number;
+          deviation_pct: number | null;
+          dimensions: Json | null;
+          context: Json | null;
+          fired_at: string;
+          acknowledged_at: string | null;
+          acknowledged_by: string | null;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          resolution_note: string | null;
+          escalation_level: number;
+          next_escalation_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; description?: string | null; head_id?: string | null; created_at?: string
-        }
+          id?: string;
+          rule_id: string;
+          organization_id: string;
+          status?: 'firing' | 'acknowledged' | 'resolved';
+          severity: string;
+          current_value: number;
+          threshold_value: number;
+          deviation_pct?: number | null;
+          dimensions?: Json | null;
+          context?: Json | null;
+          fired_at?: string;
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          resolution_note?: string | null;
+          escalation_level?: number;
+          next_escalation_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; description?: string | null; head_id?: string | null; created_at?: string
-        }
-      }
-      hr_payroll: {
+          id?: string;
+          rule_id?: string;
+          organization_id?: string;
+          status?: 'firing' | 'acknowledged' | 'resolved';
+          severity?: string;
+          current_value?: number;
+          threshold_value?: number;
+          deviation_pct?: number | null;
+          dimensions?: Json | null;
+          context?: Json | null;
+          fired_at?: string;
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          resolution_note?: string | null;
+          escalation_level?: number;
+          next_escalation_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      alert_notifications: {
         Row: {
-          id: string; organization_id: string; employee_id: string; salary: number; bonuses: number; deductions: number; pay_period_start: string; pay_period_end: string; status: string; paid_at: string | null; created_at: string
-        }
+          id: string;
+          incident_id: string;
+          channel_type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          channel_config: Json;
+          status: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at: string | null;
+          delivered_at: string | null;
+          error_message: string | null;
+          retry_count: number;
+          created_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; employee_id: string; salary: number; bonuses?: number; deductions?: number; pay_period_start: string; pay_period_end: string; status?: string; paid_at?: string | null; created_at?: string
-        }
+          id?: string;
+          incident_id: string;
+          channel_type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          channel_config: Json;
+          status?: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at?: string | null;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          retry_count?: number;
+          created_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; employee_id?: string; salary?: number; bonuses?: number; deductions?: number; pay_period_start?: string; pay_period_end?: string; status?: string; paid_at?: string | null; created_at?: string
-        }
-      }
-      projects_projects: {
+          id?: string;
+          incident_id?: string;
+          channel_type?: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          channel_config?: Json;
+          status?: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at?: string | null;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          retry_count?: number;
+          created_at?: string;
+        };
+      };
+      notification_channels: {
         Row: {
-          id: string; organization_id: string; name: string; description: string | null; status: string; priority: string; start_date: string | null; end_date: string | null; owner_id: string | null; budget: number | null; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          config: Json;
+          default_severity: string[];
+          enabled: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; description?: string | null; status?: string; priority?: string; start_date?: string | null; end_date?: string | null; owner_id?: string | null; budget?: number | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          config: Json;
+          default_severity?: string[];
+          enabled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; description?: string | null; status?: string; priority?: string; start_date?: string | null; end_date?: string | null; owner_id?: string | null; budget?: number | null; created_at?: string; updated_at?: string
-        }
-      }
-      projects_tasks: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          type?: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
+          config?: Json;
+          default_severity?: string[];
+          enabled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      agent_runs: {
         Row: {
-          id: string; organization_id: string; project_id: string; title: string; description: string | null; status: string; priority: string; assignee_id: string | null; due_date: string | null; estimated_hours: number | null; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          session_id: string | null;
+          agent_type: string;
+          agent_version: string | null;
+          input: Json;
+          output: Json | null;
+          status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          tokens_used: number;
+          prompt_tokens: number;
+          completion_tokens: number;
+          latency_ms: number | null;
+          estimated_cost_usd: number | null;
+          error: string | null;
+          error_code: string | null;
+          stack_trace: string | null;
+          retry_count: number;
+          parent_run_id: string | null;
+          user_id: string | null;
+          api_key_id: string | null;
+          metadata: Json;
+          created_at: string;
+          started_at: string | null;
+          completed_at: string | null;
+        };
         Insert: {
-          id?: string; organization_id: string; project_id: string; title: string; description?: string | null; status?: string; priority?: string; assignee_id?: string | null; due_date?: string | null; estimated_hours?: number | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          session_id?: string | null;
+          agent_type: string;
+          agent_version?: string | null;
+          input: Json;
+          output?: Json | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          tokens_used?: number;
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          latency_ms?: number | null;
+          estimated_cost_usd?: number | null;
+          error?: string | null;
+          error_code?: string | null;
+          stack_trace?: string | null;
+          retry_count?: number;
+          parent_run_id?: string | null;
+          user_id?: string | null;
+          api_key_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+        };
         Update: {
-          id?: string; organization_id?: string; project_id?: string; title?: string; description?: string | null; status?: string; priority?: string; assignee_id?: string | null; due_date?: string | null; estimated_hours?: number | null; created_at?: string; updated_at?: string
-        }
-      }
-      inventory_products: {
+          id?: string;
+          organization_id?: string;
+          session_id?: string | null;
+          agent_type?: string;
+          agent_version?: string | null;
+          input?: Json;
+          output?: Json | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          tokens_used?: number;
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          latency_ms?: number | null;
+          estimated_cost_usd?: number | null;
+          error?: string | null;
+          error_code?: string | null;
+          stack_trace?: string | null;
+          retry_count?: number;
+          parent_run_id?: string | null;
+          user_id?: string | null;
+          api_key_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+        };
+      };
+      agent_run_steps: {
         Row: {
-          id: string; organization_id: string; name: string; sku: string; category: string | null; unit_price: number; quantity: number; reorder_level: number; warehouse_id: string | null; supplier_id: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          run_id: string;
+          step_number: number;
+          agent_type: string;
+          input: Json;
+          output: Json | null;
+          status: 'pending' | 'running' | 'completed' | 'failed';
+          tokens_used: number;
+          latency_ms: number | null;
+          error: string | null;
+          created_at: string;
+          started_at: string | null;
+          completed_at: string | null;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; sku: string; category?: string | null; unit_price: number; quantity?: number; reorder_level?: number; warehouse_id?: string | null; supplier_id?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          run_id: string;
+          step_number: number;
+          agent_type: string;
+          input: Json;
+          output?: Json | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          tokens_used?: number;
+          latency_ms?: number | null;
+          error?: string | null;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; sku?: string; category?: string | null; unit_price?: number; quantity?: number; reorder_level?: number; warehouse_id?: string | null; supplier_id?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      inventory_warehouses: {
+          id?: string;
+          run_id?: string;
+          step_number?: number;
+          agent_type?: string;
+          input?: Json;
+          output?: Json | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          tokens_used?: number;
+          latency_ms?: number | null;
+          error?: string | null;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+        };
+      };
+      agent_evaluations: {
         Row: {
-          id: string; organization_id: string; name: string; location: string | null; capacity: number | null; created_at: string
-        }
+          id: string;
+          run_id: string;
+          evaluator: 'auto' | 'human' | 'llm_judge';
+          criteria: Json;
+          scores: Json;
+          feedback: string | null;
+          evaluated_by: string | null;
+          created_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; location?: string | null; capacity?: number | null; created_at?: string
-        }
+          id?: string;
+          run_id: string;
+          evaluator: 'auto' | 'human' | 'llm_judge';
+          criteria: Json;
+          scores: Json;
+          feedback?: string | null;
+          evaluated_by?: string | null;
+          created_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; location?: string | null; capacity?: number | null; created_at?: string
-        }
-      }
-      inventory_suppliers: {
+          id?: string;
+          run_id?: string;
+          evaluator?: 'auto' | 'human' | 'llm_judge';
+          criteria?: Json;
+          scores?: Json;
+          feedback?: string | null;
+          evaluated_by?: string | null;
+          created_at?: string;
+        };
+      };
+      model_usage: {
         Row: {
-          id: string; organization_id: string; name: string; contact_name: string | null; email: string | null; phone: string | null; created_at: string
-        }
+          id: string;
+          organization_id: string;
+          model: string;
+          provider: string;
+          prompt_tokens: number;
+          completion_tokens: number;
+          total_tokens: number;
+          estimated_cost_usd: number;
+          agent_type: string | null;
+          run_id: string | null;
+          recorded_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; contact_name?: string | null; email?: string | null; phone?: string | null; created_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          model: string;
+          provider: string;
+          prompt_tokens: number;
+          completion_tokens: number;
+          total_tokens: number;
+          estimated_cost_usd: number;
+          agent_type?: string | null;
+          run_id?: string | null;
+          recorded_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; contact_name?: string | null; email?: string | null; phone?: string | null; created_at?: string
-        }
-      }
-      documents: {
+          id?: string;
+          organization_id?: string;
+          model?: string;
+          provider?: string;
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          total_tokens?: number;
+          estimated_cost_usd?: number;
+          agent_type?: string | null;
+          run_id?: string | null;
+          recorded_at?: string;
+        };
+      };
+      data_contracts: {
         Row: {
-          id: string; organization_id: string; name: string; file_url: string | null; file_type: string | null; size_bytes: number | null; tags: string[] | null; uploaded_by: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          description: string | null;
+          producer_team_id: string | null;
+          producer_contact: string | null;
+          consumer_team_ids: string[];
+          schema: Json;
+          schema_format: 'json' | 'avro' | 'protobuf';
+          sla: Json;
+          quality_thresholds: Json;
+          status: 'draft' | 'active' | 'deprecated';
+          version: number;
+          created_by: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; file_url?: string | null; file_type?: string | null; size_bytes?: number | null; tags?: string[] | null; uploaded_by?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          description?: string | null;
+          producer_team_id?: string | null;
+          producer_contact?: string | null;
+          consumer_team_ids?: string[];
+          schema: Json;
+          schema_format?: 'json' | 'avro' | 'protobuf';
+          sla?: Json;
+          quality_thresholds?: Json;
+          status?: 'draft' | 'active' | 'deprecated';
+          version?: number;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; file_url?: string | null; file_type?: string | null; size_bytes?: number | null; tags?: string[] | null; uploaded_by?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      notifications: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          description?: string | null;
+          producer_team_id?: string | null;
+          producer_contact?: string | null;
+          consumer_team_ids?: string[];
+          schema?: Json;
+          schema_format?: 'json' | 'avro' | 'protobuf';
+          sla?: Json;
+          quality_thresholds?: Json;
+          status?: 'draft' | 'active' | 'deprecated';
+          version?: number;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      data_sources_v2: {
         Row: {
-          id: string; organization_id: string; user_id: string | null; title: string; message: string; type: string; read: boolean; created_at: string
-        }
+          id: string;
+          organization_id: string;
+          name: string;
+          type: string;
+          connection_id: string | null;
+          source_config: Json;
+          contract_id: string | null;
+          schema: Json;
+          schema_last_inferred: string | null;
+          quality_score: number | null;
+          last_quality_check: string | null;
+          quality_issues: Json;
+          last_refreshed_at: string | null;
+          freshness_sla_hours: number | null;
+          freshness_status: string;
+          upstream_sources: string[];
+          downstream_consumers: string[];
+          owner_id: string | null;
+          tags: string[];
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; user_id?: string | null; title: string; message: string; type?: string; read?: boolean; created_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          name: string;
+          type: string;
+          connection_id?: string | null;
+          source_config: Json;
+          contract_id?: string | null;
+          schema: Json;
+          schema_last_inferred?: string | null;
+          quality_score?: number | null;
+          last_quality_check?: string | null;
+          quality_issues?: Json;
+          last_refreshed_at?: string | null;
+          freshness_sla_hours?: number | null;
+          freshness_status?: string;
+          upstream_sources?: string[];
+          downstream_consumers?: string[];
+          owner_id?: string | null;
+          tags?: string[];
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; user_id?: string | null; title?: string; message?: string; type?: string; read?: boolean; created_at?: string
-        }
-      }
-      dashboards: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          type?: string;
+          connection_id?: string | null;
+          source_config?: Json;
+          contract_id?: string | null;
+          schema?: Json;
+          schema_last_inferred?: string | null;
+          quality_score?: number | null;
+          last_quality_check?: string | null;
+          quality_issues?: Json;
+          last_refreshed_at?: string | null;
+          freshness_sla_hours?: number | null;
+          freshness_status?: string;
+          upstream_sources?: string[];
+          downstream_consumers?: string[];
+          owner_id?: string | null;
+          tags?: string[];
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      data_quality_checks: {
         Row: {
-          id: string; organization_id: string; name: string; description: string | null; config: Json; created_by: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          organization_id: string;
+          source_id: string | null;
+          contract_id: string | null;
+          name: string;
+          type: string;
+          config: Json;
+          severity: 'info' | 'warning' | 'critical';
+          schedule: string;
+          enabled: boolean;
+          last_run: string | null;
+          last_status: string | null;
+          last_result: Json | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; description?: string | null; config?: Json; created_by?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          organization_id: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          name: string;
+          type: string;
+          config: Json;
+          severity?: 'info' | 'warning' | 'critical';
+          schedule: string;
+          enabled?: boolean;
+          last_run?: string | null;
+          last_status?: string | null;
+          last_result?: Json | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; description?: string | null; config?: Json; created_by?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-      data_sources: {
+          id?: string;
+          organization_id?: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          name?: string;
+          type?: string;
+          config?: Json;
+          severity?: 'info' | 'warning' | 'critical';
+          schedule?: string;
+          enabled?: boolean;
+          last_run?: string | null;
+          last_status?: string | null;
+          last_result?: Json | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      data_quality_results: {
         Row: {
-          id: string; organization_id: string; name: string; type: string; config: Json; enabled: boolean; last_synced_at: string | null; created_at: string; updated_at: string
-        }
+          id: string;
+          check_id: string;
+          source_id: string | null;
+          contract_id: string | null;
+          status: 'passed' | 'failed' | 'error';
+          metric_value: number | null;
+          threshold_value: number | null;
+          details: Json | null;
+          sample_query: string | null;
+          sample_results: Json | null;
+          run_at: string;
+          duration_ms: number | null;
+        };
         Insert: {
-          id?: string; organization_id: string; name: string; type: string; config?: Json; enabled?: boolean; last_synced_at?: string | null; created_at?: string; updated_at?: string
-        }
+          id?: string;
+          check_id: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          status: 'passed' | 'failed' | 'error';
+          metric_value?: number | null;
+          threshold_value?: number | null;
+          details?: Json | null;
+          sample_query?: string | null;
+          sample_results?: Json | null;
+          run_at?: string;
+          duration_ms?: number | null;
+        };
         Update: {
-          id?: string; organization_id?: string; name?: string; type?: string; config?: Json; enabled?: boolean; last_synced_at?: string | null; created_at?: string; updated_at?: string
-        }
-      }
-    }
-    Views: Record<string, never>
+          id?: string;
+          check_id?: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          status?: 'passed' | 'failed' | 'error';
+          metric_value?: number | null;
+          threshold_value?: number | null;
+          details?: Json | null;
+          sample_query?: string | null;
+          sample_results?: Json | null;
+          run_at?: string;
+          duration_ms?: number | null;
+        };
+      };
+      data_incidents: {
+        Row: {
+          id: string;
+          organization_id: string;
+          source_id: string | null;
+          contract_id: string | null;
+          check_id: string | null;
+          title: string;
+          description: string | null;
+          severity: 'info' | 'warning' | 'critical';
+          status: 'open' | 'investigating' | 'resolved' | 'ignored';
+          impact: string | null;
+          root_cause: string | null;
+          resolution: string | null;
+          detected_at: string;
+          acknowledged_at: string | null;
+          acknowledged_by: string | null;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          check_id?: string | null;
+          title: string;
+          description?: string | null;
+          severity?: 'info' | 'warning' | 'critical';
+          status?: 'open' | 'investigating' | 'resolved' | 'ignored';
+          impact?: string | null;
+          root_cause?: string | null;
+          resolution?: string | null;
+          detected_at?: string;
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          source_id?: string | null;
+          contract_id?: string | null;
+          check_id?: string | null;
+          title?: string;
+          description?: string | null;
+          severity?: 'info' | 'warning' | 'critical';
+          status?: 'open' | 'investigating' | 'resolved' | 'ignored';
+          impact?: string | null;
+          root_cause?: string | null;
+          resolution?: string | null;
+          detected_at?: string;
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      data_lineage: {
+        Row: {
+          id: string;
+          organization_id: string;
+          source_id: string | null;
+          target_id: string | null;
+          transformation_type: string | null;
+          transformation_config: Json | null;
+          column_mapping: Json | null;
+          is_active: boolean;
+          last_synced: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          source_id?: string | null;
+          target_id?: string | null;
+          transformation_type?: string | null;
+          transformation_config?: Json | null;
+          column_mapping?: Json | null;
+          is_active?: boolean;
+          last_synced?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          source_id?: string | null;
+          target_id?: string | null;
+          transformation_type?: string | null;
+          transformation_config?: Json | null;
+          column_mapping?: Json | null;
+          is_active?: boolean;
+          last_synced?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      imported_datasets: {
+        Row: {
+          id: string;
+          organization_id: string;
+          name: string;
+          original_filename: string | null;
+          columns: Json;
+          rows: Json;
+          row_count: number;
+          status: 'draft' | 'mapped' | 'imported' | 'error';
+          mapped_table: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          name: string;
+          original_filename?: string | null;
+          columns: Json;
+          rows: Json;
+          row_count?: number;
+          status?: 'draft' | 'mapped' | 'imported' | 'error';
+          mapped_table?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          name?: string;
+          original_filename?: string | null;
+          columns?: Json;
+          rows?: Json;
+          row_count?: number;
+          status?: 'draft' | 'mapped' | 'imported' | 'error';
+          mapped_table?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      import_mappings: {
+        Row: {
+          id: string;
+          organization_id: string;
+          dataset_id: string | null;
+          name: string;
+          source_columns: Json;
+          target_table: string;
+          column_mapping: Json;
+          transform_rules: Json;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          dataset_id?: string | null;
+          name: string;
+          source_columns: Json;
+          target_table: string;
+          column_mapping: Json;
+          transform_rules?: Json;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          dataset_id?: string | null;
+          name?: string;
+          source_columns?: Json;
+          target_table?: string;
+          column_mapping?: Json;
+          transform_rules?: Json;
+          created_by?: string | null;
+          created_at?: string;
+        };
+      };
+      import_jobs: {
+        Row: {
+          id: string;
+          organization_id: string;
+          mapping_id: string | null;
+          dataset_id: string | null;
+          status: 'pending' | 'running' | 'completed' | 'failed';
+          total_rows: number;
+          processed_rows: number;
+          failed_rows: number;
+          error_details: Json | null;
+          started_at: string | null;
+          completed_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          mapping_id?: string | null;
+          dataset_id?: string | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          total_rows?: number;
+          processed_rows?: number;
+          failed_rows?: number;
+          error_details?: Json | null;
+          started_at?: string | null;
+          completed_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          mapping_id?: string | null;
+          dataset_id?: string | null;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          total_rows?: number;
+          processed_rows?: number;
+          failed_rows?: number;
+          error_details?: Json | null;
+          started_at?: string | null;
+          completed_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+      };
+      embedded_dashboards: {
+        Row: {
+          id: string;
+          organization_id: string;
+          dashboard_id: string;
+          public_token: string;
+          allowed_domains: string[];
+          rls_policy: Json | null;
+          expires_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_id: string;
+          dashboard_id: string;
+          public_token?: string;
+          allowed_domains?: string[];
+          rls_policy?: Json | null;
+          expires_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          organization_id?: string;
+          dashboard_id?: string;
+          public_token?: string;
+          allowed_domains?: string[];
+          rls_policy?: Json | null;
+          expires_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      embed_usage: {
+        Row: {
+          id: string;
+          embed_id: string;
+          viewer_id: string | null;
+          event_type: string;
+          event_data: Json | null;
+          referrer: string | null;
+          user_agent: string | null;
+          ip_hash: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          embed_id: string;
+          viewer_id?: string | null;
+          event_type: string;
+          event_data?: Json | null;
+          referrer?: string | null;
+          user_agent?: string | null;
+          ip_hash?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          embed_id?: string;
+          viewer_id?: string | null;
+          event_type?: string;
+          event_data?: Json | null;
+          referrer?: string | null;
+          user_agent?: string | null;
+          ip_hash?: string | null;
+          created_at?: string;
+        };
+      };
+    };
+    Views: Record<string, never>;
     Functions: {
-      get_organization: {
-        Args: { p_slug: string }
-        Returns: {
-          id: string; name: string; slug: string; logo_url: string | null; plan: string; created_at: string; updated_at: string
-        }
-      }
-      ensure_organization: {
-        Args: { p_slug: string; p_name: string }
-        Returns: { id: string; name: string; slug: string; logo_url: string | null; plan: string; created_at: string; updated_at: string }
-      }
-    }
-    Enums: Record<string, never>
-  }
+      current_org_id: { Args: {}; Returns: string };
+      current_user_id: { Args: {}; Returns: string };
+      can_access_dashboard: { Args: { dashboard_id: string; user_id: string; permission: string }; Returns: boolean };
+      track_metric_version: { Args: Record<string, never>; Returns: unknown };
+      handle_new_user: { Args: Record<string, never>; Returns: unknown };
+      ensure_organization: { Args: { p_slug: string; p_name: string }; Returns: { id: string; name: string; slug: string; logo_url: string | null; plan: string; created_at: string; updated_at: string }[] };
+    };
+    Enums: {
+      plan: 'free' | 'pro' | 'team' | 'enterprise';
+      user_role: 'owner' | 'admin' | 'analyst' | 'viewer';
+      team_role: 'lead' | 'member';
+      metric_status: 'draft' | 'certified' | 'deprecated';
+      alert_severity: 'info' | 'warning' | 'critical';
+      alert_status: 'firing' | 'acknowledged' | 'resolved';
+      agent_status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+      agent_type: 'sql' | 'insight' | 'action' | 'forecast' | 'root_cause' | 'narrative' | 'data_quality' | 'pre_mortem';
+      dataset_status: 'draft' | 'mapped' | 'imported' | 'error';
+      import_status: 'pending' | 'running' | 'completed' | 'failed';
+      data_source_type: 'table' | 'view' | 'stream' | 'file' | 'api';
+      data_source_status: 'fresh' | 'stale' | 'critical';
+      contract_status: 'draft' | 'active' | 'deprecated';
+      quality_check_status: 'passed' | 'failed' | 'error';
+      incident_status: 'open' | 'investigating' | 'resolved' | 'ignored';
+      incident_severity: 'info' | 'warning' | 'critical';
+      quality_check_type: 'null_check' | 'range_check' | 'freshness' | 'uniqueness' | 'referential_integrity' | 'schema_match' | 'custom_sql';
+    };
+  };
 }
 
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
-export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
-export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
+export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
+
+export type Organization = Tables<'organizations'>;
+export type User = Tables<'users'>;
+export type Team = Tables<'teams'>;
+export type ApiKey = Tables<'api_keys'>;
+export type AuditLog = Tables<'audit_logs'>;
+export type Metric = Tables<'metrics'>;
+export type MetricVersion = Tables<'metric_versions'>;
+export type Dashboard = Tables<'dashboards_v2'>;
+export type DashboardVersion = Tables<'dashboard_versions'>;
+export type AlertRule = Tables<'alert_rules'>;
+export type AlertIncident = Tables<'alert_incidents'>;
+export type AgentRun = Tables<'agent_runs'>;
+export type AgentRunStep = Tables<'agent_run_steps'>;
+export type DataContract = Tables<'data_contracts'>;
+export type DataSource = Tables<'data_sources_v2'>;
+export type ImportedDataset = Tables<'imported_datasets'>;
+export type ImportMapping = Tables<'import_mappings'>;
+export type ImportJob = Tables<'import_jobs'>;
+export type EmbeddedDashboard = Tables<'embedded_dashboards'>;
+export type EmbedUsage = Tables<'embed_usage'>;

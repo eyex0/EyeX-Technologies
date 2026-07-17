@@ -1,25 +1,54 @@
 {
-  "name": "default-project",
+  "name": "eyex-technologies",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:all": "npm run build --workspaces",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "lint:fix": "oxlint --fix",
+    "typecheck": "tsc -b",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "db:generate": "supabase gen types typescript --project-id arshrkjqptpquqpkfktd > src/lib/supabase/types.ts",
+    "db:push": "supabase db push",
+    "db:migrate": "supabase migration new",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "db:seed": "node scripts/seed-database.js",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
     "@supabase/supabase-js": "^2.110.7",
+    "@tanstack/react-query": "^5.17.0",
     "@tanstack/react-router": "^1.170.18",
+    "@tanstack/router-devtools": "^1.170.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
     "lucide-react": "^1.24.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "recharts": "^3.9.2",
     "tailwind-merge": "^3.6.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^3.22.4",
+    "jose": "^5.2.0",
+    "resend": "^4.0.0",
+    "@slack/web-api": "^7.0.0",
+    "@octokit/rest": "^20.0.0",
+    "ioredis": "^5.4.1",
+    "stripe": "^14.0.0",
+    "pptxgenjs": "^3.12.0",
+    "pdfkit": "^0.15.0",
+    "node-fetch": "^3.3.2",
+    "vitest": "^2.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -31,6 +60,8 @@
     "supabase": "^2.109.1",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "wrangler": "^3.0.0",
+    "@types/pdfkit": "^0.13.0"
   }
 }
