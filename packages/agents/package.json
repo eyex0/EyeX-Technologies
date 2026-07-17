@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "zod": "^3.22.4",
-    "langgraph": "^0.1.0",
-    "@langchain/core": "^0.1.0",
-    "@langchain/openai": "^0.1.0"
+    "@langchain/langgraph": "^1.4.0",
+    "@langchain/core": "^1.2.0",
+    "@langchain/openai": "^1.5.0"
   },
   "devDependencies": {
     "typescript": "~6.0.2",
