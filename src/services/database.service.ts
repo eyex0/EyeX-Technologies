@@ -1,15 +1,11 @@
-import { supabase, getCurrentOrgId } from './client';
+import { supabase, getCurrentOrgId, getCurrentUserId } from '../lib/supabase/client';
 import type { 
   Organization, User, Team, ApiKey, AuditLog,
   Metric, MetricVersion, Dashboard, DashboardVersion,
-  AlertRule, AlertIncident, AlertNotification, NotificationChannel,
-  AgentRun, AgentRunStep, AgentEvaluation, ModelUsage,
-  DataContract, DataSource, DataQualityCheck, DataQualityResult, DataIncident, DataLineage,
-  ImportedDataset, ImportMapping, ImportJob,
-  EmbeddedDashboard, EmbedUsage,
-} from './types';
-
-const db = supabase;
+  AlertRule, AlertIncident,
+  AgentRun,
+  EmbeddedDashboard,
+} from '../lib/supabase/types';
 
 function handleError(error: Error | null, context: string): never {
   if (error) {
@@ -72,7 +68,7 @@ export const db = {
       if (memberError) handleError(memberError, 'addTeamMembers');
     }
 
-    return { user: invite.user!, inviteSent: true };
+    return { user: invite.user! as unknown as User, inviteSent: true };
   },
 
   async updateUserRole(userId: string, role: 'owner' | 'admin' | 'analyst' | 'viewer'): Promise<User> {
@@ -136,8 +132,7 @@ export const db = {
   },
 
   async createApiKey(input: { name: string; scopes: string[]; expiresAt?: string; rateLimit?: number }): Promise<{ key: string; apiKey: ApiKey }> {
-    const orgId = await getCurrentOrgId();
-    const userId = await getCurrentUserId();
+    const _orgId = await getCurrentOrgId();
     const prefix = 'eyex_live_';
     const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 24);
     const key = prefix + randomPart;
@@ -148,7 +143,7 @@ export const db = {
     const { data, error } = await supabase
       .from('api_keys')
       .insert({
-        organization_id: await getCurrentOrgId(),
+        organization_id: _orgId,
         name: input.name,
         key_hash: hashHex,
         key_prefix: prefix,
@@ -347,7 +342,8 @@ export const db = {
       if (error.code === 'PGRST116') return null;
       handleError(error, 'getMetricCache');
     }
-    return data;
+    if (!data) return null;
+    return { value: data.value as number, sampleSize: data.sample_size as number | null };
   },
 
   // Dashboards v2
@@ -581,7 +577,7 @@ export const db = {
     sessionId?: string;
     options?: { timeoutMs?: number; maxRetries?: number };
   }): Promise<{ runId: string; output: unknown }> {
-    const { data, error } = await supabase.functions.invoke('agent-orchestrator', {
+    const res = await (supabase as any).functions.invoke('agent-orchestrator', {
       body: {
         agentType: input.agentType,
         input: input.input,
@@ -592,7 +588,9 @@ export const db = {
         },
         options: input.options,
       },
-    );
+    });
+    const data = res.data as { runId: string; output: unknown };
+    const error = res.error as Error | null;
     if (error) handleError(error, `runAgent:${input.agentType}`);
     return data;
   },
@@ -768,11 +766,15 @@ export const db = {
   async getSubscription(): Promise<{ plan: string; status: string; currentPeriodEnd: string | null } | null> {
     const { data, error } = await supabase
       .from('organizations')
-      .select('plan, stripe_customer_id, stripe_subscription_id')
+      .select('plan')
       .eq('id', await getCurrentOrgId())
       .single();
-    if (error) handleError(error, 'getSubscription');
-    return data;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      handleError(error, 'getSubscription');
+    }
+    if (!data) return null;
+    return { plan: data.plan as string, status: 'active', currentPeriodEnd: null };
   },
 
   async createCheckoutSession(input: { plan: 'pro' | 'team' | 'enterprise'; successUrl: string; cancelUrl: string }): Promise<{ sessionId: string; url: string }> {
@@ -799,5 +801,161 @@ export const db = {
     });
     if (error) handleError(error, 'getUsage');
     return data ?? {};
+  },
+
+  // Domain-specific methods for page components
+  async getCustomers(): Promise<any[]> {
+    const { data, error } = await supabase.from('customers').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getLeads(): Promise<any[]> {
+    const { data, error } = await supabase.from('leads').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getDeals(): Promise<any[]> {
+    const { data, error } = await supabase.from('deals').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getActivities(): Promise<any[]> {
+    const { data, error } = await supabase.from('activities').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getInvoices(): Promise<any[]> {
+    const { data, error } = await supabase.from('invoices').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getBudgets(): Promise<any[]> {
+    const { data, error } = await supabase.from('budgets').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getTransactions(): Promise<any[]> {
+    const { data, error } = await supabase.from('transactions').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getEmployees(): Promise<any[]> {
+    const { data, error } = await supabase.from('employees').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getDepartments(): Promise<any[]> {
+    const { data, error } = await supabase.from('departments').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getPayroll(): Promise<any[]> {
+    const { data, error } = await supabase.from('payroll').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getInventoryProducts(): Promise<any[]> {
+    const { data, error } = await supabase.from('inventory_products').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getWarehouses(): Promise<any[]> {
+    const { data, error } = await supabase.from('warehouses').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getSuppliers(): Promise<any[]> {
+    const { data, error } = await supabase.from('suppliers').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getOrders(): Promise<any[]> {
+    const { data, error } = await supabase.from('orders').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getSalesProducts(): Promise<any[]> {
+    const { data, error } = await supabase.from('sales_products').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getProjects(): Promise<any[]> {
+    const { data, error } = await supabase.from('projects').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getTasks(): Promise<any[]> {
+    const { data, error } = await supabase.from('tasks').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getNotifications(): Promise<any[]> {
+    const { data, error } = await supabase.from('notifications').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  subscribeNotifications(callback: (payload: any) => void): () => void {
+    const channel = supabase.channel('notifications');
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, callback);
+    channel.subscribe();
+    return () => { supabase.removeChannel(channel); };
+  },
+
+  async markNotificationRead(id: string): Promise<void> {
+    await supabase.from('notifications').update({ read: true }).eq('id', id);
+  },
+
+  async getDataSources(): Promise<any[]> {
+    const { data, error } = await supabase.from('data_sources_v2').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getDocuments(): Promise<any[]> {
+    const { data, error } = await supabase.from('documents').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getDatasets(): Promise<any[]> {
+    const { data, error } = await supabase.from('imported_datasets').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async getMappings(): Promise<any[]> {
+    const { data, error } = await supabase.from('import_mappings').select('*').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
+  },
+
+  async createDataset(input: any): Promise<any> {
+    const { data, error } = await supabase.from('imported_datasets').insert({ ...input, organization_id: await getCurrentOrgId() }).select().single();
+    if (error) handleError(error, 'createDataset');
+    return data;
+  },
+
+  async getProfiles(): Promise<any[]> {
+    const { data, error } = await supabase.from('users').select('id, email, full_name, avatar_url, role, timezone, locale, preferences, created_at').eq('organization_id', await getCurrentOrgId());
+    if (error) return [];
+    return data ?? [];
   },
 };

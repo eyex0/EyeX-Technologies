@@ -31,13 +31,13 @@ export function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white">
-      <div className="flex h-14 items-center border-b border-gray-200 px-6">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-800 bg-gray-950">
+      <div className="flex h-14 items-center border-b border-gray-800 px-6">
         <Link to="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center border border-gray-800">
             <span className="text-white font-bold text-sm">E</span>
           </div>
-          <span className="font-semibold text-lg">Enterprise</span>
+          <span className="font-semibold text-lg text-white">Enterprise</span>
         </Link>
       </div>
       <nav className="h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-4">
@@ -51,8 +51,8 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+                  ? 'bg-gray-900/50 text-white'
+                  : 'text-gray-400 hover:bg-gray-900/50 hover:text-white',
               )}
             >
               <Icon className="h-4 w-4" />
