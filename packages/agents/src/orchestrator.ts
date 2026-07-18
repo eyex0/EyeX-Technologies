@@ -1,19 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import type { Database } from '../lib/supabase/types';
-
-export interface AgentContext {
-  orgId: string;
-  userId: string;
-  permissions: string[];
-  budget: TokenBudget;
-}
-
-export interface TokenBudget {
-  maxTokens: number;
-  usedTokens: number;
-}
+import type { Database } from '../../src/lib/supabase/types';
+import { BaseAgent, type AgentContext, type TokenBudget, type AgentOutput, type LLMProvider, type LLMOptions, type LLMResponse, type ToolRegistry } from './base';
+import { SQLAgent } from './sql-agent';
+import { InsightAgent } from './insight-agent';
+import { ActionAgent } from './action-agent';
+import { ForecastAgent } from './forecast-agent';
+import { RootCauseAgent } from './root-cause-agent';
+import { NarrativeAgent } from './narrative-agent';
+import { DataQualityAgent } from './data-quality-agent';
+import { PreMortemAgent } from './pre-mortem-agent';
 
 export interface AgentStep {
   agent: AgentType;
@@ -218,33 +215,6 @@ export class AgentOrchestrator {
   }
 }
 
-// ==================== Base Agent ====================
-
-abstract class BaseAgent {
-  constructor(
-    protected llm: LLMProvider,
-    protected db: ReturnType<typeof createClient<Database>>,
-    protected tools?: ToolRegistry
-  ) {}
-
-  abstract execute(input: unknown, context: AgentContext): Promise<AgentOutput>;
-
-  protected async callLLM(prompt: string, options: LLMOptions = {}): Promise<LLMResponse> {
-    return this.llm.complete(prompt, options);
-  }
-
-  protected async callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
-    if (!this.tools) throw new Error('No tool registry');
-    return this.tools.execute(name, args);
-  }
-}
-
-interface AgentOutput {
-  output: unknown;
-  tokensUsed: number;
-  metadata?: Record<string, unknown>;
-}
-
 // ==================== Planner Agent ====================
 
 class PlannerAgent {
@@ -369,22 +339,6 @@ interface Tool {
 
 // ==================== Types ====================
 
-interface LLMProvider {
-  complete(prompt: string, options?: LLMOptions): Promise<LLMResponse>;
-}
-
-interface LLMOptions {
-  temperature?: number;
-  maxTokens?: number;
-  stop?: string[];
-}
-
-interface LLMResponse {
-  content: string;
-  tokensUsed: number;
-  model: string;
-}
-
 interface OrchestratorConfig {
   maxTokensPerRequest: number;
   defaultTimeoutMs: number;
@@ -408,4 +362,4 @@ interface AgentRun {
   completedAt: Date | null;
 }
 
-export { AgentOrchestrator, BaseAgent, AgentContext, AgentStep, AgentType, AgentRequest, AgentResponse, AgentPlan, TokenBudgetManager };
+export type { AgentContext, AgentStep, AgentType, AgentRequest, AgentResponse, AgentPlan };

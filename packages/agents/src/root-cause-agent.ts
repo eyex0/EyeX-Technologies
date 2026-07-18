@@ -1,5 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput } from './base';
 
 interface RootCauseInput {
   metric: string;
@@ -24,8 +23,6 @@ interface RootCauseOutput extends AgentOutput {
 }
 
 export class RootCauseAgent extends BaseAgent {
-  private db = createClient<Database>();
-
   async execute(input: RootCauseInput, context: AgentContext): Promise<RootCauseOutput> {
     const { metric, anomalyTimestamp, dimensions = {}, lookbackDays = 30 } = input;
 

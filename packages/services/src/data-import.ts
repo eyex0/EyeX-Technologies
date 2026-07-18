@@ -1,4 +1,4 @@
-import { createClient, type Database } from '../lib/supabase/client';
+import { createClient, type Database } from '../../src/lib/supabase/client';
 import * as XLSX from 'xlsx';
 
 const db = createClient<Database>();

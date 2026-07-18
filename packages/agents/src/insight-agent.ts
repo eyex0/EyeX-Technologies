@@ -1,5 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from '../agents/orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput } from './base';
 
 interface TimeSeriesPoint {
   timestamp: Date;
@@ -55,7 +54,7 @@ export class InsightAgent extends BaseAgent {
     // Fetch metric data
     const data = await this.fetchMetricData(metric, dimensions, timeframe, context);
     if (data.length < 10) {
-      return this.output({
+      return {
         output: {
           insights: [{
             type: 'insufficient_data',
@@ -68,7 +67,7 @@ export class InsightAgent extends BaseAgent {
           }],
         },
         tokensUsed: 0,
-      );
+      };
     }
 
     switch (type) {

@@ -1,5 +1,19 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from '../agents/orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider } from './base';
+
+class ProphetForecaster {
+  async train(data: any[]): Promise<any> { return this; }
+  async predict(horizon: number, frequency: string): Promise<any[]> { return []; }
+}
+
+class NeuralProphetForecaster {
+  async train(data: any[]): Promise<any> { return this; }
+  async predict(horizon: number, frequency: string): Promise<any[]> { return []; }
+}
+
+class EnsembleForecaster {
+  async train(models: any[], data: any[]): Promise<any> { return this; }
+  async predict(horizon: number, frequency: string): Promise<any[]> { return []; }
+}
 
 interface ForecastInput {
   metric: string;
@@ -30,7 +44,7 @@ export class ForecastAgent extends BaseAgent {
 
   constructor(
     llm: LLMProvider,
-    db: ReturnType<typeof createClient<Database>>
+    db: any
   ) {
     super(llm, db);
     this.prophet = new ProphetForecaster();

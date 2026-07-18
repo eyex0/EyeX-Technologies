@@ -1,7 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
-
-const db = createClient<Database>();
+import { BaseAgent, type AgentContext, type AgentOutput } from './base';
 
 interface DataQualityInput {
   sourceId?: string;
@@ -33,7 +30,7 @@ interface DataQualityOutput extends AgentOutput {
 export class DataQualityAgent extends BaseAgent {
   constructor(
     llm: LLMProvider,
-    db: ReturnType<typeof createClient<Database>>
+    db: any
   ) {
     super(llm, db);
   }

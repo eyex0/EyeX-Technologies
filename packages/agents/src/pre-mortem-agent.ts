@@ -1,5 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput } from './base';
 
 interface PreMortemInput {
   scenario: string;
@@ -28,8 +27,6 @@ interface PreMortemOutput extends AgentOutput {
 }
 
 export class PreMortemAgent extends BaseAgent {
-  private db = createClient<Database>();
-
   constructor(llm: LLMProvider, db: ReturnType<typeof createClient<Database>>) {
     super(llm, db);
   }

@@ -1,8 +1,8 @@
-import { createClient, type Database } from '../lib/supabase/client';
-import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider, type LLMOptions, type LLMResponse, type ToolRegistry } from './orchestrator';
+import { createClient, type Database } from '../../src/lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider, type LLMOptions, type LLMResponse, type ToolRegistry } from './base';
 import { z } from 'zod';
-import { SQLValidator } from '../services/sql-validator';
-import { SchemaCache } from '../services/schema-cache';
+import { SQLValidator } from '../../packages/services/src/sql-validator';
+import { SchemaCache } from '../../packages/services/src/schema-cache';
 
 interface SQLAgentInput {
   question: string;

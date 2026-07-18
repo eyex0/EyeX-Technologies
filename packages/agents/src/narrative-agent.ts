@@ -1,5 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput } from './base';
 
 interface NarrativeInput {
   type: 'board_deck' | 'executive_summary' | 'metric_deep_dive' | 'anomaly_report';
@@ -27,7 +26,6 @@ interface SlideTemplate {
 }
 
 export class NarrativeAgent extends BaseAgent {
-  private db = createClient<Database>();
   private slideTemplates: Map<string, SlideTemplate[]> = new Map();
 
   constructor(

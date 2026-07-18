@@ -16,8 +16,7 @@
     "./metric-cache": "./src/metric-cache.ts",
     "./billing": "./src/billing.ts",
     "./auth": "./src/auth.ts",
-    "./permissions": "./src/permissions.ts",
-    "./git-ops": "./src/git-ops.ts"
+    "./permissions": "./src/permissions.ts"
   },
   "scripts": {
     "build": "tsc",

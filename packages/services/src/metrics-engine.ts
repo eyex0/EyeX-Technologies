@@ -1,11 +1,11 @@
 import { BaseAgent, type AgentContext, type AgentOutput } from './orchestrator';
-import { createClient, type Database } from '../lib/supabase/client';
-import { InsightAgent, type InsightRequest } from '../agents/insight-agent';
-import { ForecastAgent } from '../agents/forecast-agent';
-import { RootCauseAgent } from '../agents/root-cause-agent';
-import { NarrativeAgent } from '../agents/narrative-agent';
-import { DataQualityAgent } from '../agents/data-quality-agent';
-import { PreMortemAgent } from '../agents/pre-mortem-agent';
+import { createClient, type Database } from '../../src/lib/supabase/client';
+import { InsightAgent, type InsightRequest } from '../../packages/agents/src/insight-agent';
+import { ForecastAgent } from '../../packages/agents/src/forecast-agent';
+import { RootCauseAgent } from '../../packages/agents/src/root-cause-agent';
+import { NarrativeAgent } from '../../packages/agents/src/narrative-agent';
+import { DataQualityAgent } from '../../packages/agents/src/data-quality-agent';
+import { PreMortemAgent } from '../../packages/agents/src/pre-mortem-agent';
 
 interface MetricDefinition {
   name: string;

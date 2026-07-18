@@ -1,5 +1,5 @@
-import { createClient, type Database } from '../lib/supabase/client';
-import { BaseAgent, type AgentContext, type AgentOutput } from '../agents/orchestrator';
+import { createClient, type Database } from '../../src/lib/supabase/client';
+import { BaseAgent, type AgentContext, type AgentOutput } from '../../packages/agents/src/orchestrator';
 
 interface SchemaInfo {
   tables: Map<string, TableInfo>;
