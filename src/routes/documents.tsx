@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DocumentsAppPage } from "@/pages/DocumentsApp";
+import { ProtectedRoute } from "@/components/auth/protected-route";
 
 export const Route = createFileRoute("/documents")({
   head: () => ({
@@ -8,7 +9,12 @@ export const Route = createFileRoute("/documents")({
       { name: "description", content: "Manage contracts, invoices, reports, and policies across your organization." },
       { property: "og:title", content: "Documents — EyeX Technologies" },
       { property: "og:description", content: "Manage contracts, invoices, reports, and policies." },
+      { property: "og:type", content: "website" },
     ],
   }),
-  component: DocumentsAppPage,
+  component: () => (
+    <ProtectedRoute>
+      <DocumentsAppPage />
+    </ProtectedRoute>
+  ),
 });

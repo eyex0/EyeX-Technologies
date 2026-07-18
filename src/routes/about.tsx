@@ -8,6 +8,7 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: 'The people, principles and origin story behind EyeX Technologies.' },
       { property: "og:title", content: 'About EyeX Technologies — Origin' },
       { property: "og:description", content: 'The people, principles and origin story behind EyeX Technologies.' },
+      { property: "og:type", content: "website" },
     ],
   }),
   component: AboutPage,

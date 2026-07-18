@@ -16,6 +16,7 @@ const FOOTER_LINKS = [
     items: [
       { to: "/documents", label: "Documents" },
       { to: "/about", label: "About" },
+      { to: "/contact", label: "Contact" },
     ],
   },
 ];

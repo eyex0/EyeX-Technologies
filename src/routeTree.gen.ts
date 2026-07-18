@@ -15,20 +15,24 @@ import { Route as AiChatRouteImport } from './routes/ai-chat'
 import { Route as AiCopilotRouteImport } from './routes/ai-copilot'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as ApiRouteImport } from './routes/api'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as FinanceRouteImport } from './routes/finance'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as HrRouteImport } from './routes/hr'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as InventoryRouteImport } from './routes/inventory'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SalesRouteImport } from './routes/sales'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 
 const IndexRoute = IndexRouteImport.update({
@@ -61,6 +65,11 @@ const ApiRoute = ApiRouteImport.update({
   path: '/api',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CrmRoute = CrmRouteImport.update({
   id: '/crm',
   path: '/crm',
@@ -86,6 +95,11 @@ const FinanceRoute = FinanceRouteImport.update({
   path: '/finance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HrRoute = HrRouteImport.update({
   id: '/hr',
   path: '/hr',
@@ -99,6 +113,11 @@ const IntegrationsRoute = IntegrationsRouteImport.update({
 const InventoryRoute = InventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketingRoute = MarketingRouteImport.update({
@@ -131,6 +150,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -144,20 +168,24 @@ export interface FileRoutesByFullPath {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
   '/inventory': typeof InventoryRoute
+  '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
   '/notifications': typeof NotificationsRoute
   '/projects': typeof ProjectsRoute
   '/reports': typeof ReportsRoute
   '/sales': typeof SalesRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesByTo {
@@ -167,20 +195,24 @@ export interface FileRoutesByTo {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
   '/inventory': typeof InventoryRoute
+  '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
   '/notifications': typeof NotificationsRoute
   '/projects': typeof ProjectsRoute
   '/reports': typeof ReportsRoute
   '/sales': typeof SalesRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesById {
@@ -191,20 +223,24 @@ export interface FileRoutesById {
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
   '/inventory': typeof InventoryRoute
+  '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
   '/notifications': typeof NotificationsRoute
   '/projects': typeof ProjectsRoute
   '/reports': typeof ReportsRoute
   '/sales': typeof SalesRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRouteTypes {
@@ -216,20 +252,24 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
     | '/finance'
+    | '/forgot-password'
     | '/hr'
     | '/integrations'
     | '/inventory'
+    | '/login'
     | '/marketing'
     | '/notifications'
     | '/projects'
     | '/reports'
     | '/sales'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -239,20 +279,24 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
     | '/finance'
+    | '/forgot-password'
     | '/hr'
     | '/integrations'
     | '/inventory'
+    | '/login'
     | '/marketing'
     | '/notifications'
     | '/projects'
     | '/reports'
     | '/sales'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
   id:
     | '__root__'
@@ -262,20 +306,24 @@ export interface FileRouteTypes {
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
     | '/finance'
+    | '/forgot-password'
     | '/hr'
     | '/integrations'
     | '/inventory'
+    | '/login'
     | '/marketing'
     | '/notifications'
     | '/projects'
     | '/reports'
     | '/sales'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
   fileRoutesById: FileRoutesById
 }
@@ -286,20 +334,24 @@ export interface RootRouteChildren {
   AiCopilotRoute: typeof AiCopilotRoute
   AnalyticsRoute: typeof AnalyticsRoute
   ApiRoute: typeof ApiRoute
+  ContactRoute: typeof ContactRoute
   CrmRoute: typeof CrmRoute
   DashboardRoute: typeof DashboardRoute
   DataSourcesRoute: typeof DataSourcesRoute
   DocumentsRoute: typeof DocumentsRoute
   FinanceRoute: typeof FinanceRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   HrRoute: typeof HrRoute
   IntegrationsRoute: typeof IntegrationsRoute
   InventoryRoute: typeof InventoryRoute
+  LoginRoute: typeof LoginRoute
   MarketingRoute: typeof MarketingRoute
   NotificationsRoute: typeof NotificationsRoute
   ProjectsRoute: typeof ProjectsRoute
   ReportsRoute: typeof ReportsRoute
   SalesRoute: typeof SalesRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -347,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/crm': {
       id: '/crm'
       path: '/crm'
@@ -382,6 +441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FinanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hr': {
       id: '/hr'
       path: '/hr'
@@ -401,6 +467,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory'
       fullPath: '/inventory'
       preLoaderRoute: typeof InventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketing': {
@@ -445,6 +518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -462,20 +542,24 @@ const rootRouteChildren: RootRouteChildren = {
   AiCopilotRoute: AiCopilotRoute,
   AnalyticsRoute: AnalyticsRoute,
   ApiRoute: ApiRoute,
+  ContactRoute: ContactRoute,
   CrmRoute: CrmRoute,
   DashboardRoute: DashboardRoute,
   DataSourcesRoute: DataSourcesRoute,
   DocumentsRoute: DocumentsRoute,
   FinanceRoute: FinanceRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   HrRoute: HrRoute,
   IntegrationsRoute: IntegrationsRoute,
   InventoryRoute: InventoryRoute,
+  LoginRoute: LoginRoute,
   MarketingRoute: MarketingRoute,
   NotificationsRoute: NotificationsRoute,
   ProjectsRoute: ProjectsRoute,
   ReportsRoute: ReportsRoute,
   SalesRoute: SalesRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport

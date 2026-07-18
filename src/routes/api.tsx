@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ApiPage } from "@/pages/Api";
+import { ProtectedRoute } from "@/components/auth/protected-route";
 
 export const Route = createFileRoute("/api")({
   head: () => ({
@@ -8,7 +9,12 @@ export const Route = createFileRoute("/api")({
       { name: "description", content: 'Programmatic access to QORX. Typed endpoints, deterministic outputs, enterprise-grade rate limits.' },
       { property: "og:title", content: 'API Platform — EyeX Technologies' },
       { property: "og:description", content: 'Programmatic access to QORX. Typed endpoints, deterministic outputs, enterprise-grade rate limits.' },
+      { property: "og:type", content: "website" },
     ],
   }),
-  component: ApiPage,
+  component: () => (
+    <ProtectedRoute>
+      <ApiPage />
+    </ProtectedRoute>
+  ),
 });

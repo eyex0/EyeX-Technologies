@@ -38,12 +38,18 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors">
-            Sign in
-          </button>
-          <button className="luminous-btn-primary px-5 py-2 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex">
-            Request Access
-          </button>
+          <Link
+            to="/login"
+            className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors"
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className="luminous-btn-primary px-5 py-2 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex"
+          >
+            Sign Up
+          </Link>
           <button
             aria-label="Toggle menu"
             className="lg:hidden inline-flex items-center justify-center h-9 w-9 border border-eye-border text-eye-white"
@@ -69,9 +75,20 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <button className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start">
-              Request Access
-            </button>
+            <Link
+              to="/login"
+              onClick={() => setOpen(false)}
+              className="text-eye-text hover:text-eye-white transition-colors text-sm uppercase tracking-widest font-medium"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => setOpen(false)}
+              className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start text-center"
+            >
+              Sign Up
+            </Link>
           </div>
         </div>
       )}

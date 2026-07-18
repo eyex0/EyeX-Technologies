@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   BarChart3,
@@ -10,8 +11,108 @@ import {
   HelpCircle,
   Server,
 } from "lucide-react";
+import {
+  FinanceService,
+  CrmService,
+  SalesService,
+  HrService,
+} from "@/services/data";
+
+function formatCurrency(value: number): string {
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}k`;
+  return `$${value.toFixed(2)}`;
+}
+
+function formatNumber(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
+  return value.toLocaleString();
+}
+
+function SkeletonCard() {
+  return (
+    <div className="glass-panel p-5 relative overflow-hidden">
+      <div className="flex justify-between items-start mb-4">
+        <div className="h-3 w-24 bg-surface-container-highest rounded animate-pulse" />
+        <div className="h-3 w-12 bg-surface-container-highest rounded animate-pulse" />
+      </div>
+      <div className="h-8 w-32 bg-surface-container-highest rounded animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
+        <div className="h-full bg-primary-brand/30 w-full animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonRow() {
+  return (
+    <div className="flex gap-3 items-start animate-pulse">
+      <div className="w-2 h-2 mt-2 bg-surface-container-highest rounded" />
+      <div className="space-y-1.5">
+        <div className="h-2.5 w-20 bg-surface-container-highest rounded" />
+        <div className="h-3 w-48 bg-surface-container-highest rounded" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonTable() {
+  return (
+    <div className="space-y-4 p-6">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="flex gap-6 animate-pulse">
+          <div className="h-3 w-24 bg-surface-container-highest rounded" />
+          <div className="h-3 w-28 bg-surface-container-highest rounded" />
+          <div className="h-3 w-20 bg-surface-container-highest rounded" />
+          <div className="h-3 w-16 bg-surface-container-highest rounded" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="flex items-center justify-center py-8">
+      <p className="text-outline text-sm font-mono">No {label} data available</p>
+    </div>
+  );
+}
 
 export function DashboardPage() {
+  const finance = useQuery({
+    queryKey: ["finance-summary"],
+    queryFn: () => FinanceService.getSummary(),
+  });
+
+  const crm = useQuery({
+    queryKey: ["crm-summary"],
+    queryFn: () => CrmService.getSummary(),
+  });
+
+  const sales = useQuery({
+    queryKey: ["sales-summary"],
+    queryFn: () => SalesService.getSummary(),
+  });
+
+  const hr = useQuery({
+    queryKey: ["hr-summary"],
+    queryFn: () => HrService.getSummary(),
+  });
+
+  const transactions = useQuery({
+    queryKey: ["finance-transactions"],
+    queryFn: () => FinanceService.getTransactions(),
+  });
+
+  const activities = useQuery({
+    queryKey: ["crm-activities"],
+    queryFn: () => CrmService.getActivities(),
+  });
+
+  const isLoading = finance.isLoading || crm.isLoading || sales.isLoading || hr.isLoading;
+
   return (
     <div className="dark bg-eye-bg">
       {/* Sidebar Navigation */}
@@ -28,7 +129,6 @@ export function DashboardPage() {
           </div>
         </div>
         <nav className="flex-1 space-y-1">
-          {/* Active: Dashboard */}
           <a
             className="flex items-center gap-3 py-3 px-4 text-primary-brand border-l-2 border-primary-brand bg-primary-brand/5 transition-colors text-sm"
             href="#"
@@ -130,53 +230,80 @@ export function DashboardPage() {
         <div className="px-8 pt-8 max-w-[1400px] mx-auto">
           {/* KPI Cards Row */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10" data-fade-up>
-            {/* Card 1 - Revenue */}
-            <div className="glass-panel p-5 relative overflow-hidden group">
-              <div className="flex justify-between items-start mb-4">
-                <p className="text-outline text-[12px] uppercase font-mono">Total Revenue</p>
-                <span className="text-primary-brand text-[14px] font-mono font-bold">+12.4%</span>
-              </div>
-              <h3 className="text-3xl font-bold text-on-surface">$1.24M</h3>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                <div className="h-full bg-primary-brand w-[70%] shadow-[0_0_10px_#38BDF8]" />
-              </div>
-            </div>
+            {isLoading ? (
+              <>
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+              </>
+            ) : (
+              <>
+                {/* Card 1 - Total Revenue */}
+                <div className="glass-panel p-5 relative overflow-hidden group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-outline text-[12px] uppercase font-mono">Total Revenue</p>
+                    <span className="text-primary-brand text-[14px] font-mono font-bold">
+                      {finance.data?.totalRevenue ? `${formatCurrency(finance.data.totalRevenue)}` : "--"}
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-bold text-on-surface">
+                    {formatCurrency(finance.data?.totalRevenue ?? 0)}
+                  </h3>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
+                    <div className="h-full bg-primary-brand w-[70%] shadow-[0_0_10px_#38BDF8]" />
+                  </div>
+                </div>
 
-            {/* Card 2 - Users */}
-            <div className="glass-panel p-5 relative overflow-hidden group">
-              <div className="flex justify-between items-start mb-4">
-                <p className="text-outline text-[12px] uppercase font-mono">Active Users</p>
-                <span className="text-primary-brand text-[14px] font-mono font-bold">+5.1%</span>
-              </div>
-              <h3 className="text-3xl font-bold text-on-surface">45.2k</h3>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                <div className="h-full bg-primary-brand w-[45%] shadow-[0_0_10px_#38BDF8]" />
-              </div>
-            </div>
+                {/* Card 2 - Active Users (CRM) */}
+                <div className="glass-panel p-5 relative overflow-hidden group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-outline text-[12px] uppercase font-mono">Active Customers</p>
+                    <span className="text-primary-brand text-[14px] font-mono font-bold">
+                      {crm.data?.activeCustomers ?? 0}
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-bold text-on-surface">
+                    {formatNumber(crm.data?.totalCustomers ?? 0)}
+                  </h3>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
+                    <div className="h-full bg-primary-brand w-[45%] shadow-[0_0_10px_#38BDF8]" />
+                  </div>
+                </div>
 
-            {/* Card 3 - API Calls */}
-            <div className="glass-panel p-5 relative overflow-hidden group">
-              <div className="flex justify-between items-start mb-4">
-                <p className="text-outline text-[12px] uppercase font-mono">API Calls</p>
-                <span className="text-red-400 text-[14px] font-mono font-bold">-2.3%</span>
-              </div>
-              <h3 className="text-3xl font-bold text-on-surface">8.4M</h3>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-red-400/20">
-                <div className="h-full bg-red-400 w-[80%] shadow-[0_0_10px_#ffb4ab]" />
-              </div>
-            </div>
+                {/* Card 3 - Pipeline Value */}
+                <div className="glass-panel p-5 relative overflow-hidden group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-outline text-[12px] uppercase font-mono">Pipeline Value</p>
+                    <span className="text-primary-brand text-[14px] font-mono font-bold">
+                      {crm.data?.conversionRate.toFixed(1)}% CVR
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-bold text-on-surface">
+                    {formatCurrency(crm.data?.pipelineValue ?? 0)}
+                  </h3>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
+                    <div className="h-full bg-primary-brand w-[80%] shadow-[0_0_10px_#38BDF8]" />
+                  </div>
+                </div>
 
-            {/* Card 4 - Uptime */}
-            <div className="glass-panel p-5 relative overflow-hidden group">
-              <div className="flex justify-between items-start mb-4">
-                <p className="text-outline text-[12px] uppercase font-mono">System Uptime</p>
-                <span className="text-primary-brand text-[14px] font-mono font-bold">STABLE</span>
-              </div>
-              <h3 className="text-3xl font-bold text-on-surface">99.99%</h3>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                <div className="h-full bg-primary-brand w-[99%] shadow-[0_0_10px_#38BDF8]" />
-              </div>
-            </div>
+                {/* Card 4 - Employees */}
+                <div className="glass-panel p-5 relative overflow-hidden group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-outline text-[12px] uppercase font-mono">Employees</p>
+                    <span className="text-primary-brand text-[14px] font-mono font-bold">
+                      {hr.data?.activeEmployees} active
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-bold text-on-surface">
+                    {formatNumber(hr.data?.totalEmployees ?? 0)}
+                  </h3>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
+                    <div className="h-full bg-primary-brand w-[99%] shadow-[0_0_10px_#38BDF8]" />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Middle Section: Revenue Chart & Activity Feed */}
@@ -203,7 +330,6 @@ export function DashboardPage() {
                 </div>
               </div>
               <div className="flex-1 relative flex items-end">
-                {/* Chart Grid Background */}
                 <div
                   className="absolute inset-0"
                   style={{
@@ -235,62 +361,36 @@ export function DashboardPage() {
               </div>
             </div>
 
-            {/* System Activity Feed */}
+            {/* Activity Feed */}
             <div className="glass-panel p-6 flex flex-col h-[400px]">
               <h2 className="text-base font-bold text-on-surface mb-6">System Activity</h2>
               <div className="flex-1 overflow-y-auto space-y-4">
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-primary-brand group-hover:shadow-[0_0_8px_#38BDF8]" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:22:01] AUTH</p>
-                    <p className="text-sm text-on-surface">
-                      User <span className="text-primary-brand">ADMIN_PROX</span> verified.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-primary-brand/40" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:21:45] NET</p>
-                    <p className="text-sm text-on-surface">
-                      Gateway node <span className="font-mono">G-LON-04</span> active.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-red-400 group-hover:shadow-[0_0_8px_#ffb4ab]" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:19:33] CRIT</p>
-                    <p className="text-sm text-on-surface">
-                      Disk I/O latency spike in <span className="text-red-400">Zone-C</span>.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-primary-brand/40" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:18:12] SYNC</p>
-                    <p className="text-sm text-on-surface">Database clustering synchronized.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-primary-brand/40" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:15:59] INFO</p>
-                    <p className="text-sm text-on-surface">
-                      Auto-scaling group expanded by 2 units.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start group">
-                  <div className="w-2 h-2 mt-2 bg-primary-brand/40" />
-                  <div>
-                    <p className="text-[12px] font-mono text-outline">[14:12:01] LOG</p>
-                    <p className="text-sm text-on-surface">
-                      Weekly security audit complete.
-                    </p>
-                  </div>
-                </div>
+                {activities.isLoading ? (
+                  <>
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                  </>
+                ) : activities.data && activities.data.length > 0 ? (
+                  activities.data.slice(0, 6).map((activity) => (
+                    <div key={activity.id} className="flex gap-3 items-start group">
+                      <div className="w-2 h-2 mt-2 bg-primary-brand group-hover:shadow-[0_0_8px_#38BDF8]" />
+                      <div>
+                        <p className="text-[12px] font-mono text-outline">
+                          [{new Date(activity.created_at).toLocaleTimeString()}] {activity.type?.toUpperCase() ?? "ACTIVITY"}
+                        </p>
+                        <p className="text-sm text-on-surface">
+                          <span className="text-primary-brand">{activity.subject || "System"}</span>{" "}
+                          {activity.description || "Event recorded"}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <EmptyState label="activity" />
+                )}
               </div>
               <button className="mt-4 w-full py-2 text-[12px] font-mono text-outline-variant hover:text-primary-brand transition-colors border border-outline-variant/20 uppercase tracking-widest">
                 View Detailed Logs
@@ -308,91 +408,66 @@ export function DashboardPage() {
                   Export CSV
                 </button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-surface-container-low border-b border-eye-border">
-                      <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                        Transaction ID
-                      </th>
-                      <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                        Customer
-                      </th>
-                      <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                        Amount
-                      </th>
-                      <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                        Status
-                      </th>
-                      <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                        Timestamp
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-eye-border">
-                    <tr className="hover:bg-primary-brand/5 transition-colors">
-                      <td className="px-6 py-4 font-mono text-on-surface text-sm">TX-882910</td>
-                      <td className="px-6 py-4 text-sm font-bold">Nexus Dynamics</td>
-                      <td className="px-6 py-4 font-mono text-on-surface font-bold">
-                        $12,400.00
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-primary-brand/10 text-primary-brand border border-primary-brand/20">
-                          SUCCESS
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-outline text-[12px]">
-                        2024-05-24 14:12
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-primary-brand/5 transition-colors">
-                      <td className="px-6 py-4 font-mono text-on-surface text-sm">TX-882909</td>
-                      <td className="px-6 py-4 text-sm font-bold">CloudCore AI</td>
-                      <td className="px-6 py-4 font-mono text-on-surface font-bold">
-                        $45,000.00
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-primary-brand/10 text-primary-brand border border-primary-brand/20">
-                          SUCCESS
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-outline text-[12px]">
-                        2024-05-24 13:58
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-primary-brand/5 transition-colors">
-                      <td className="px-6 py-4 font-mono text-on-surface text-sm">TX-882908</td>
-                      <td className="px-6 py-4 text-sm font-bold">Aether Labs</td>
-                      <td className="px-6 py-4 font-mono text-on-surface font-bold">
-                        $2,150.00
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-secondary/10 text-secondary border border-secondary/20">
-                          PENDING
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-outline text-[12px]">
-                        2024-05-24 13:45
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-primary-brand/5 transition-colors">
-                      <td className="px-6 py-4 font-mono text-on-surface text-sm">TX-882907</td>
-                      <td className="px-6 py-4 text-sm font-bold">Stellar Ventures</td>
-                      <td className="px-6 py-4 font-mono text-on-surface font-bold">
-                        $18,720.00
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-primary-brand/10 text-primary-brand border border-primary-brand/20">
-                          SUCCESS
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-outline text-[12px]">
-                        2024-05-24 13:22
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {transactions.isLoading ? (
+                <SkeletonTable />
+              ) : transactions.data && transactions.data.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-surface-container-low border-b border-eye-border">
+                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
+                          Transaction ID
+                        </th>
+                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
+                          Description
+                        </th>
+                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
+                          Amount
+                        </th>
+                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
+                          Type
+                        </th>
+                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
+                          Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-eye-border">
+                      {transactions.data.slice(0, 5).map((tx) => (
+                        <tr key={tx.id} className="hover:bg-primary-brand/5 transition-colors">
+                          <td className="px-6 py-4 font-mono text-on-surface text-sm">
+                            {tx.id.slice(0, 8).toUpperCase()}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-bold">
+                            {tx.description || tx.category || "Transaction"}
+                          </td>
+                          <td className="px-6 py-4 font-mono text-on-surface font-bold">
+                            {formatCurrency(Number(tx.amount))}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`px-2 py-0.5 text-[10px] font-mono font-bold border ${
+                                tx.type === "revenue"
+                                  ? "bg-primary-brand/10 text-primary-brand border-primary-brand/20"
+                                  : "bg-red-400/10 text-red-400 border-red-400/20"
+                              }`}
+                            >
+                              {tx.type?.toUpperCase() ?? "N/A"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 font-mono text-outline text-[12px]">
+                            {tx.transaction_date
+                              ? new Date(tx.transaction_date).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <EmptyState label="transaction" />
+              )}
             </div>
 
             {/* Infrastructure Status */}
@@ -401,29 +476,69 @@ export function DashboardPage() {
               <div className="space-y-8">
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">CPU Utilization</span>
-                    <span className="font-mono text-primary-brand font-bold">64%</span>
+                    <span className="text-sm font-bold">Total Revenue</span>
+                    <span className="font-mono text-primary-brand font-bold">
+                      {formatCurrency(finance.data?.totalRevenue ?? 0)}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-eye-border">
-                    <div className="h-full bg-primary-brand" style={{ width: "64%" }} />
+                    <div
+                      className="h-full bg-primary-brand"
+                      style={{
+                        width: `${Math.min(
+                          ((finance.data?.totalRevenue ?? 0) /
+                            Math.max(finance.data?.totalInvoiced ?? 1, 1)) *
+                            100,
+                          100
+                        )}%`,
+                      }}
+                    />
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">Memory Capacity</span>
-                    <span className="font-mono text-primary-brand font-bold">42%</span>
+                    <span className="text-sm font-bold">Net Income</span>
+                    <span className="font-mono text-primary-brand font-bold">
+                      {formatCurrency(finance.data?.netIncome ?? 0)}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-eye-border">
-                    <div className="h-full bg-primary-brand" style={{ width: "42%" }} />
+                    <div
+                      className="h-full bg-primary-brand"
+                      style={{
+                        width: `${Math.min(
+                          ((finance.data?.netIncome ?? 0) /
+                            Math.max(finance.data?.totalRevenue ?? 1, 1)) *
+                            100,
+                          100
+                        )}%`,
+                      }}
+                    />
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">NVMe Storage</span>
-                    <span className="font-mono text-red-400 font-bold">88%</span>
+                    <span className="text-sm font-bold">Pending Invoices</span>
+                    <span className="font-mono text-red-400 font-bold">
+                      {finance.data?.pendingInvoices ?? 0}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-eye-border">
-                    <div className="h-full bg-red-400" style={{ width: "88%" }} />
+                    <div
+                      className="h-full bg-red-400"
+                      style={{
+                        width: `${Math.min(
+                          ((finance.data?.pendingInvoices ?? 0) /
+                            Math.max(
+                              (finance.data?.pendingInvoices ?? 0) +
+                                (finance.data?.overdueInvoices ?? 0),
+                              1
+                            )) *
+                            100,
+                          100
+                        )}%`,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -433,7 +548,7 @@ export function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-[12px] font-mono text-primary-brand font-bold">
-                    All nodes operational
+                    All systems operational
                   </p>
                   <p className="text-[10px] text-outline uppercase tracking-widest">
                     Global Cluster: ACTIVE

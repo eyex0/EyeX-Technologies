@@ -1,3 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { IntegrationsPage } from "@/pages/Integrations";
-export const Route = createFileRoute("/integrations")({ component: IntegrationsPage });
+import { ProtectedRoute } from "@/components/auth/protected-route";
+
+export const Route = createFileRoute("/integrations")({
+  head: () => ({
+    meta: [
+      { title: 'Integrations | EyeX Technologies' },
+      { name: "description", content: 'Connect and manage third-party integrations for your business platform.' },
+      { property: "og:title", content: 'Integrations | EyeX Technologies' },
+      { property: "og:description", content: 'Connect and manage third-party integrations for your business platform.' },
+      { property: "og:type", content: "website" },
+    ],
+  }),
+  component: () => (
+    <ProtectedRoute>
+      <IntegrationsPage />
+    </ProtectedRoute>
+  ),
+});

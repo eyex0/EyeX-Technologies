@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { chatWithCopilotFn } from "@/services/chat.service";
 import {
   Send,
   Plus,
@@ -15,8 +18,78 @@ import {
   Terminal,
 } from "lucide-react";
 
+interface ChatMessage {
+  role: "user" | "assistant";
+  text: string;
+  timestamp: string;
+}
+
 export function AiChatPage() {
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  interface ChatResponse {
+    success: boolean;
+    text?: string;
+    error?: string;
+  }
+
+  const chatMutation = useMutation<ChatResponse, Error, { message: string; history: { role: string; text: string }[] }>({
+    mutationFn: async ({ message, history }) => {
+      return chatWithCopilotFn({ data: { message, history } }) as Promise<ChatResponse>;
+    },
+    onSuccess: (result) => {
+      if (result.success && result.text) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", text: result.text!, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+        ]);
+      } else {
+        toast.error(result.error || "Failed to get response");
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Connection failed. Please try again.");
+    },
+  });
+
+  const handleSend = () => {
+    const trimmed = message.trim();
+    if (!trimmed || chatMutation.isPending) return;
+
+    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const userMsg: ChatMessage = { role: "user", text: trimmed, timestamp: now };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+
+    chatMutation.mutate({
+      message: trimmed,
+      history: messages.map((m) => ({ role: m.role, text: m.text })),
+    });
+
+    setMessage("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "";
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard");
+  };
 
   return (
     <div className="h-screen flex text-eye-white overflow-hidden relative">
@@ -40,7 +113,10 @@ export function AiChatPage() {
           </div>
         </div>
         <div className="px-4 mb-6">
-          <button className="w-full py-3 px-4 bg-white hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300 rounded flex items-center justify-center gap-2 text-background font-bold text-sm">
+          <button
+            onClick={() => { setMessages([]); setMessage(""); }}
+            className="w-full py-3 px-4 bg-white hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300 rounded flex items-center justify-center gap-2 text-background font-bold text-sm"
+          >
             <Plus className="text-lg w-5 h-5" />
             New Analysis
           </button>
@@ -147,138 +223,91 @@ export function AiChatPage() {
 
         {/* Chat History */}
         <section className="flex-1 overflow-y-auto p-8 space-y-8 max-w-4xl mx-auto w-full pb-32">
-          {/* Assistant Message */}
-          <div className="flex flex-col gap-3 group" data-fade-up>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-primary-brand uppercase tracking-widest font-mono">
-                QORX ANALYTIC
-              </span>
-              <span className="text-[10px] text-eye-text/40 font-mono">T+0.002s</span>
-            </div>
-            <div className="pl-6 border-l-2 border-primary-brand py-2" style={{ background: "linear-gradient(90deg, rgba(56,189,248,0.05) 0%, transparent 100%)" }}>
-              <p className="text-eye-white leading-relaxed text-[16px]">
-                Infrastructure optimization sequence initialized. I have mapped the current node
-                distribution across your EMEA clusters. Systems are currently performing at 84.2%
-                efficiency. Would you like me to execute the reallocation protocol for the peak-load
-                shift?
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="w-16 h-16 bg-primary-brand/10 rounded-full flex items-center justify-center mb-6">
+                <Terminal className="text-primary-brand w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">QORX Analytic Core</h3>
+              <p className="text-sm text-eye-text max-w-md">
+                Issue a command to begin analysis. The orchestrator will route your request
+                to the appropriate specialist agent.
               </p>
             </div>
-          </div>
+          )}
 
-          {/* User Message */}
-          <div className="flex flex-col gap-3 items-end" data-fade-up>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-eye-text/40 font-mono">12:45 PM</span>
-              <span className="text-[10px] text-eye-text uppercase tracking-widest font-mono">
-                ADMINISTRATOR
-              </span>
-            </div>
-            <div className="bg-eye-surface border border-eye-border px-6 py-4 rounded-xl max-w-[85%]">
-              <p className="text-eye-white leading-relaxed text-[15px]">
-                Yes, please proceed. Also, generate a Python script to monitor the specific latency
-                spikes we saw in the Frankfurt cluster during the last deployment cycle.
-              </p>
-            </div>
-          </div>
-
-          {/* Assistant Message with Code */}
-          <div className="flex flex-col gap-3 group" data-fade-up>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-primary-brand uppercase tracking-widest font-mono">
-                QORX ANALYTIC
-              </span>
-              <span className="text-[10px] text-eye-text/40 font-mono">T+0.412s</span>
-            </div>
-            <div className="pl-6 border-l-2 border-primary-brand py-2 space-y-4" style={{ background: "linear-gradient(90deg, rgba(56,189,248,0.05) 0%, transparent 100%)" }}>
-              <p className="text-eye-white leading-relaxed text-[16px]">
-                Reallocation protocol executed. Efficiency projected to reach 97.4% within 120
-                seconds.
-                <br />
-                <br />
-                Here is the latency monitoring utility for the Frankfurt cluster. This uses the
-                internal EyeX Telemetry API.
-              </p>
-              <div className="bg-black rounded-lg border border-eye-border overflow-hidden group/code relative">
-                <div className="bg-eye-surface border-b border-eye-border px-4 py-2 flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-eye-text uppercase tracking-tighter">
-                    latency_monitor.py
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`flex flex-col gap-3 group ${msg.role === "user" ? "items-end" : ""}`}
+              data-fade-up
+            >
+              <div className="flex items-center gap-2">
+                {msg.role === "assistant" && (
+                  <span className="text-[10px] text-primary-brand uppercase tracking-widest font-mono">
+                    QORX ANALYTIC
                   </span>
-                  <button aria-label="Copy code" className="text-eye-text hover:text-white transition-all">
-                    <Copy className="text-sm w-4 h-4" />
+                )}
+                <span className="text-[10px] text-eye-text/40 font-mono">{msg.timestamp}</span>
+                {msg.role === "user" && (
+                  <span className="text-[10px] text-eye-text uppercase tracking-widest font-mono">
+                    ADMINISTRATOR
+                  </span>
+                )}
+              </div>
+              {msg.role === "assistant" ? (
+                <div
+                  className="pl-6 border-l-2 border-primary-brand py-2 relative"
+                  style={{ background: "linear-gradient(90deg, rgba(56,189,248,0.05) 0%, transparent 100%)" }}
+                >
+                  <p className="text-eye-white leading-relaxed text-[16px] whitespace-pre-wrap">
+                    {msg.text}
+                  </p>
+                  <button
+                    onClick={() => copyToClipboard(msg.text)}
+                    className="absolute top-2 right-2 text-eye-text/30 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                    aria-label="Copy response"
+                  >
+                    <Copy className="w-4 h-4" />
                   </button>
                 </div>
-                <pre className="p-5 font-mono text-[13px] leading-relaxed text-blue-300/80 overflow-x-auto">
-                  <code>
-                    <span className="text-primary-brand">import</span>{" "}
-                    eyex_telemetry{" "}
-                    <span className="text-primary-brand">as</span> et
-                    {"\n"}
-                    <span className="text-primary-brand">from</span> datetime{" "}
-                    <span className="text-primary-brand">import</span> datetime
-                    {"\n\n"}
-                    <span className="text-zinc-500">
-                      # Configure Frankfurt Cluster Endpoint
-                    </span>
-                    {"\n"}
-                    CLUSTER_ID ={" "}
-                    <span className="text-orange-300">"EMEA-FRA-01"</span>
-                    {"\n"}
-                    THRESHOLD_MS ={" "}
-                    <span className="text-orange-300">45.0</span>
-                    {"\n\n"}
-                    <span className="text-primary-brand">def</span>{" "}
-                    <span className="text-white">monitor_latency</span>():
-                    {"\n"}
-                    {"    "}telemetry = et.Connect(secure=
-                    <span className="text-primary-brand">True</span>)
-                    {"\n"}
-                    {"    "}
-                    <span className="text-primary-brand">while</span>{" "}
-                    <span className="text-primary-brand">True</span>:
-                    {"\n"}
-                    {"        "}metrics = telemetry.get_cluster_stats(CLUSTER_ID)
-                    {"\n"}
-                    {"        "}
-                    <span className="text-primary-brand">if</span>{" "}
-                    metrics.latency &gt; THRESHOLD_MS:
-                    {"\n"}
-                    {"            "}et.alert(f
-                    <span className="text-orange-300">
-                      "Critical Spike: {metrics.latency}ms"
-                    </span>
-                    )
-                    {"\n"}
-                    {"            "}et.log_event(metrics.trace_dump())
-                  </code>
-                </pre>
-              </div>
+              ) : (
+                <div className="bg-eye-surface border border-eye-border px-6 py-4 rounded-xl max-w-[85%]">
+                  <p className="text-eye-white leading-relaxed text-[15px] whitespace-pre-wrap">
+                    {msg.text}
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
+          ))}
 
-          {/* Thinking State */}
-          <div className="flex flex-col gap-3" data-fade-up>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-primary-brand uppercase tracking-widest font-mono">
-                QORX ANALYTIC
-              </span>
-            </div>
-            <div className="flex items-center gap-4 bg-eye-surface/40 border border-primary-brand/10 rounded-full px-5 py-3 w-fit backdrop-blur-md">
-              <div className="flex gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse" />
-                <div
-                  className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse"
-                  style={{ animationDelay: "0.2s" }}
-                />
-                <div
-                  className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse"
-                  style={{ animationDelay: "0.4s" }}
-                />
+          {chatMutation.isPending && (
+            <div className="flex flex-col gap-3" data-fade-up>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-primary-brand uppercase tracking-widest font-mono">
+                  QORX ANALYTIC
+                </span>
               </div>
-              <span className="text-[10px] text-eye-text uppercase tracking-widest font-mono">
-                Thinking
-              </span>
+              <div className="flex items-center gap-4 bg-eye-surface/40 border border-primary-brand/10 rounded-full px-5 py-3 w-fit backdrop-blur-md">
+                <div className="flex gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse" />
+                  <div
+                    className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse"
+                    style={{ animationDelay: "0.2s" }}
+                  />
+                  <div
+                    className="w-1.5 h-1.5 rounded-full bg-primary-brand animate-pulse"
+                    style={{ animationDelay: "0.4s" }}
+                  />
+                </div>
+                <span className="text-[10px] text-eye-text uppercase tracking-widest font-mono">
+                  Thinking
+                </span>
+              </div>
             </div>
-          </div>
+          )}
+
+          <div ref={chatEndRef} />
         </section>
 
         {/* Input Area */}
@@ -301,18 +330,25 @@ export function AiChatPage() {
                 </div>
                 <div className="flex items-end gap-3 px-3 py-2">
                   <textarea
+                    ref={textareaRef}
                     className="w-full bg-transparent border-none focus:ring-0 text-[15px] leading-relaxed resize-none py-1 max-h-48 min-h-[44px]"
-                    placeholder="Issue command to Analytic Core..."
+                    placeholder={chatMutation.isPending ? "Analytic Core processing..." : "Issue command to Analytic Core..."}
                     rows={1}
                     value={message}
+                    disabled={chatMutation.isPending}
                     onChange={(e) => {
                       setMessage(e.target.value);
                       e.currentTarget.style.height = "";
-                      e.currentTarget.style.height =
-                        e.currentTarget.scrollHeight + "px";
+                      e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
                     }}
+                    onKeyDown={handleKeyDown}
                   />
-                  <button aria-label="Send message" className="w-10 h-10 flex-shrink-0 bg-white rounded-xl flex items-center justify-center text-background hover:shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:bg-primary-brand transition-all group">
+                  <button
+                    aria-label="Send message"
+                    onClick={handleSend}
+                    disabled={chatMutation.isPending || !message.trim()}
+                    className="w-10 h-10 flex-shrink-0 bg-white rounded-xl flex items-center justify-center text-background hover:shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:bg-primary-brand transition-all group disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
                     <Send className="text-xl w-5 h-5 transition-transform group-active:scale-90" />
                   </button>
                 </div>
@@ -404,7 +440,10 @@ export function AiChatPage() {
             <History className="text-sm w-4 h-4" />
             FULL CONTEXT LOGS
           </button>
-          <button className="w-full py-2.5 border border-eye-border hover:border-red-500/50 text-eye-text hover:text-red-400 text-xs font-mono rounded transition-all flex items-center justify-center gap-2">
+          <button
+            onClick={() => { setMessages([]); setMessage(""); toast.success("Session purged"); }}
+            className="w-full py-2.5 border border-eye-border hover:border-red-500/50 text-eye-text hover:text-red-400 text-xs font-mono rounded transition-all flex items-center justify-center gap-2"
+          >
             <Trash2 className="text-sm w-4 h-4" />
             PURGE SESSION
           </button>

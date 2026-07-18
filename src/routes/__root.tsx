@@ -13,25 +13,13 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/layout/SiteHeader";
 import { SiteFooter } from "../components/layout/SiteFooter";
+import { AuthProvider } from "../components/providers/auth-provider";
+import { NotFoundPage } from "../pages/NotFound";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-eye-bg px-4 pt-16">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-display font-medium text-eye-white tracking-tight">404</h1>
-        <h2 className="mt-4 text-xl font-medium text-eye-white">Page not found</h2>
-        <p className="mt-2 text-sm text-eye-text font-light">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-8">
-          <Link
-            to="/"
-            className="luminous-btn-primary px-6 py-3 text-[10px] font-bold uppercase tracking-widest"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
+    <div className="bg-eye-bg min-h-screen">
+      <NotFoundPage />
     </div>
   );
 }
@@ -101,7 +89,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "EyeX Technologies is the foundational intelligence infrastructure for the next generation of global enterprise — secured by design, engineered for scale.",
       },
-
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -116,7 +103,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap",
       },
-
     ],
   }),
   shellComponent: RootShell,
@@ -140,10 +126,24 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 const APP_ROUTES = [
-  "/dashboard","/analytics","/data-sources","/ai-copilot","/reports",
-  "/crm","/sales","/marketing","/finance","/inventory","/hr","/projects",
-  "/documents","/integrations","/notifications","/settings",
-  "/ai-chat","/api",
+  "/dashboard",
+  "/analytics",
+  "/data-sources",
+  "/ai-copilot",
+  "/reports",
+  "/crm",
+  "/sales",
+  "/marketing",
+  "/finance",
+  "/inventory",
+  "/hr",
+  "/projects",
+  "/documents",
+  "/integrations",
+  "/notifications",
+  "/settings",
+  "/ai-chat",
+  "/api",
 ];
 
 function RootComponent() {
@@ -153,13 +153,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-eye-bg text-eye-text">
-        {!isApp && <SiteHeader />}
-        <main className={isApp ? "" : "pt-16"}>
-          <Outlet />
-        </main>
-        {!isApp && <SiteFooter />}
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen bg-eye-bg text-eye-text">
+          {!isApp && <SiteHeader />}
+          <main className={isApp ? "" : "pt-16"}>
+            <Outlet />
+          </main>
+          {!isApp && <SiteFooter />}
+        </div>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

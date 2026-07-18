@@ -1,3 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HrPage } from "@/pages/Hr";
-export const Route = createFileRoute("/hr")({ component: HrPage });
+import { ProtectedRoute } from "@/components/auth/protected-route";
+
+export const Route = createFileRoute("/hr")({
+  head: () => ({
+    meta: [
+      { title: 'Human Resources | EyeX Technologies' },
+      { name: "description", content: 'Employee and HR management with intelligent workforce insights.' },
+      { property: "og:title", content: 'Human Resources | EyeX Technologies' },
+      { property: "og:description", content: 'Employee and HR management with intelligent workforce insights.' },
+      { property: "og:type", content: "website" },
+    ],
+  }),
+  component: () => (
+    <ProtectedRoute>
+      <HrPage />
+    </ProtectedRoute>
+  ),
+});
