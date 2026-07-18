@@ -93,30 +93,11 @@ export class PreMortemAgent extends BaseAgent {
   }
 
   private async identifyRisks(scenario: string, historical: any, simulation: any, context: AgentContext): Promise<any[]> {
-    const prompt = `
-Analyze this scenario and identify specific risks:
-
-SCENARIO: ${scenario}
-
-HISTORICAL DATA:
-${JSON.stringify(historical.slice(0, 3), null, 2)}
-
-SIMULATION RESULTS:
-${JSON.stringify(simulation, null, 2)}
-
-Identify 8-12 specific risks across categories: technical, operational, market, regulatory, team.
-For each risk, provide:
-- title, description
-- probability (0-1)
-- impact (low/medium/high/critical)
-- category
-- leading indicators (3-5 specific metrics to watch)
-- mitigation strategies (3-5 actionable items)
-- suggested owner (role)
-- timeline for mitigation
-
-Return JSON array.
-`;
+    const template = this.loadPrompt('pre-mortem');
+    const prompt = template
+      .replace('{{SCENARIO}}', scenario)
+      .replace('{{HISTORICAL_DATA}}', JSON.stringify(historical.slice(0, 3), null, 2))
+      .replace('{{SIMULATION_RESULTS}}', JSON.stringify(simulation, null, 2));
 
     const response = await this.llm.complete(prompt, { temperature: 0.3, maxTokens: 4000 });
     try {

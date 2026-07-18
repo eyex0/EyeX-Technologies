@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../../src/lib/supabase/types';
+import fs from 'fs';
+import path from 'path';
 
 export interface AgentContext {
   orgId: string;
@@ -57,5 +59,9 @@ export abstract class BaseAgent {
   protected async callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
     if (!this.tools) throw new Error('No tool registry');
     return this.tools.execute(name, args);
+  }
+
+  protected loadPrompt(name: string): string {
+    return fs.readFileSync(path.join(__dirname, 'prompts', `${name}.txt`), 'utf-8');
   }
 }

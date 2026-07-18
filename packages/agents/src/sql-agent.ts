@@ -58,6 +58,7 @@ export class SQLAgent extends BaseAgent {
     tools: ToolRegistry
   ) {
     super(llm, db, tools);
+    this.name = 'sql-agent';
     this.validator = new SQLValidator(db);
     this.optimizer = new QueryOptimizer(db);
     this.schemaCache = new SchemaCache(db);
@@ -140,48 +141,13 @@ export class SQLAgent extends BaseAgent {
     semanticLayer: SemanticLayer,
     userContext?: Record<string, unknown>
   ): string {
-    return `
-You are an expert SQL analyst. Generate PostgreSQL SQL for the question.
-
-QUESTION: ${question}
-
-${userContext ? `CONTEXT: ${JSON.stringify(userContext)}` : ''}
-
-DATABASE SCHEMA:
-${schema.toString()}
-
-SEMANTIC LAYER (USE THESE METRICS):
-${semanticLayer.toYAML()}
-
-RULES:
-1. ONLY use tables/columns defined in schema
-2. USE semantic layer metrics when possible (e.g., {{arr}} not SUM(amount))
-3. ALWAYS filter by organization_id = current_org_id()
-4. USE CTEs for readability
-5. LIMIT 1000 rows unless specified otherwise
-5. NO SELECT *
-6. Use proper type casting
-7. Handle NULLs explicitly
-8. Use proper date truncation for time series
-9. Return only the SQL in a markdown code block with "sql" language
-
-EXAMPLE:
-\`\`\`sql
-WITH filtered AS (
-  SELECT 
-    date_trunc('month', created_at) as month,
-    {{arr}} as arr
-  FROM finance_transactions
-  WHERE organization_id = current_org_id()
-    AND type = 'revenue'
-    AND created_at >= now() - interval '12 months'
-)
-SELECT month, SUM(arr) as monthly_arr
-FROM filtered
-GROUP BY month
-ORDER BY month;
-\`\`\`
-`;
+    const template = this.loadPrompt('sql');
+    const contextStr = userContext ? `CONTEXT: ${JSON.stringify(userContext)}` : '';
+    return template
+      .replace('{{QUESTION}}', question)
+      .replace('{{CONTEXT}}', contextStr)
+      .replace('{{SCHEMA}}', schema.toString())
+      .replace('{{SEMANTIC_LAYER}}', semanticLayer.toYAML());
   }
 
   private parseSQL(text: string): SQLCandidate {

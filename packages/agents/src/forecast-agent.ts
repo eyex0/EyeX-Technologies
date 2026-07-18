@@ -47,6 +47,7 @@ export class ForecastAgent extends BaseAgent {
     db: any
   ) {
     super(llm, db);
+    this.name = 'forecast-agent';
     this.prophet = new ProphetForecaster();
     this.neuralProphet = new NeuralProphetForecaster();
     this.ensemble = new EnsembleForecaster();

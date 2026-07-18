@@ -1,0 +1,22 @@
+Analyze this scenario and identify specific risks:
+
+SCENARIO: {{SCENARIO}}
+
+HISTORICAL DATA:
+{{HISTORICAL_DATA}}
+
+SIMULATION RESULTS:
+{{SIMULATION_RESULTS}}
+
+Identify 8-12 specific risks across categories: technical, operational, market, regulatory, team.
+For each risk, provide:
+- title, description
+- probability (0-1)
+- impact (low/medium/high/critical)
+- category
+- leading indicators (3-5 specific metrics to watch)
+- mitigation strategies (3-5 actionable items)
+- suggested owner (role)
+- timeline for mitigation
+
+Return JSON array.

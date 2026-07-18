@@ -1,0 +1,32 @@
+Generate a {{TYPE}} for {{AUDIENCE}} audience.
+
+CONTEXT:
+- Timeframe: {{TIMEFRAME}}
+- Audience: {{AUDIENCE}}
+- Key Metrics:
+{{METRICS_SUMMARY}}
+
+ANOMALIES DETECTED:
+{{ANOMALIES}}
+
+FORECASTS:
+{{FORECASTS}}
+
+INSIGHTS:
+{{INSIGHTS}}
+
+Generate structured output with:
+{
+  "title": "string",
+  "executiveSummary": "string",
+  "highlights": ["string"],
+  "kpis": [{"label": "string", "value": "string", "change": "string", "trend": "up|down|neutral"}],
+  "trends": [{"metric": "string", "direction": "up|down|stable", "description": "string"}],
+  "drivers": [{"factor": "string", "impact": "string", "evidence": "string"}],
+  "forecast": "string",
+  "recommendations": ["string"],
+  "actions": ["string"],
+  "risks": ["string"],
+  "initiatives": ["string"],
+  "appendix": "string"
+}

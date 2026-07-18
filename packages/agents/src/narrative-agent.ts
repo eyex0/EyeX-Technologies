@@ -184,39 +184,20 @@ export class NarrativeAgent extends BaseAgent {
       `${k}: ${v.length} data points, latest: ${v[v.length-1]?.value ?? 'N/A'}`
     ).join('\n');
 
-    return `
-Generate a ${input.type.replace('_', ' ')} for ${input.audience} audience.
+    const template = this.loadPrompt('narrative');
+    const timeframe = `${input.timeframe?.start?.toLocaleDateString()} to ${input.timeframe?.end?.toLocaleDateString()}`;
+    const anomalies = data.anomalies.map((a: any) => `- ${a.rule_id}: ${a.current_value} vs ${a.threshold_value} (${a.severity})`).join('\n') || 'None';
+    const forecasts = Object.entries(data.forecasts).map(([m, f]) => `- ${m}: ${f.predictions?.[0]?.value ?? 'N/A'} next period`).join('\n') || 'None';
+    const insights = (data.insights || []).slice(0, 5).map((i: any) => `- ${i.title}: ${i.description}`).join('\n') || 'None';
 
-CONTEXT:
-- Timeframe: ${input.timeframe?.start?.toLocaleDateString()} to ${input.timeframe?.end?.toLocaleDateString()}
-- Audience: ${input.audience}
-- Key Metrics:\n${metricsSummary}
-
-ANOMALIES DETECTED:
-${data.anomalies.map((a: any) => `- ${a.rule_id}: ${a.current_value} vs ${a.threshold_value} (${a.severity})`).join('\n') || 'None'}
-
-FORECASTS:
-${Object.entries(data.forecasts).map(([m, f]) => `- ${m}: ${f.predictions?.[0]?.value ?? 'N/A'} next period`).join('\n') || 'None'}
-
-INSIGHTS:
-${(data.insights || []).slice(0, 5).map((i: any) => `- ${i.title}: ${i.description}`).join('\n') || 'None'}
-
-Generate structured output with:
-{
-  "title": "string",
-  "executiveSummary": "string",
-  "highlights": ["string"],
-  "kpis": [{"label": "string", "value": "string", "change": "string", "trend": "up|down|neutral"}],
-  "trends": [{"metric": "string", "direction": "up|down|stable", "description": "string"}],
-  "drivers": [{"factor": "string", "impact": "string", "evidence": "string"}],
-  "forecast": "string",
-  "recommendations": ["string"],
-  "actions": ["string"],
-  "risks": ["string"],
-  "initiatives": ["string"],
-  "appendix": "string"
-}
-`;
+    return template
+      .replace('{{TYPE}}', input.type.replace('_', ' '))
+      .replace('{{AUDIENCE}}', input.audience)
+      .replace('{{TIMEFRAME}}', timeframe)
+      .replace('{{METRICS_SUMMARY}}', metricsSummary)
+      .replace('{{ANOMALIES}}', anomalies)
+      .replace('{{FORECASTS}}', forecasts)
+      .replace('{{INSIGHTS}}', insights);
   }
 
   private generateSlides(type: string, narrative: any, data: any): Array<{ title: string; content: string; chart?: string }> {
