@@ -1,70 +1,64 @@
-import { useEffect, useState } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
+import { useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
+import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import * as m from "@/lib/mock";
 
 export function HrPage() {
-  const [employees, setEmployees] = useState<any[]>([])
-  const [departments, setDepartments] = useState<any[]>([])
-  const [payroll, setPayroll] = useState<any[]>([])
-  const [tab, setTab] = useState('employees')
-
-  useEffect(() => {
-    db.getEmployees().then(setEmployees)
-    db.getDepartments().then(setDepartments)
-    db.getPayroll().then(setPayroll)
-  }, [])
-
-  const totalSalary = employees.reduce((s: number, e: any) => s + Number(e.salary), 0)
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">HR</h1>
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardHeader><CardTitle className="text-sm">Employees</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{employees.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Departments</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{departments.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Total Salary</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">${totalSalary.toLocaleString()}</div></CardContent></Card>
-      </div>
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="employees">Employees</TabsTrigger>
-          <TabsTrigger value="departments">Departments</TabsTrigger>
-          <TabsTrigger value="payroll">Payroll</TabsTrigger>
-        </TabsList>
-        <TabsContent value="employees">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Position</Th><Th>Department</Th><Th>Salary</Th><Th>Status</Th></Tr></THead>
-            <TBody>{employees.map((e: any) => {
-              const dept = departments.find((d: any) => d.id === e.department_id)
-              return (
-                <Tr key={e.id}><Td className="font-medium">{e.first_name} {e.last_name}</Td><Td>{e.position}</Td><Td>{dept?.name || '-'}</Td><Td>${Number(e.salary).toLocaleString()}</Td><Td><Badge variant={e.status === 'active' ? 'success' : 'warning'}>{e.status}</Badge></Td></Tr>
-              )
-            })}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="departments">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Description</Th></Tr></THead>
-            <TBody>{departments.map((d: any) => (
-              <Tr key={d.id}><Td className="font-medium">{d.name}</Td><Td>{d.description}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="payroll">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Employee</Th><Th>Salary</Th><Th>Bonuses</Th><Th>Deductions</Th><Th>Net</Th><Th>Status</Th></Tr></THead>
-            <TBody>{payroll.map((p: any) => {
-              const emp = employees.find((e: any) => e.id === p.employee_id)
-              return (
-                <Tr key={p.id}><Td className="font-medium">{emp ? `${emp.first_name} ${emp.last_name}` : '-'}</Td><Td>${Number(p.salary).toLocaleString()}</Td><Td>${Number(p.bonuses).toLocaleString()}</Td><Td>${Number(p.deductions).toLocaleString()}</Td><Td>${(Number(p.salary) + Number(p.bonuses) - Number(p.deductions)).toLocaleString()}</Td><Td><Badge variant={p.status === 'paid' ? 'success' : 'warning'}>{p.status}</Badge></Td></Tr>
-              )
-            })}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+  return <ModulePage title="HR" subtitle="People · Payroll · Performance" tabs={[
+    { key: "emp", label: "Employees", render: () => (
+      <>
+        <KpiRow items={[
+          { label: "Headcount", value: "184", delta: "+6", icon: "groups" },
+          { label: "Retention", value: "94%", delta: "+1.2%", icon: "workspace_premium" },
+          { label: "Open roles", value: "12", icon: "work" },
+          { label: "eNPS", value: "62", delta: "+4", icon: "sentiment_satisfied" },
+        ]}/>
+        <TableCard title="All employees" columns={[
+          { key: "name", label: "Name" },{ key: "role", label: "Role" },{ key: "dept", label: "Department" },{ key: "location", label: "Location" },
+          { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Active"?"success":"warn"}>{r.status}</Badge> },
+        ]} rows={m.employees}/>
+      </>
+    )},
+    { key: "att", label: "Attendance", render: () => (
+      <Card title="Attendance — this week"><BarChart data={["Mon","Tue","Wed","Thu","Fri"].map((l)=>({label:l,value:170+Math.random()*14}))}/></Card>
+    )},
+    { key: "pay", label: "Payroll", render: () => (
+      <TableCard title="Payroll runs" columns={[
+        { key: "period", label: "Period" },{ key: "total", label: "Total" },{ key: "employees", label: "Employees" },{ key: "status", label: "Status", align: "right" },
+      ]} rows={[
+        { period: "Nov 2025", total: "$1.28M", employees: 184, status: "Processed" },
+        { period: "Oct 2025", total: "$1.24M", employees: 182, status: "Processed" },
+        { period: "Sep 2025", total: "$1.19M", employees: 178, status: "Processed" },
+      ]}/>
+    )},
+    { key: "leave", label: "Leave", render: () => (
+      <TableCard title="Leave requests" columns={[
+        { key: "name", label: "Employee" },{ key: "type", label: "Type" },{ key: "days", label: "Days" },{ key: "status", label: "Status", align: "right" },
+      ]} rows={[
+        { name: "Marco Silva", type: "PTO", days: 5, status: "Approved" },
+        { name: "James Park", type: "Sick", days: 1, status: "Approved" },
+        { name: "Priya Rao", type: "PTO", days: 3, status: "Pending" },
+      ]}/>
+    )},
+    { key: "perf", label: "Performance", render: () => (
+      <Card title="Review cycles">
+        <div className="p-5 space-y-3">
+          {["Q4 2025 — In Progress (72% complete)","Q3 2025 — Complete","Q2 2025 — Complete"].map((r) => (
+            <div key={r} className="text-sm text-white border-b border-border pb-3 last:border-0">{r}</div>
+          ))}
+        </div>
+      </Card>
+    )},
+    { key: "rec", label: "Recruitment", render: () => (
+      <TableCard title="Open roles" columns={[
+        { key: "role", label: "Role" },{ key: "dept", label: "Dept" },{ key: "applicants", label: "Applicants" },{ key: "stage", label: "Stage", align: "right" },
+      ]} rows={[
+        { role: "Sr. ML Engineer", dept: "Engineering", applicants: 42, stage: "Interviewing" },
+        { role: "Product Designer", dept: "Design", applicants: 84, stage: "Screening" },
+        { role: "Enterprise AE", dept: "Sales", applicants: 21, stage: "Offer" },
+      ]}/>
+    )},
+  ]}/>;
 }
+

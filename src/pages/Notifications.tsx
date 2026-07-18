@@ -1,64 +1,27 @@
-import { useEffect, useState } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { X, Bell } from 'lucide-react'
-
-const typeVariant: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
-  success: 'success', warning: 'warning', error: 'danger', info: 'info',
-}
+import { useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
+import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import * as m from "@/lib/mock";
 
 export function NotificationsPage() {
-  const [notifications, setNotifications] = useState<any[]>([])
-
-  useEffect(() => {
-    db.getNotifications().then(setNotifications)
-    const unsub = db.subscribeNotifications((payload) => {
-      setNotifications((prev) => [payload, ...prev])
-    })
-    return () => unsub()
-  }, [])
-
-  const dismiss = async (id: string) => {
-    await db.markNotificationRead(id)
-    setNotifications((prev) => prev.filter((n) => n.id !== id))
-  }
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Notifications</h1>
-      <Card>
-        <CardHeader><CardTitle>Recent Notifications</CardTitle></CardHeader>
-        <CardContent>
-          {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-              <Bell className="h-12 w-12 mb-4" />
-              <p>No notifications yet</p>
+    <AppShell title="Notifications" subtitle="Alerts & activity">
+      <Card title="Recent" icon="notifications">
+        <div className="p-2">
+          {m.notifications.map((n,i) => (
+            <div key={i} className="flex items-start gap-3 px-3 py-3 border-b border-border last:border-0 hover:bg-secondary/40 rounded">
+              <div className="mt-0.5"><Badge tone={n.tone}>·</Badge></div>
+              <div className="flex-1">
+                <div className="text-sm text-white">{n.title}</div>
+                <div className="text-[10px] font-mono text-muted-foreground uppercase mt-1">{n.meta}</div>
+              </div>
+              <button className="text-[10px] font-mono uppercase text-muted-foreground hover:text-white">Dismiss</button>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {notifications.map((n: any) => (
-                <div key={n.id} className={`flex items-start justify-between p-4 rounded-lg border ${n.read ? 'bg-white' : 'bg-blue-50 border-blue-200'}`}>
-                  <div className="flex items-start gap-3">
-                    <Bell className="h-5 w-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{n.title}</p>
-                        <Badge variant={typeVariant[n.type] || 'default'}>{n.type}</Badge>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">{n.message}</p>
-                      <p className="text-xs text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => dismiss(n.id)} className="p-1 hover:bg-gray-100 rounded">
-                    <X className="h-4 w-4 text-gray-400" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
+          ))}
+        </div>
       </Card>
-    </div>
-  )
+    </AppShell>
+  );
 }
+

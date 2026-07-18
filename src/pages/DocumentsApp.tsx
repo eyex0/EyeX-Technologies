@@ -1,48 +1,52 @@
-import { useEffect, useState } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { FileText } from 'lucide-react'
+import { useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
+import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import * as m from "@/lib/mock";
 
 export function DocumentsAppPage() {
-  const [documents, setDocuments] = useState<any[]>([])
-  const [filter, setFilter] = useState('')
-
-  useEffect(() => { db.getDocuments().then(setDocuments) }, [])
-
-  const allTags = [...new Set(documents.flatMap((d: any) => d.tags || []))].sort()
-  const filtered = documents.filter((d: any) =>
-    !filter || (d.tags || []).includes(filter) || d.name.toLowerCase().includes(filter.toLowerCase())
-  )
-
+  const [tag, setTag] = useState("All");
+  const tags = ["All","Contract","Invoice","Report","Policy"];
+  const rows = tag === "All" ? m.documents : m.documents.filter((d) => d.type === tag);
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Documents</h1>
-      <div className="flex gap-2 flex-wrap">
-        <Input placeholder="Search documents..." className="w-64" value={filter} onChange={(e) => setFilter(e.target.value)} />
-        {allTags.map((tag) => (
-          <button key={tag} onClick={() => setFilter(filter === tag ? '' : tag)} className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${filter === tag ? 'bg-blue-100 border-blue-300 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{tag}</button>
-        ))}
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((doc: any) => (
-          <Card key={doc.id} className="hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-4 flex items-start gap-3">
-              <FileText className="h-8 w-8 text-blue-600 shrink-0 mt-1" />
-              <div>
-                <p className="font-medium">{doc.name}</p>
-                <p className="text-xs text-gray-500 mt-1">{doc.file_type || 'Unknown type'}</p>
-                <div className="flex gap-1 mt-2 flex-wrap">
-                  {(doc.tags || []).map((tag: string) => (
-                    <Badge key={tag} variant="default" className="text-xs">{tag}</Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
+    <AppShell title="Documents" subtitle="Contracts · Invoices · Reports · Policies">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-1 space-y-4">
+          <Card title="Folders" icon="folder">
+            <div className="p-4 space-y-1 text-xs">
+              {["All Documents","Contracts","Invoices","Reports","Policies","Shared with me","Trash"].map((f) => (
+                <div key={f} className="px-3 py-2 rounded hover:bg-secondary/40 text-white cursor-pointer">{f}</div>
+              ))}
+            </div>
           </Card>
-        ))}
+          <Card title="Tags" icon="sell">
+            <div className="p-4 flex flex-wrap gap-2">
+              {["Signed","Draft","Final","Review","Paid"].map((t) => <Badge key={t}>{t}</Badge>)}
+            </div>
+          </Card>
+        </div>
+        <div className="lg:col-span-3 space-y-4">
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2 border border-border rounded-md px-4 py-2 bg-background flex-1">
+              <span className="material-symbols-outlined text-muted-foreground text-[18px]">search</span>
+              <input className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground" placeholder="Search documents..." />
+            </div>
+            <div className="flex gap-1">
+              {tags.map((t) => (
+                <button key={t} onClick={()=>setTag(t)} className={`text-xs px-3 py-1.5 rounded-md border ${tag===t?"bg-white text-black border-white":"border-border text-muted-foreground hover:text-white"}`}>{t}</button>
+              ))}
+            </div>
+          </div>
+          <Card title="Files" icon="description">
+            <DataTable columns={[
+              { key: "name", label: "Name" },{ key: "type", label: "Type" },{ key: "owner", label: "Owner" },
+              { key: "tag", label: "Tag", render: (r:any) => <Badge>{r.tag}</Badge> },
+              { key: "updated", label: "Updated", align: "right" },
+            ]} rows={rows}/>
+          </Card>
+        </div>
       </div>
-    </div>
-  )
+    </AppShell>
+  );
 }
+

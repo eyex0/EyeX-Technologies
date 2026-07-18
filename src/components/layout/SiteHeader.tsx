@@ -1,33 +1,80 @@
-import { Bell, Search, LogOut } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth'
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
+import { BrandMark } from "./BrandMark";
+
+const NAV = [
+  { to: "/", label: "Platform" },
+  { to: "/dashboard", label: "Dashboard" },
+  { to: "/ai-chat", label: "AI Chat" },
+  { to: "/documents", label: "Documents" },
+  { to: "/api", label: "API" },
+  { to: "/analytics", label: "Analytics" },
+  { to: "/about", label: "About" },
+] as const;
 
 export function SiteHeader() {
-  const { signOut } = useAuth()
+  const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-800 bg-gray-950 px-6">
-      <div className="flex-1" />
-      <div className="relative w-64">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-        <Input className="pl-9 bg-gray-900 border-gray-800 text-white placeholder-gray-500" placeholder="Search..." />
-      </div>
-      <button className="relative rounded-full p-2 hover:bg-gray-800">
-        <Bell className="h-5 w-5 text-gray-400" />
-        <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
-      </button>
-      <div className="flex items-center gap-3 pl-4 border-l border-gray-800">
-        <div className="h-8 w-8 rounded-full bg-black flex items-center justify-center text-white text-sm font-medium border border-gray-800">
-          E
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav h-16 flex items-center justify-center px-6">
+      <div className="max-w-[1200px] w-full flex items-center justify-between">
+        <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
+          <BrandMark />
+        </Link>
+
+        <div className="hidden lg:flex items-center gap-8 text-[10px] font-medium uppercase tracking-widest">
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="text-eye-text hover:text-eye-white transition-colors"
+              activeProps={{ className: "text-eye-white" }}
+              activeOptions={{ exact: item.to === "/" }}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
-        <div className="text-sm">
-          <p className="font-medium text-white">Admin</p>
-          <p className="text-gray-500 text-xs">Administrator</p>
+
+        <div className="flex items-center gap-4">
+          <button className="hidden md:inline-flex text-[10px] font-medium uppercase tracking-widest text-eye-text hover:text-eye-white transition-colors">
+            Sign in
+          </button>
+          <button className="luminous-btn-primary px-5 py-2 text-[10px] font-bold uppercase tracking-widest hidden sm:inline-flex">
+            Request Access
+          </button>
+          <button
+            aria-label="Toggle menu"
+            className="lg:hidden inline-flex items-center justify-center h-9 w-9 border border-eye-border text-eye-white"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X size={16} /> : <Menu size={16} />}
+          </button>
         </div>
-        <button onClick={signOut} className="p-2 hover:bg-gray-800 rounded-lg transition-colors" title="Sign out">
-          <LogOut className="h-4 w-4 text-gray-400" />
-        </button>
       </div>
-    </header>
-  )
+
+      {open && (
+        <div className="absolute top-16 left-0 right-0 lg:hidden bg-eye-bg border-b border-eye-border">
+          <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-4">
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={() => setOpen(false)}
+                className="text-eye-text hover:text-eye-white transition-colors text-sm uppercase tracking-widest font-medium"
+                activeProps={{ className: "text-eye-white" }}
+                activeOptions={{ exact: item.to === "/" }}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <button className="luminous-btn-primary h-11 px-5 mt-2 text-[10px] font-bold uppercase tracking-widest self-start">
+              Request Access
+            </button>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
 }

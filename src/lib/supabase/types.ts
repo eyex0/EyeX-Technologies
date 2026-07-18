@@ -1,1518 +1,205 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export interface Database {
   public: {
     Tables: {
-      organizations: {
+      profiles: {
         Row: {
-          id: string;
-          name: string;
-          slug: string;
-          logo_url: string | null;
-          plan: 'free' | 'pro' | 'team' | 'enterprise';
-          settings: Json;
-          billing_email: string | null;
-          stripe_customer_id: string | null;
-          stripe_subscription_id: string | null;
-          trial_ends_at: string | null;
-          created_at: string;
-          updated_at: string;
-        };
+          id: string
+          email: string
+          full_name: string | null
+          avatar_url: string | null
+          created_at: string
+        }
         Insert: {
-          id?: string;
-          name: string;
-          slug: string;
-          logo_url?: string | null;
-          plan?: 'free' | 'pro' | 'team' | 'enterprise';
-          settings?: Json;
-          billing_email?: string | null;
-          stripe_customer_id?: string | null;
-          stripe_subscription_id?: string | null;
-          trial_ends_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
+          id: string
+          email: string
+          full_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
         Update: {
-          id?: string;
-          name?: string;
-          slug?: string;
-          logo_url?: string | null;
-          plan?: 'free' | 'pro' | 'team' | 'enterprise';
-          settings?: Json;
-          billing_email?: string | null;
-          stripe_customer_id?: string | null;
-          stripe_subscription_id?: string | null;
-          trial_ends_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      users: {
+          id?: string
+          email?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      datasets: {
         Row: {
-          id: string;
-          email: string;
-          full_name: string | null;
-          avatar_url: string | null;
-          role: 'owner' | 'admin' | 'analyst' | 'viewer';
-          organization_id: string;
-          team_id: string | null;
-          timezone: string;
-          locale: string;
-          last_active_at: string | null;
-          preferences: Json;
-          created_at: string;
-          updated_at: string;
-        };
+          id: string
+          user_id: string | null
+          name: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
         Insert: {
-          id: string;
-          email: string;
-          full_name?: string | null;
-          avatar_url?: string | null;
-          role?: 'owner' | 'admin' | 'analyst' | 'viewer';
-          organization_id: string;
-          team_id?: string | null;
-          timezone?: string;
-          locale?: string;
-          last_active_at?: string | null;
-          preferences?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
+          id?: string
+          user_id?: string | null
+          name: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
         Update: {
-          id?: string;
-          email?: string;
-          full_name?: string | null;
-          avatar_url?: string | null;
-          role?: 'owner' | 'admin' | 'analyst' | 'viewer';
-          organization_id?: string;
-          team_id?: string | null;
-          timezone?: string;
-          locale?: string;
-          last_active_at?: string | null;
-          preferences?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      teams: {
+          id?: string
+          user_id?: string | null
+          name?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "datasets_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      uploaded_files: {
         Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          description: string | null;
-          parent_team_id: string | null;
-          created_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
+          id: string
+          dataset_id: string | null
+          user_id: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          storage_path: string
+          created_at: string
+        }
         Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          description?: string | null;
-          parent_team_id?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
+          id?: string
+          dataset_id?: string | null
+          user_id?: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          storage_path: string
+          created_at?: string
+        }
         Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          description?: string | null;
-          parent_team_id?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      team_members: {
+          id?: string
+          dataset_id?: string | null
+          user_id?: string | null
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          storage_path?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uploaded_files_dataset_id_fkey"
+            columns: ["dataset_id"]
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "uploaded_files_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      dashboards: {
         Row: {
-          team_id: string;
-          user_id: string;
-          role: 'lead' | 'member';
-          joined_at: string;
-        };
+          id: string
+          user_id: string | null
+          title: string
+          layout: Json | null
+          created_at: string
+          updated_at: string
+        }
         Insert: {
-          team_id: string;
-          user_id: string;
-          role?: 'lead' | 'member';
-          joined_at?: string;
-        };
+          id?: string
+          user_id?: string | null
+          title: string
+          layout?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
         Update: {
-          team_id?: string;
-          user_id?: string;
-          role?: 'lead' | 'member';
-          joined_at?: string;
-        };
-      };
-      api_keys: {
+          id?: string
+          user_id?: string | null
+          title?: string
+          layout?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboards_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      chat_messages: {
         Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          key_hash: string;
-          key_prefix: string;
-          scopes: string[];
-          rate_limit: number;
-          last_used_at: string | null;
-          expires_at: string | null;
-          created_by: string | null;
-          created_at: string;
-          revoked_at: string | null;
-        };
+          id: string
+          user_id: string | null
+          role: string
+          content: string
+          session_id: string | null
+          created_at: string
+        }
         Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          key_hash: string;
-          key_prefix: string;
-          scopes?: string[];
-          rate_limit?: number;
-          expires_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          revoked_at?: string | null;
-        };
+          id?: string
+          user_id?: string | null
+          role: string
+          content: string
+          session_id?: string | null
+          created_at?: string
+        }
         Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          key_hash?: string;
-          key_prefix?: string;
-          scopes?: string[];
-          rate_limit?: number;
-          last_used_at?: string | null;
-          expires_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          revoked_at?: string | null;
-        };
-      };
-      audit_logs: {
-        Row: {
-          id: string;
-          organization_id: string;
-          user_id: string | null;
-          api_key_id: string | null;
-          action: string;
-          resource_type: string;
-          resource_id: string | null;
-          old_values: Json | null;
-          new_values: Json | null;
-          ip_address: string | null;
-          user_agent: string | null;
-          request_id: string | null;
-          status: 'success' | 'failure';
-          error_message: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          user_id?: string | null;
-          api_key_id?: string | null;
-          action: string;
-          resource_type: string;
-          resource_id?: string | null;
-          old_values?: Json | null;
-          new_values?: Json | null;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          request_id?: string | null;
-          status?: 'success' | 'failure';
-          error_message?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          user_id?: string | null;
-          api_key_id?: string | null;
-          action?: string;
-          resource_type?: string;
-          resource_id?: string | null;
-          old_values?: Json | null;
-          new_values?: Json | null;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          request_id?: string | null;
-          status?: 'success' | 'failure';
-          error_message?: string | null;
-          created_at?: string;
-        };
-      };
-      metrics: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          display_name: string | null;
-          description: string | null;
-          sql_definition: string;
-          dimensions: string[];
-          default_dimensions: string[];
-          filters: Json;
-          unit: string | null;
-          format: Json;
-          owner_id: string | null;
-          status: 'draft' | 'certified' | 'deprecated';
-          version: number;
-          previous_version_id: string | null;
-          tags: string[];
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          display_name?: string | null;
-          description?: string | null;
-          sql_definition: string;
-          dimensions?: string[];
-          default_dimensions?: string[];
-          filters?: Json;
-          unit?: string | null;
-          format?: Json;
-          owner_id?: string | null;
-          status?: 'draft' | 'certified' | 'deprecated';
-          version?: number;
-          previous_version_id?: string | null;
-          tags?: string[];
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          display_name?: string | null;
-          description?: string | null;
-          sql_definition?: string;
-          dimensions?: string[];
-          default_dimensions?: string[];
-          filters?: Json;
-          unit?: string | null;
-          format?: Json;
-          owner_id?: string | null;
-          status?: 'draft' | 'certified' | 'deprecated';
-          version?: number;
-          previous_version_id?: string | null;
-          tags?: string[];
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      metric_versions: {
-        Row: {
-          id: string;
-          metric_id: string;
-          version: number;
-          sql_definition: string;
-          dimensions: string[];
-          filters: Json | null;
-          unit: string | null;
-          format: Json | null;
-          changed_by: string | null;
-          change_reason: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          metric_id: string;
-          version: number;
-          sql_definition: string;
-          dimensions: string[];
-          filters?: Json | null;
-          unit?: string | null;
-          format?: Json | null;
-          changed_by?: string | null;
-          change_reason?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          metric_id?: string;
-          version?: number;
-          sql_definition?: string;
-          dimensions?: string[];
-          filters?: Json | null;
-          unit?: string | null;
-          format?: Json | null;
-          changed_by?: string | null;
-          change_reason?: string | null;
-          created_at?: string;
-        };
-      };
-      metric_cache: {
-        Row: {
-          metric_id: string;
-          dimension_values: Json;
-          granularity: 'day' | 'week' | 'month' | 'quarter';
-          period_start: string;
-          period_end: string;
-          value: number;
-          sample_size: number | null;
-          computed_at: string;
-          expires_at: string;
-        };
-        Insert: {
-          metric_id: string;
-          dimension_values: Json;
-          granularity: 'day' | 'week' | 'month' | 'quarter';
-          period_start: string;
-          period_end: string;
-          value: number;
-          sample_size?: number | null;
-          computed_at?: string;
-          expires_at: string;
-        };
-        Update: {
-          metric_id?: string;
-          dimension_values?: Json;
-          granularity?: 'day' | 'week' | 'month' | 'quarter';
-          period_start?: string;
-          period_end?: string;
-          value?: number;
-          sample_size?: number | null;
-          computed_at?: string;
-          expires_at?: string;
-        };
-      };
-      dashboards_v2: {
-        Row: {
-          id: string;
-          organization_id: string;
-          slug: string;
-          name: string;
-          description: string | null;
-          spec: Json;
-          spec_version: number;
-          git_sync_enabled: boolean;
-          git_repo: string | null;
-          git_branch: string;
-          git_path: string | null;
-          last_synced_at: string | null;
-          sync_status: string | null;
-          is_public: boolean;
-          public_token: string;
-          allowed_embed_domains: string[];
-          view_count: number;
-          created_by: string | null;
-          updated_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          slug: string;
-          name: string;
-          description?: string | null;
-          spec: Json;
-          spec_version?: number;
-          git_sync_enabled?: boolean;
-          git_repo?: string | null;
-          git_branch?: string;
-          git_path?: string | null;
-          last_synced_at?: string | null;
-          sync_status?: string | null;
-          is_public?: boolean;
-          public_token?: string;
-          allowed_embed_domains?: string[];
-          view_count?: number;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          slug?: string;
-          name?: string;
-          description?: string | null;
-          spec?: Json;
-          spec_version?: number;
-          git_sync_enabled?: boolean;
-          git_repo?: string | null;
-          git_branch?: string;
-          git_path?: string | null;
-          last_synced_at?: string | null;
-          sync_status?: string | null;
-          is_public?: boolean;
-          public_token?: string;
-          allowed_embed_domains?: string[];
-          view_count?: number;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      dashboard_versions: {
-        Row: {
-          id: string;
-          dashboard_id: string;
-          version: number;
-          spec: Json;
-          commit_hash: string | null;
-          commit_message: string | null;
-          committed_by: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          dashboard_id: string;
-          version: number;
-          spec: Json;
-          commit_hash?: string | null;
-          commit_message?: string | null;
-          committed_by?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          dashboard_id?: string;
-          version?: number;
-          spec?: Json;
-          commit_hash?: string | null;
-          commit_message?: string | null;
-          committed_by?: string | null;
-          created_at?: string;
-        };
-      };
-      dashboard_permissions: {
-        Row: {
-          dashboard_id: string;
-          principal_type: 'user' | 'team' | 'public';
-          principal_id: string | null;
-          permission: 'view' | 'edit' | 'admin';
-          granted_by: string | null;
-          granted_at: string;
-        };
-        Insert: {
-          dashboard_id: string;
-          principal_type: 'user' | 'team' | 'public';
-          principal_id: string | null;
-          permission: 'view' | 'edit' | 'admin';
-          granted_by?: string | null;
-          granted_at?: string;
-        };
-        Update: {
-          dashboard_id?: string;
-          principal_type?: 'user' | 'team' | 'public';
-          principal_id?: string | null;
-          permission?: 'view' | 'edit' | 'admin';
-          granted_by?: string | null;
-          granted_at?: string;
-        };
-      };
-      alert_rules: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          description: string | null;
-          metric_id: string | null;
-          condition: Json;
-          evaluation: Json;
-          severity: 'info' | 'warning' | 'critical';
-          channels: Json;
-          schedule: Json;
-          runbook_url: string | null;
-          runbook_markdown: string | null;
-          owner_id: string | null;
-          anomaly_config: Json | null;
-          enabled: boolean;
-          created_by: string | null;
-          updated_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          description?: string | null;
-          metric_id?: string | null;
-          condition: Json;
-          evaluation?: Json;
-          severity?: 'info' | 'warning' | 'critical';
-          channels: Json;
-          schedule?: Json;
-          runbook_url?: string | null;
-          runbook_markdown?: string | null;
-          owner_id?: string | null;
-          anomaly_config?: Json | null;
-          enabled?: boolean;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          description?: string | null;
-          metric_id?: string | null;
-          condition?: Json;
-          evaluation?: Json;
-          severity?: 'info' | 'warning' | 'critical';
-          channels?: Json;
-          schedule?: Json;
-          runbook_url?: string | null;
-          runbook_markdown?: string | null;
-          owner_id?: string | null;
-          anomaly_config?: Json | null;
-          enabled?: boolean;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      alert_incidents: {
-        Row: {
-          id: string;
-          rule_id: string;
-          organization_id: string;
-          status: 'firing' | 'acknowledged' | 'resolved';
-          severity: string;
-          current_value: number;
-          threshold_value: number;
-          deviation_pct: number | null;
-          dimensions: Json | null;
-          context: Json | null;
-          fired_at: string;
-          acknowledged_at: string | null;
-          acknowledged_by: string | null;
-          resolved_at: string | null;
-          resolved_by: string | null;
-          resolution_note: string | null;
-          escalation_level: number;
-          next_escalation_at: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          rule_id: string;
-          organization_id: string;
-          status?: 'firing' | 'acknowledged' | 'resolved';
-          severity: string;
-          current_value: number;
-          threshold_value: number;
-          deviation_pct?: number | null;
-          dimensions?: Json | null;
-          context?: Json | null;
-          fired_at?: string;
-          acknowledged_at?: string | null;
-          acknowledged_by?: string | null;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-          resolution_note?: string | null;
-          escalation_level?: number;
-          next_escalation_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          rule_id?: string;
-          organization_id?: string;
-          status?: 'firing' | 'acknowledged' | 'resolved';
-          severity?: string;
-          current_value?: number;
-          threshold_value?: number;
-          deviation_pct?: number | null;
-          dimensions?: Json | null;
-          context?: Json | null;
-          fired_at?: string;
-          acknowledged_at?: string | null;
-          acknowledged_by?: string | null;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-          resolution_note?: string | null;
-          escalation_level?: number;
-          next_escalation_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      alert_notifications: {
-        Row: {
-          id: string;
-          incident_id: string;
-          channel_type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          channel_config: Json;
-          status: 'pending' | 'sent' | 'delivered' | 'failed';
-          sent_at: string | null;
-          delivered_at: string | null;
-          error_message: string | null;
-          retry_count: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          incident_id: string;
-          channel_type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          channel_config: Json;
-          status?: 'pending' | 'sent' | 'delivered' | 'failed';
-          sent_at?: string | null;
-          delivered_at?: string | null;
-          error_message?: string | null;
-          retry_count?: number;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          incident_id?: string;
-          channel_type?: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          channel_config?: Json;
-          status?: 'pending' | 'sent' | 'delivered' | 'failed';
-          sent_at?: string | null;
-          delivered_at?: string | null;
-          error_message?: string | null;
-          retry_count?: number;
-          created_at?: string;
-        };
-      };
-      notification_channels: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          config: Json;
-          default_severity: string[];
-          enabled: boolean;
-          created_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          type: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          config: Json;
-          default_severity?: string[];
-          enabled?: boolean;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          type?: 'slack' | 'email' | 'pagerduty' | 'webhook' | 'teams';
-          config?: Json;
-          default_severity?: string[];
-          enabled?: boolean;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      agent_runs: {
-        Row: {
-          id: string;
-          organization_id: string;
-          session_id: string | null;
-          agent_type: string;
-          agent_version: string | null;
-          input: Json;
-          output: Json | null;
-          status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-          tokens_used: number;
-          prompt_tokens: number;
-          completion_tokens: number;
-          latency_ms: number | null;
-          estimated_cost_usd: number | null;
-          error: string | null;
-          error_code: string | null;
-          stack_trace: string | null;
-          retry_count: number;
-          parent_run_id: string | null;
-          user_id: string | null;
-          api_key_id: string | null;
-          metadata: Json;
-          created_at: string;
-          started_at: string | null;
-          completed_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          session_id?: string | null;
-          agent_type: string;
-          agent_version?: string | null;
-          input: Json;
-          output?: Json | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-          tokens_used?: number;
-          prompt_tokens?: number;
-          completion_tokens?: number;
-          latency_ms?: number | null;
-          estimated_cost_usd?: number | null;
-          error?: string | null;
-          error_code?: string | null;
-          stack_trace?: string | null;
-          retry_count?: number;
-          parent_run_id?: string | null;
-          user_id?: string | null;
-          api_key_id?: string | null;
-          metadata?: Json;
-          created_at?: string;
-          started_at?: string | null;
-          completed_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          session_id?: string | null;
-          agent_type?: string;
-          agent_version?: string | null;
-          input?: Json;
-          output?: Json | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-          tokens_used?: number;
-          prompt_tokens?: number;
-          completion_tokens?: number;
-          latency_ms?: number | null;
-          estimated_cost_usd?: number | null;
-          error?: string | null;
-          error_code?: string | null;
-          stack_trace?: string | null;
-          retry_count?: number;
-          parent_run_id?: string | null;
-          user_id?: string | null;
-          api_key_id?: string | null;
-          metadata?: Json;
-          created_at?: string;
-          started_at?: string | null;
-          completed_at?: string | null;
-        };
-      };
-      agent_run_steps: {
-        Row: {
-          id: string;
-          run_id: string;
-          step_number: number;
-          agent_type: string;
-          input: Json;
-          output: Json | null;
-          status: 'pending' | 'running' | 'completed' | 'failed';
-          tokens_used: number;
-          latency_ms: number | null;
-          error: string | null;
-          created_at: string;
-          started_at: string | null;
-          completed_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          run_id: string;
-          step_number: number;
-          agent_type: string;
-          input: Json;
-          output?: Json | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed';
-          tokens_used?: number;
-          latency_ms?: number | null;
-          error?: string | null;
-          created_at?: string;
-          started_at?: string | null;
-          completed_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          run_id?: string;
-          step_number?: number;
-          agent_type?: string;
-          input?: Json;
-          output?: Json | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed';
-          tokens_used?: number;
-          latency_ms?: number | null;
-          error?: string | null;
-          created_at?: string;
-          started_at?: string | null;
-          completed_at?: string | null;
-        };
-      };
-      agent_evaluations: {
-        Row: {
-          id: string;
-          run_id: string;
-          evaluator: 'auto' | 'human' | 'llm_judge';
-          criteria: Json;
-          scores: Json;
-          feedback: string | null;
-          evaluated_by: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          run_id: string;
-          evaluator: 'auto' | 'human' | 'llm_judge';
-          criteria: Json;
-          scores: Json;
-          feedback?: string | null;
-          evaluated_by?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          run_id?: string;
-          evaluator?: 'auto' | 'human' | 'llm_judge';
-          criteria?: Json;
-          scores?: Json;
-          feedback?: string | null;
-          evaluated_by?: string | null;
-          created_at?: string;
-        };
-      };
-      model_usage: {
-        Row: {
-          id: string;
-          organization_id: string;
-          model: string;
-          provider: string;
-          prompt_tokens: number;
-          completion_tokens: number;
-          total_tokens: number;
-          estimated_cost_usd: number;
-          agent_type: string | null;
-          run_id: string | null;
-          recorded_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          model: string;
-          provider: string;
-          prompt_tokens: number;
-          completion_tokens: number;
-          total_tokens: number;
-          estimated_cost_usd: number;
-          agent_type?: string | null;
-          run_id?: string | null;
-          recorded_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          model?: string;
-          provider?: string;
-          prompt_tokens?: number;
-          completion_tokens?: number;
-          total_tokens?: number;
-          estimated_cost_usd?: number;
-          agent_type?: string | null;
-          run_id?: string | null;
-          recorded_at?: string;
-        };
-      };
-      data_contracts: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          description: string | null;
-          producer_team_id: string | null;
-          producer_contact: string | null;
-          consumer_team_ids: string[];
-          schema: Json;
-          schema_format: 'json' | 'avro' | 'protobuf';
-          sla: Json;
-          quality_thresholds: Json;
-          status: 'draft' | 'active' | 'deprecated';
-          version: number;
-          created_by: string | null;
-          updated_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          description?: string | null;
-          producer_team_id?: string | null;
-          producer_contact?: string | null;
-          consumer_team_ids?: string[];
-          schema: Json;
-          schema_format?: 'json' | 'avro' | 'protobuf';
-          sla?: Json;
-          quality_thresholds?: Json;
-          status?: 'draft' | 'active' | 'deprecated';
-          version?: number;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          description?: string | null;
-          producer_team_id?: string | null;
-          producer_contact?: string | null;
-          consumer_team_ids?: string[];
-          schema?: Json;
-          schema_format?: 'json' | 'avro' | 'protobuf';
-          sla?: Json;
-          quality_thresholds?: Json;
-          status?: 'draft' | 'active' | 'deprecated';
-          version?: number;
-          created_by?: string | null;
-          updated_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      data_sources_v2: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          type: string;
-          connection_id: string | null;
-          source_config: Json;
-          contract_id: string | null;
-          schema: Json;
-          schema_last_inferred: string | null;
-          quality_score: number | null;
-          last_quality_check: string | null;
-          quality_issues: Json;
-          last_refreshed_at: string | null;
-          freshness_sla_hours: number | null;
-          freshness_status: string;
-          upstream_sources: string[];
-          downstream_consumers: string[];
-          owner_id: string | null;
-          tags: string[];
-          description: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          type: string;
-          connection_id?: string | null;
-          source_config: Json;
-          contract_id?: string | null;
-          schema: Json;
-          schema_last_inferred?: string | null;
-          quality_score?: number | null;
-          last_quality_check?: string | null;
-          quality_issues?: Json;
-          last_refreshed_at?: string | null;
-          freshness_sla_hours?: number | null;
-          freshness_status?: string;
-          upstream_sources?: string[];
-          downstream_consumers?: string[];
-          owner_id?: string | null;
-          tags?: string[];
-          description?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          type?: string;
-          connection_id?: string | null;
-          source_config?: Json;
-          contract_id?: string | null;
-          schema?: Json;
-          schema_last_inferred?: string | null;
-          quality_score?: number | null;
-          last_quality_check?: string | null;
-          quality_issues?: Json;
-          last_refreshed_at?: string | null;
-          freshness_sla_hours?: number | null;
-          freshness_status?: string;
-          upstream_sources?: string[];
-          downstream_consumers?: string[];
-          owner_id?: string | null;
-          tags?: string[];
-          description?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      data_quality_checks: {
-        Row: {
-          id: string;
-          organization_id: string;
-          source_id: string | null;
-          contract_id: string | null;
-          name: string;
-          type: string;
-          config: Json;
-          severity: 'info' | 'warning' | 'critical';
-          schedule: string;
-          enabled: boolean;
-          last_run: string | null;
-          last_status: string | null;
-          last_result: Json | null;
-          created_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          name: string;
-          type: string;
-          config: Json;
-          severity?: 'info' | 'warning' | 'critical';
-          schedule: string;
-          enabled?: boolean;
-          last_run?: string | null;
-          last_status?: string | null;
-          last_result?: Json | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          name?: string;
-          type?: string;
-          config?: Json;
-          severity?: 'info' | 'warning' | 'critical';
-          schedule?: string;
-          enabled?: boolean;
-          last_run?: string | null;
-          last_status?: string | null;
-          last_result?: Json | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      data_quality_results: {
-        Row: {
-          id: string;
-          check_id: string;
-          source_id: string | null;
-          contract_id: string | null;
-          status: 'passed' | 'failed' | 'error';
-          metric_value: number | null;
-          threshold_value: number | null;
-          details: Json | null;
-          sample_query: string | null;
-          sample_results: Json | null;
-          run_at: string;
-          duration_ms: number | null;
-        };
-        Insert: {
-          id?: string;
-          check_id: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          status: 'passed' | 'failed' | 'error';
-          metric_value?: number | null;
-          threshold_value?: number | null;
-          details?: Json | null;
-          sample_query?: string | null;
-          sample_results?: Json | null;
-          run_at?: string;
-          duration_ms?: number | null;
-        };
-        Update: {
-          id?: string;
-          check_id?: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          status?: 'passed' | 'failed' | 'error';
-          metric_value?: number | null;
-          threshold_value?: number | null;
-          details?: Json | null;
-          sample_query?: string | null;
-          sample_results?: Json | null;
-          run_at?: string;
-          duration_ms?: number | null;
-        };
-      };
-      data_incidents: {
-        Row: {
-          id: string;
-          organization_id: string;
-          source_id: string | null;
-          contract_id: string | null;
-          check_id: string | null;
-          title: string;
-          description: string | null;
-          severity: 'info' | 'warning' | 'critical';
-          status: 'open' | 'investigating' | 'resolved' | 'ignored';
-          impact: string | null;
-          root_cause: string | null;
-          resolution: string | null;
-          detected_at: string;
-          acknowledged_at: string | null;
-          acknowledged_by: string | null;
-          resolved_at: string | null;
-          resolved_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          check_id?: string | null;
-          title: string;
-          description?: string | null;
-          severity?: 'info' | 'warning' | 'critical';
-          status?: 'open' | 'investigating' | 'resolved' | 'ignored';
-          impact?: string | null;
-          root_cause?: string | null;
-          resolution?: string | null;
-          detected_at?: string;
-          acknowledged_at?: string | null;
-          acknowledged_by?: string | null;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          source_id?: string | null;
-          contract_id?: string | null;
-          check_id?: string | null;
-          title?: string;
-          description?: string | null;
-          severity?: 'info' | 'warning' | 'critical';
-          status?: 'open' | 'investigating' | 'resolved' | 'ignored';
-          impact?: string | null;
-          root_cause?: string | null;
-          resolution?: string | null;
-          detected_at?: string;
-          acknowledged_at?: string | null;
-          acknowledged_by?: string | null;
-          resolved_at?: string | null;
-          resolved_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      data_lineage: {
-        Row: {
-          id: string;
-          organization_id: string;
-          source_id: string | null;
-          target_id: string | null;
-          transformation_type: string | null;
-          transformation_config: Json | null;
-          column_mapping: Json | null;
-          is_active: boolean;
-          last_synced: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          source_id?: string | null;
-          target_id?: string | null;
-          transformation_type?: string | null;
-          transformation_config?: Json | null;
-          column_mapping?: Json | null;
-          is_active?: boolean;
-          last_synced?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          source_id?: string | null;
-          target_id?: string | null;
-          transformation_type?: string | null;
-          transformation_config?: Json | null;
-          column_mapping?: Json | null;
-          is_active?: boolean;
-          last_synced?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      imported_datasets: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          original_filename: string | null;
-          columns: Json;
-          rows: Json;
-          row_count: number;
-          status: 'draft' | 'mapped' | 'imported' | 'error';
-          mapped_table: string | null;
-          created_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          original_filename?: string | null;
-          columns: Json;
-          rows: Json;
-          row_count?: number;
-          status?: 'draft' | 'mapped' | 'imported' | 'error';
-          mapped_table?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          original_filename?: string | null;
-          columns?: Json;
-          rows?: Json;
-          row_count?: number;
-          status?: 'draft' | 'mapped' | 'imported' | 'error';
-          mapped_table?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      import_mappings: {
-        Row: {
-          id: string;
-          organization_id: string;
-          dataset_id: string | null;
-          name: string;
-          source_columns: Json;
-          target_table: string;
-          column_mapping: Json;
-          transform_rules: Json;
-          created_by: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          dataset_id?: string | null;
-          name: string;
-          source_columns: Json;
-          target_table: string;
-          column_mapping: Json;
-          transform_rules?: Json;
-          created_by?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          dataset_id?: string | null;
-          name?: string;
-          source_columns?: Json;
-          target_table?: string;
-          column_mapping?: Json;
-          transform_rules?: Json;
-          created_by?: string | null;
-          created_at?: string;
-        };
-      };
-      import_jobs: {
-        Row: {
-          id: string;
-          organization_id: string;
-          mapping_id: string | null;
-          dataset_id: string | null;
-          status: 'pending' | 'running' | 'completed' | 'failed';
-          total_rows: number;
-          processed_rows: number;
-          failed_rows: number;
-          error_details: Json | null;
-          started_at: string | null;
-          completed_at: string | null;
-          created_by: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          mapping_id?: string | null;
-          dataset_id?: string | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed';
-          total_rows?: number;
-          processed_rows?: number;
-          failed_rows?: number;
-          error_details?: Json | null;
-          started_at?: string | null;
-          completed_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          mapping_id?: string | null;
-          dataset_id?: string | null;
-          status?: 'pending' | 'running' | 'completed' | 'failed';
-          total_rows?: number;
-          processed_rows?: number;
-          failed_rows?: number;
-          error_details?: Json | null;
-          started_at?: string | null;
-          completed_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-        };
-      };
-      embedded_dashboards: {
-        Row: {
-          id: string;
-          organization_id: string;
-          dashboard_id: string;
-          public_token: string;
-          allowed_domains: string[];
-          rls_policy: Json | null;
-          expires_at: string | null;
-          created_by: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          dashboard_id: string;
-          public_token?: string;
-          allowed_domains?: string[];
-          rls_policy?: Json | null;
-          expires_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          organization_id?: string;
-          dashboard_id?: string;
-          public_token?: string;
-          allowed_domains?: string[];
-          rls_policy?: Json | null;
-          expires_at?: string | null;
-          created_by?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      embed_usage: {
-        Row: {
-          id: string;
-          embed_id: string;
-          viewer_id: string | null;
-          event_type: string;
-          event_data: Json | null;
-          referrer: string | null;
-          user_agent: string | null;
-          ip_hash: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          embed_id: string;
-          viewer_id?: string | null;
-          event_type: string;
-          event_data?: Json | null;
-          referrer?: string | null;
-          user_agent?: string | null;
-          ip_hash?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          embed_id?: string;
-          viewer_id?: string | null;
-          event_type?: string;
-          event_data?: Json | null;
-          referrer?: string | null;
-          user_agent?: string | null;
-          ip_hash?: string | null;
-          created_at?: string;
-        };
-      };
-    };
-    Views: Record<string, never>;
+          id?: string
+          user_id?: string | null
+          role?: string
+          content?: string
+          session_id?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
     Functions: {
-      current_org_id: { Args: {}; Returns: string };
-      current_user_id: { Args: {}; Returns: string };
-      can_access_dashboard: { Args: { dashboard_id: string; user_id: string; permission: string }; Returns: boolean };
-      track_metric_version: { Args: Record<string, never>; Returns: unknown };
-      handle_new_user: { Args: Record<string, never>; Returns: unknown };
-      ensure_organization: { Args: { p_slug: string; p_name: string }; Returns: { id: string; name: string; slug: string; logo_url: string | null; plan: string; created_at: string; updated_at: string }[] };
-    };
+      [_ in never]: never
+    }
     Enums: {
-      plan: 'free' | 'pro' | 'team' | 'enterprise';
-      user_role: 'owner' | 'admin' | 'analyst' | 'viewer';
-      team_role: 'lead' | 'member';
-      metric_status: 'draft' | 'certified' | 'deprecated';
-      alert_severity: 'info' | 'warning' | 'critical';
-      alert_status: 'firing' | 'acknowledged' | 'resolved';
-      agent_status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-      agent_type: 'sql' | 'insight' | 'action' | 'forecast' | 'root_cause' | 'narrative' | 'data_quality' | 'pre_mortem';
-      dataset_status: 'draft' | 'mapped' | 'imported' | 'error';
-      import_status: 'pending' | 'running' | 'completed' | 'failed';
-      data_source_type: 'table' | 'view' | 'stream' | 'file' | 'api';
-      data_source_status: 'fresh' | 'stale' | 'critical';
-      contract_status: 'draft' | 'active' | 'deprecated';
-      quality_check_status: 'passed' | 'failed' | 'error';
-      incident_status: 'open' | 'investigating' | 'resolved' | 'ignored';
-      incident_severity: 'info' | 'warning' | 'critical';
-      quality_check_type: 'null_check' | 'range_check' | 'freshness' | 'uniqueness' | 'referential_integrity' | 'schema_match' | 'custom_sql';
-    };
-  };
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
-
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
-export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
-export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
-
-export type Organization = Tables<'organizations'>;
-export type User = Tables<'users'>;
-export type Team = Tables<'teams'>;
-export type ApiKey = Tables<'api_keys'>;
-export type AuditLog = Tables<'audit_logs'>;
-export type Metric = Tables<'metrics'>;
-export type MetricVersion = Tables<'metric_versions'>;
-export type Dashboard = Tables<'dashboards_v2'>;
-export type DashboardVersion = Tables<'dashboard_versions'>;
-export type AlertRule = Tables<'alert_rules'>;
-export type AlertIncident = Tables<'alert_incidents'>;
-export type AgentRun = Tables<'agent_runs'>;
-export type AgentRunStep = Tables<'agent_run_steps'>;
-export type DataContract = Tables<'data_contracts'>;
-export type DataSource = Tables<'data_sources_v2'>;
-export type ImportedDataset = Tables<'imported_datasets'>;
-export type ImportMapping = Tables<'import_mappings'>;
-export type ImportJob = Tables<'import_jobs'>;
-export type EmbeddedDashboard = Tables<'embedded_dashboards'>;
-export type EmbedUsage = Tables<'embed_usage'>;

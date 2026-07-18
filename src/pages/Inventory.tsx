@@ -1,78 +1,62 @@
-import { useEffect, useState } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
+import { useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
+import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import * as m from "@/lib/mock";
 
 export function InventoryPage() {
-  const [products, setProducts] = useState<any[]>([])
-  const [warehouses, setWarehouses] = useState<any[]>([])
-  const [suppliers, setSuppliers] = useState<any[]>([])
-  const [tab, setTab] = useState('products')
-
-  useEffect(() => {
-    db.getInventoryProducts().then(setProducts)
-    db.getWarehouses().then(setWarehouses)
-    db.getSuppliers().then(setSuppliers)
-  }, [])
-
-  const lowStock = products.filter((p: any) => p.quantity <= p.reorder_level)
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Inventory</h1>
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardHeader><CardTitle className="text-sm">Products</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{products.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Warehouses</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{warehouses.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Low Stock Alerts</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-red-600">{lowStock.length}</div></CardContent></Card>
+  return <ModulePage title="Inventory" subtitle="Stock · Warehouses · Suppliers" tabs={[
+    { key: "prod", label: "Products", render: () => (
+      <TableCard title="Products" columns={[
+        { key: "sku", label: "SKU" },{ key: "name", label: "Product" },{ key: "category", label: "Category" },{ key: "stock", label: "Stock" },{ key: "price", label: "Price", align: "right" },
+      ]} rows={m.products}/>
+    )},
+    { key: "stock", label: "Stock", render: () => (
+      <>
+        <KpiRow items={[
+          { label: "SKUs", value: "1,284", icon: "inventory_2" },
+          { label: "In stock", value: "1,142", delta: "+18", icon: "check_circle" },
+          { label: "Low stock", value: "42", delta: "+8", icon: "warning" },
+          { label: "Out of stock", value: "12", icon: "block" },
+        ]}/>
+        <TableCard title="Low stock" columns={[
+          { key: "sku", label: "SKU" },{ key: "name", label: "Product" },{ key: "stock", label: "Stock", align: "right" },
+        ]} rows={m.products.filter(p=>p.stock<50)}/>
+      </>
+    )},
+    { key: "ware", label: "Warehouses", render: () => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[["SF-01","San Francisco","82%"],["NYC-02","New York","64%"],["AMS-03","Amsterdam","41%"]].map(([id,loc,cap]) => (
+          <div key={id} className="bento-card rounded-lg p-5">
+            <div className="text-white text-sm">{loc}</div>
+            <div className="text-[10px] font-mono text-muted-foreground uppercase mt-1">{id}</div>
+            <div className="mt-4 h-1 bg-border rounded"><div className="h-full bg-white" style={{width:cap as string}}/></div>
+            <div className="text-xs text-muted-foreground mt-2">Capacity {cap}</div>
+          </div>
+        ))}
       </div>
-
-      {lowStock.length > 0 && (
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader><CardTitle className="text-red-700">Low Stock Alerts</CardTitle></CardHeader>
-          <CardContent>
-            {lowStock.map((p: any) => (
-              <div key={p.id} className="flex items-center justify-between py-1">
-                <span className="font-medium">{p.name}</span>
-                <Badge variant="danger">{p.quantity} remaining (reorder at {p.reorder_level})</Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="warehouses">Warehouses</TabsTrigger>
-          <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
-        </TabsList>
-        <TabsContent value="products">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>SKU</Th><Th>Price</Th><Th>Quantity</Th><Th>Reorder Level</Th><Th>Status</Th></Tr></THead>
-            <TBody>{products.map((p: any) => (
-              <Tr key={p.id}><Td className="font-medium">{p.name}</Td><Td>{p.sku}</Td><Td>${Number(p.unit_price).toFixed(2)}</Td><Td>{p.quantity}</Td><Td>{p.reorder_level}</Td><Td>{p.quantity <= p.reorder_level ? <Badge variant="danger">Low Stock</Badge> : <Badge variant="success">In Stock</Badge>}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="warehouses">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Location</Th><Th>Capacity</Th></Tr></THead>
-            <TBody>{warehouses.map((w: any) => (
-              <Tr key={w.id}><Td className="font-medium">{w.name}</Td><Td>{w.location}</Td><Td>{w.capacity?.toLocaleString() || '-'}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="suppliers">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Contact</Th><Th>Email</Th><Th>Phone</Th></Tr></THead>
-            <TBody>{suppliers.map((s: any) => (
-              <Tr key={s.id}><Td className="font-medium">{s.name}</Td><Td>{s.contact_name}</Td><Td>{s.email}</Td><Td>{s.phone}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+    )},
+    { key: "sup", label: "Suppliers", render: () => (
+      <TableCard title="Suppliers" columns={[
+        { key: "name", label: "Supplier" },{ key: "country", label: "Country" },{ key: "lead", label: "Lead time" },{ key: "rating", label: "Rating", align: "right" },
+      ]} rows={[
+        { name: "Nexus Components", country: "Taiwan", lead: "14 days", rating: "A+" },
+        { name: "Orion Logistics", country: "USA", lead: "3 days", rating: "A" },
+        { name: "Meridian Parts", country: "Germany", lead: "10 days", rating: "B+" },
+      ]}/>
+    )},
+    { key: "po", label: "Purchase orders", render: () => (
+      <TableCard title="Purchase orders" columns={[
+        { key: "po", label: "PO" },{ key: "supplier", label: "Supplier" },{ key: "amount", label: "Amount" },{ key: "status", label: "Status", align: "right" },
+      ]} rows={[
+        { po: "PO-2841", supplier: "Nexus", amount: "$48,200", status: "Received" },
+        { po: "PO-2842", supplier: "Orion", amount: "$12,900", status: "In Transit" },
+        { po: "PO-2843", supplier: "Meridian", amount: "$92,400", status: "Ordered" },
+      ]}/>
+    )},
+    { key: "an", label: "Analytics", render: () => (
+      <Card title="Turnover — 12w"><BarChart data={Array.from({length:12},(_,i)=>({label:`W${i+1}`,value:30+Math.random()*70}))}/></Card>
+    )},
+  ]}/>;
 }
+

@@ -1,73 +1,117 @@
-import { useEffect, useState, useRef } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Bot, Send, User } from 'lucide-react'
-
-interface Message {
-  role: 'user' | 'assistant'
-  content: string
-}
+import { useState, useRef, useEffect } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { Card } from "@/components/common/primitives";
+import { ChatService } from "@/services/chat.service";
 
 export function AiCopilotPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I'm your AI Copilot. I have access to your business data and can help you analyze it, generate reports, or answer questions about your operations." },
-  ])
-  const [input, setInput] = useState('')
-  const [context, setContext] = useState('')
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: "assistant", text: "Hi — I'm your Copilot. Ask about revenue, customers, forecasts, or generate a report based on your connected datasets." },
+  ]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    Promise.all([
-      db.getCustomers(), db.getInvoices(), db.getDeals(), db.getProjects(), db.getEmployees(),
-    ]).then(([customers, invoices, deals, projects, employees]) => {
-      const paidInvoices = invoices.filter((i: any) => i.status === 'paid')
-      const totalRevenue = paidInvoices.reduce((s: number, i: any) => s + Number(i.amount), 0)
-      const pipelineValue = deals.filter((d: any) => d.stage !== 'closed_lost').reduce((s: number, d: any) => s + Number(d.value), 0)
-      setContext(`Business Context: ${customers.length} customers, ${invoices.length} invoices (${paidInvoices.length} paid, total $${totalRevenue.toLocaleString()}), ${deals.length} deals (pipeline $${pipelineValue.toLocaleString()}), ${projects.length} projects, ${employees.length} employees.`)
-    })
-  }, [])
+    scrollToBottom();
+  }, [messages]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  const suggested = [
+    "Why did revenue drop?",
+    "Show customer growth.",
+    "Generate executive summary.",
+    "Forecast next month's cash flow",
+    "Compare this month vs last month",
+  ];
 
-  const handleSend = async () => {
-    if (!input.trim()) return
-    const userMsg = { role: 'user' as const, content: input }
-    setMessages((prev) => [...prev, userMsg])
-    setInput('')
+  const send = async (t: string) => {
+    if (!t.trim() || loading) return;
+    
+    const newHistory = [...messages, { role: "user", text: t }];
+    setMessages(newHistory);
+    setInput("");
+    setLoading(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [...prev, {
-        role: 'assistant',
-        content: `Based on your business data:\n${context}\n\nI understand your question about "${input}". To provide specific analysis, I would connect to the Gemini API. For now, here's a summary of what I know about your business.`,
-      }])
-    }, 1000)
-  }
+    try {
+      const responseText = await ChatService.sendMessage(t, messages);
+      setMessages([...newHistory, { role: "assistant", text: responseText }]);
+    } catch (error: any) {
+      console.error(error);
+      setMessages([...newHistory, { role: "assistant", text: `Error: ${error.message || 'Failed to communicate with Copilot.'}` }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">AI Copilot</h1>
-      <p className="text-sm text-gray-500">{context}</p>
-      <Card className="h-[600px] flex flex-col">
-        <CardHeader><CardTitle className="flex items-center gap-2"><Bot className="h-5 w-5" /> AI Copilot Chat</CardTitle></CardHeader>
-        <CardContent className="flex-1 overflow-y-auto space-y-4">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : ''}`}>
-              {m.role === 'assistant' && <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><Bot className="h-4 w-4 text-blue-600" /></div>}
-              <div className={`max-w-[80%] rounded-lg p-3 ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
-                <p className="text-sm whitespace-pre-wrap">{m.content}</p>
+    <AppShell title="AI Copilot" subtitle="Ask · Analyze · Generate">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-14rem)]">
+        <div className="lg:col-span-3 bento-card rounded-lg flex flex-col overflow-hidden relative">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap ${
+                  msg.role === "user" ? "bg-white text-black" : "text-white bg-white/5 border border-white/10"
+                }`}>{msg.text}</div>
               </div>
-              {m.role === 'user' && <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0"><User className="h-4 w-4 text-gray-600" /></div>}
+            ))}
+            {loading && (
+               <div className="flex justify-start">
+                 <div className="max-w-[70%] rounded-lg px-4 py-3 text-sm text-white bg-white/5 border border-white/10 flex items-center gap-2">
+                   <span className="material-symbols-outlined animate-spin h-4 w-4">sync</span>
+                   Analyzing...
+                 </div>
+               </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="border-t border-border p-4 bg-background/50 backdrop-blur-md">
+            <div className="flex gap-2 flex-wrap mb-3">
+              {suggested.map((s) => (
+                <button key={s} onClick={() => send(s)} disabled={loading} className="text-[11px] px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-white hover:bg-secondary/40 disabled:opacity-50">{s}</button>
+              ))}
             </div>
-          ))}
-          <div ref={bottomRef} />
-        </CardContent>
-        <div className="p-4 border-t flex gap-2">
-          <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about your business data..." onKeyDown={(e) => e.key === 'Enter' && handleSend()} />
-          <Button onClick={handleSend}><Send className="h-4 w-4" /></Button>
+            <div className="flex items-center gap-2 border border-border rounded-md px-4 py-3 bg-background focus-within:border-primary/50 transition-colors">
+              <span className="material-symbols-outlined text-muted-foreground text-[18px]">chat</span>
+              <input 
+                value={input} 
+                onChange={(e)=>setInput(e.target.value)} 
+                onKeyDown={(e)=>e.key==="Enter"&&send(input)} 
+                disabled={loading}
+                className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground disabled:opacity-50" 
+                placeholder="Ask Copilot anything..." 
+              />
+              <button 
+                onClick={()=>send(input)} 
+                disabled={loading || !input.trim()}
+                className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Send
+              </button>
+            </div>
+          </div>
         </div>
-      </Card>
-    </div>
-  )
+        <div className="flex flex-col gap-4">
+          <Card title="Quick actions" icon="bolt">
+            <div className="p-4 space-y-2">
+              {["Summarize P&L","Draft weekly update","Find at-risk deals","Explain churn spike"].map((q) => (
+                <button key={q} onClick={() => send(q)} disabled={loading} className="w-full text-left text-xs text-white px-3 py-2 rounded border border-border hover:bg-secondary/40 disabled:opacity-50">{q}</button>
+              ))}
+            </div>
+          </Card>
+          <Card title="Recent" icon="history">
+            <div className="p-4 space-y-2 text-xs">
+              {["MoM revenue analysis","Forecast Q4 cash","Top 10 accounts","Marketing ROAS report"].map((c) => (
+                <div key={c} className="border-b border-border pb-2 last:border-0 text-muted-foreground hover:text-white cursor-pointer">{c}</div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
+    </AppShell>
+  );
 }
+

@@ -1,81 +1,73 @@
-import { useEffect, useState } from 'react'
-import { db } from '@/services/database.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
-
-const statusVariant: Record<string, 'success' | 'warning' | 'danger' | 'info' | 'default'> = {
-  active: 'success', at_risk: 'danger', vip: 'info', new: 'info', contacted: 'warning', qualified: 'success', lost: 'default',
-  prospecting: 'default', proposal: 'warning', negotiation: 'info', closed_won: 'success', closed_lost: 'danger',
-}
+import { useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
+import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import * as m from "@/lib/mock";
 
 export function CrmPage() {
-  const [customers, setCustomers] = useState<any[]>([])
-  const [leads, setLeads] = useState<any[]>([])
-  const [deals, setDeals] = useState<any[]>([])
-  const [activities, setActivities] = useState<any[]>([])
-  const [tab, setTab] = useState('customers')
-
-  useEffect(() => {
-    db.getCustomers().then(setCustomers)
-    db.getLeads().then(setLeads)
-    db.getDeals().then(setDeals)
-    db.getActivities().then(setActivities)
-  }, [])
-
-  const pipelineValue = deals.reduce((s: number, d: any) => s + Number(d.value), 0)
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">CRM</h1>
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card><CardHeader><CardTitle className="text-sm">Customers</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{customers.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Leads</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{leads.length}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Pipeline Value</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">${pipelineValue.toLocaleString()}</div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Activities</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{activities.length}</div></CardContent></Card>
+  return <ModulePage title="CRM" subtitle="Customers · Deals · Pipeline" tabs={[
+    { key: "customers", label: "Customers", render: () => (
+      <>
+        <KpiRow items={[
+          { label: "Customers", value: "8,412", delta: "+184", icon: "groups" },
+          { label: "Active", value: "7,912", delta: "+2.1%", icon: "check_circle" },
+          { label: "Churn Risk", value: "142", delta: "+12", icon: "warning" },
+          { label: "LTV", value: "$18.4K", delta: "+3.4%", icon: "diamond" },
+        ]}/>
+        <TableCard title="All customers" columns={[
+          { key: "name", label: "Customer" },{ key: "contact", label: "Contact" },{ key: "industry", label: "Industry" },
+          { key: "value", label: "Value", align: "right" },
+          { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Active"?"success":r.status==="Prospect"?"info":"warn"}>{r.status}</Badge> },
+        ]} rows={m.customers} />
+      </>
+    )},
+    { key: "companies", label: "Companies", render: () => (
+      <TableCard title="Companies" columns={[
+        { key: "name", label: "Company" },{ key: "industry", label: "Industry" },{ key: "contact", label: "Primary" },{ key: "value", label: "ACV", align: "right" },
+      ]} rows={m.customers} />
+    )},
+    { key: "leads", label: "Leads", render: () => (
+      <TableCard title="Leads" columns={[
+        { key: "name", label: "Lead" },{ key: "owner", label: "Owner" },{ key: "stage", label: "Stage" },
+        { key: "score", label: "Score", render: (r:any) => <Badge tone={r.score>80?"success":r.score>60?"info":"warn"}>{r.score}</Badge> },
+        { key: "value", label: "Value", align: "right" },
+      ]} rows={m.leads} />
+    )},
+    { key: "deals", label: "Deals", render: () => (
+      <TableCard title="Deals" columns={[
+        { key: "name", label: "Deal" },{ key: "stage", label: "Stage" },{ key: "value", label: "Value" },{ key: "prob", label: "Probability" },{ key: "close", label: "Close", align: "right" },
+      ]} rows={m.deals} />
+    )},
+    { key: "pipeline", label: "Pipeline", render: () => (
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {["New","Qualified","Proposal","Negotiation"].map((stage, i) => (
+          <div key={stage} className="bento-card rounded-lg p-4">
+            <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">{stage}</div>
+            <div className="space-y-2">
+              {m.deals.slice(0,2+i%3).map((d) => (
+                <div key={d.name+stage} className="border border-border rounded p-3 hover:bg-secondary/40">
+                  <div className="text-xs text-white">{d.name}</div>
+                  <div className="text-[10px] font-mono text-muted-foreground mt-1">{d.value} · {d.close}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="leads">Leads</TabsTrigger>
-          <TabsTrigger value="deals">Deals</TabsTrigger>
-          <TabsTrigger value="activities">Activities</TabsTrigger>
-        </TabsList>
-        <TabsContent value="customers">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Company</Th><Th>Status</Th><Th>LTV</Th><Th>Last Contacted</Th></Tr></THead>
-            <TBody>{customers.map((c: any) => (
-              <Tr key={c.id}><Td className="font-medium">{c.name}</Td><Td>{c.company}</Td><Td><Badge variant={statusVariant[c.status] || 'default'}>{c.status}</Badge></Td><Td>${Number(c.lifetime_value).toLocaleString()}</Td><Td>{c.last_contacted ? new Date(c.last_contacted).toLocaleDateString() : '-'}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="leads">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Email</Th><Th>Source</Th><Th>Status</Th></Tr></THead>
-            <TBody>{leads.map((l: any) => (
-              <Tr key={l.id}><Td className="font-medium">{l.name}</Td><Td>{l.email}</Td><Td>{l.source}</Td><Td><Badge variant={statusVariant[l.status] || 'default'}>{l.status}</Badge></Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="deals">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Name</Th><Th>Value</Th><Th>Stage</Th><Th>Probability</Th><Th>Close Date</Th></Tr></THead>
-            <TBody>{deals.map((d: any) => (
-              <Tr key={d.id}><Td className="font-medium">{d.name}</Td><Td>${Number(d.value).toLocaleString()}</Td><Td><Badge variant={statusVariant[d.stage] || 'default'}>{d.stage}</Badge></Td><Td>{d.probability}%</Td><Td>{d.close_date ? new Date(d.close_date).toLocaleDateString() : '-'}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-        <TabsContent value="activities">
-          <Card><CardContent className="p-0"><Table>
-            <THead><Tr><Th>Type</Th><Th>Subject</Th><Th>Description</Th><Th>Date</Th></Tr></THead>
-            <TBody>{activities.map((a: any) => (
-              <Tr key={a.id}><Td><Badge>{a.type}</Badge></Td><Td className="font-medium">{a.subject}</Td><Td>{a.description}</Td><Td>{new Date(a.created_at).toLocaleDateString()}</Td></Tr>
-            ))}</TBody>
-          </Table></CardContent></Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+    )},
+    { key: "activities", label: "Activities", render: () => (
+      <Card title="Recent activities" icon="history">
+        <div className="p-5 space-y-3">
+          {["Call with Sarah Chen (Acme)","Sent proposal to Adventure Works","Demo scheduled — Contoso","Email opened by Wayne Enterprises","Meeting notes: Globex QBR"].map((a,i) => (
+            <div key={a} className="flex items-center gap-3 border-b border-border pb-3 last:border-0">
+              <span className="material-symbols-outlined text-muted-foreground text-[18px]">event</span>
+              <div className="flex-1 text-sm text-white">{a}</div>
+              <span className="text-[10px] font-mono text-muted-foreground">{i+1}h ago</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+    )},
+  ]}/>;
 }
+
