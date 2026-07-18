@@ -1,3 +1,6 @@
+import { useState, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   Key,
   Plus,
@@ -6,15 +9,126 @@ import {
   Activity,
   Settings,
   Copy,
-  MoreVertical,
   Trash2,
-  Pause,
-  Download,
   X,
   Database,
+  Eye,
+  EyeOff,
+  Check,
+  AlertTriangle,
 } from "lucide-react";
 
+const STORAGE_KEY = "qorx_api_keys";
+
+interface ApiKeyRecord {
+  id: string;
+  name: string;
+  key: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  active: boolean;
+}
+
+function generateApiKey(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let key = "eyex_live_";
+  for (let i = 0; i < 48; i++) {
+    key += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return key;
+}
+
+function loadKeys(): ApiKeyRecord[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveKeys(keys: ApiKeyRecord[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+}
+
+function maskKey(key: string): string {
+  if (key.length <= 12) return key;
+  return key.slice(0, 12) + "••••••••" + key.slice(-4);
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function ApiPage() {
+  const queryClient = useQueryClient();
+  const [showNewKeyModal, setShowNewKeyModal] = useState(false);
+  const [newKeyName, setNewKeyName] = useState("");
+  const [revealedKey, setRevealedKey] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const keysQuery = useQuery<ApiKeyRecord[]>({
+    queryKey: ["api-keys"],
+    queryFn: loadKeys,
+  });
+
+  const keys = keysQuery.data ?? [];
+  const activeKeys = keys.filter((k) => k.active);
+
+  const handleCreateKey = useCallback(() => {
+    if (!newKeyName.trim()) {
+      toast.error("Please enter a key name");
+      return;
+    }
+    const key = generateApiKey();
+    const record: ApiKeyRecord = {
+      id: crypto.randomUUID(),
+      name: newKeyName.trim(),
+      key,
+      createdAt: new Date().toISOString(),
+      lastUsedAt: null,
+      active: true,
+    };
+    const updated = [...keys, record];
+    saveKeys(updated);
+    queryClient.setQueryData(["api-keys"], updated);
+    setRevealedKey(key);
+    setNewKeyName("");
+    toast.success("API key created");
+  }, [newKeyName, keys, queryClient]);
+
+  const handleRevokeKey = useCallback(
+    (id: string) => {
+      const updated = keys.map((k) => (k.id === id ? { ...k, active: false } : k));
+      saveKeys(updated);
+      queryClient.setQueryData(["api-keys"], updated);
+      toast.success("API key revoked");
+    },
+    [keys, queryClient]
+  );
+
+  const handleDeleteKey = useCallback(
+    (id: string) => {
+      const updated = keys.filter((k) => k.id !== id);
+      saveKeys(updated);
+      queryClient.setQueryData(["api-keys"], updated);
+      toast.success("API key deleted");
+    },
+    [keys, queryClient]
+  );
+
+  const handleCopy = useCallback((id: string, key: string) => {
+    navigator.clipboard.writeText(key).then(() => {
+      setCopiedId(id);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  }, []);
+
   return (
     <div className="flex h-screen overflow-hidden relative">
       {/* Ambient Background Effects */}
@@ -33,31 +147,19 @@ export function ApiPage() {
           </div>
         </div>
         <nav className="flex-1 space-y-2">
-          <a
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
-            href="#"
-          >
+          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
             <LayoutDashboard className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">Dashboard</span>
           </a>
-          <a
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-brand border-l-2 border-primary-brand bg-surface-container-low transition-all"
-            href="#"
-          >
+          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-brand border-l-2 border-primary-brand bg-surface-container-low transition-all" href="#">
             <Key className="w-5 h-5" />
             <span className="text-sm font-bold">API Management</span>
           </a>
-          <a
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
-            href="#"
-          >
+          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
             <FileText className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">Documentation</span>
           </a>
-          <a
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
-            href="#"
-          >
+          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
             <Activity className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">System Health</span>
           </a>
@@ -69,11 +171,7 @@ export function ApiPage() {
           </button>
           <div className="mt-6 p-4 rounded-xl glass-panel flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
-              <img
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCADlX9fn0WkHCWmyDGh8WzHmcD4apoXdAtufXqEkhWuXG3yx9tYqxBPHKklvJNhNeLad44KiUD-3AUZBPCeXybO1-u7-oazruKGqa2uB0Ft0RQ84p3Ce1ZYEtz-NwPTOmcoy5_rDiJlzGd20mJ2m-Gg_14Nv6bBheXqGC6IpbO_6Z7SNmg4KGvDHgBqbQTDVAXs1SYbffGt-jyNe_v5YegEjsu4ocgyGfUxWnkPWbVBdR0ifzM-Zxws7dIfvp-Lfunjk897pd8Plc"
-                alt="Admin avatar"
-              />
+              <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCADlX9fn0WkHCWmyDGh8WzHmcD4apoXdAtufXqEkhWuXG3yx9tYqxBPHKklvJNhNeLad44KiUD-3AUZBPCeXybO1-u7-oazruKGqa2uB0Ft0RQ84p3Ce1ZYEtz-NwPTOmcoy5_rDiJlzGd20mJ2m-Gg_14Nv6bBheXqGC6IpbO_6Z7SNmg4KGvDHgBqbQTDVAXs1SYbffGt-jyNe_v5YegEjsu4ocgyGfUxWnkPWbVBdR0ifzM-Zxws7dIfvp-Lfunjk897pd8Plc" alt="Admin avatar" />
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-white">Admin Core</span>
@@ -92,7 +190,10 @@ export function ApiPage() {
             <p className="text-sm text-eye-text">Provision and audit secure access keys</p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="bg-white text-eye-bg px-6 py-2.5 rounded-sm font-bold text-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all flex items-center gap-2">
+            <button
+              onClick={() => setShowNewKeyModal(true)}
+              className="bg-white text-eye-bg px-6 py-2.5 rounded-sm font-bold text-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all flex items-center gap-2"
+            >
               <Plus className="text-sm w-4 h-4" />
               Generate New Key
             </button>
@@ -104,51 +205,67 @@ export function ApiPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-fade-up>
             <div className="glass-panel p-6 rounded-sm">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono text-eye-text text-[10px]">TOTAL REQUESTS</span>
-                <Activity className="text-primary-brand w-5 h-5" />
+                <span className="font-mono text-eye-text text-[10px]">ACTIVE KEYS</span>
+                <Key className="text-primary-brand w-5 h-5" />
               </div>
               <div className="flex items-end gap-3 mb-4">
-                <span className="text-3xl font-bold text-white">8.4M</span>
-                <span className="text-xs text-green-400 mb-1">+12.4%</span>
+                <span className="text-3xl font-bold text-white">{activeKeys.length}</span>
+                <span className="text-xs text-eye-text mb-1">of {keys.length} total</span>
               </div>
               <div className="h-1.5 w-full bg-eye-border rounded-full overflow-hidden">
-                <div className="h-full bg-primary-brand w-[65%] rounded-full" />
+                <div
+                  className="h-full bg-primary-brand rounded-full transition-all"
+                  style={{ width: `${keys.length > 0 ? (activeKeys.length / keys.length) * 100 : 0}%` }}
+                />
               </div>
               <div className="flex justify-between mt-2">
-                <span className="text-[10px] text-eye-text">Usage: 6.5k / 10k req/m</span>
+                <span className="text-[10px] text-eye-text">
+                  {activeKeys.length === 0 ? "No active keys" : `${activeKeys.length} key(s) active`}
+                </span>
               </div>
             </div>
 
             <div className="glass-panel p-6 rounded-sm">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono text-eye-text text-[10px]">AVG LATENCY (MS)</span>
+                <span className="font-mono text-eye-text text-[10px]">TOTAL KEYS CREATED</span>
                 <Activity className="text-primary-brand w-5 h-5" />
               </div>
               <div className="flex items-end gap-3 mb-2">
-                <span className="text-3xl font-bold text-white">124</span>
-                <span className="text-xs text-blue-400 mb-1">Optimal</span>
+                <span className="text-3xl font-bold text-white">{keys.length}</span>
+                <span className="text-xs text-blue-400 mb-1">All time</span>
               </div>
               <div className="h-10 flex items-end gap-1">
-                <div className="w-full bg-eye-border h-4 rounded-t-sm" />
-                <div className="w-full bg-eye-border h-6 rounded-t-sm" />
-                <div className="w-full bg-primary-brand/40 h-8 rounded-t-sm" />
-                <div className="w-full bg-primary-brand h-5 rounded-t-sm" />
-                <div className="w-full bg-primary-brand/60 h-7 rounded-t-sm" />
-                <div className="w-full bg-eye-border h-3 rounded-t-sm" />
+                {keys.slice(-6).map((k, i) => (
+                  <div
+                    key={k.id}
+                    className={`w-full rounded-t-sm ${k.active ? "bg-primary-brand" : "bg-eye-border"}`}
+                    style={{ height: `${20 + (i + 1) * 8}px` }}
+                  />
+                ))}
+                {keys.length === 0 && (
+                  <>
+                    <div className="w-full bg-eye-border h-3 rounded-t-sm" />
+                    <div className="w-full bg-eye-border h-5 rounded-t-sm" />
+                    <div className="w-full bg-eye-border h-4 rounded-t-sm" />
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="glass-panel p-6 rounded-sm border-l-4 border-l-red-500/50">
+            <div className="glass-panel p-6 rounded-sm">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono text-eye-text text-[10px]">ERROR RATE (%)</span>
-                <X className="text-red-400 w-5 h-5" />
+                <span className="font-mono text-eye-text text-[10px]">SECURITY STATUS</span>
+                <AlertTriangle className="text-green-400 w-5 h-5" />
               </div>
               <div className="flex items-end gap-3">
-                <span className="text-3xl font-bold text-white">0.04%</span>
-                <span className="text-xs text-red-400 mb-1">Critical</span>
+                <span className="text-3xl font-bold text-white">
+                  {keys.length === 0 ? "—" : activeKeys.length > 0 ? "ACTIVE" : "NONE"}
+                </span>
               </div>
               <p className="text-[10px] text-eye-text mt-4">
-                24 failed handshakes in last 1h
+                {keys.length === 0
+                  ? "Create your first API key to get started"
+                  : `${activeKeys.length} active key(s) with AES-256 GCM encryption`}
               </p>
             </div>
           </div>
@@ -161,130 +278,118 @@ export function ApiPage() {
                 ACTIVE SECURITY TOKENS
               </h2>
               <span className="font-mono text-[10px] text-eye-text uppercase">
-                Displaying 3 of 12
+                Displaying {Math.min(keys.length, 6)} of {keys.length}
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Key Card 1 */}
-              <div className="glass-panel p-6 rounded-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Key className="text-6xl w-16 h-16" />
-                </div>
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-white mb-1">
-                      Production - Edge Mesh
-                    </h3>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 uppercase font-bold tracking-wider">
-                      Active
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button aria-label="Copy to clipboard" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
-                      <Copy className="text-lg w-5 h-5" />
-                    </button>
-                    <button aria-label="More options" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
-                      <MoreVertical className="text-lg w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <span className="font-mono text-xs text-white/90 bg-eye-bg p-2 block rounded border border-eye-border select-all">
-                    eyex_live_••••••••••••x7a9
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border-eye-border">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-eye-text">RATE LIMIT</span>
-                    <span className="text-xs font-bold text-white">10,000 REQ/MIN</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-eye-text">CREATED</span>
-                    <span className="text-xs text-white">24 OCT 2023</span>
-                  </div>
-                </div>
-              </div>
 
-              {/* Key Card 2 */}
-              <div className="glass-panel p-6 rounded-sm relative overflow-hidden group border-primary-brand/30">
-                <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity text-primary-brand">
-                  <Key className="text-6xl w-16 h-16" />
-                </div>
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-white mb-1">
-                      Staging - Intel Core
-                    </h3>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-primary-brand/10 text-primary-brand border border-primary-brand/20 uppercase font-bold tracking-wider">
-                      Active
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button aria-label="Copy API key" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
-                      <Copy className="text-lg w-5 h-5" />
-                    </button>
-                    <button aria-label="More options" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
-                      <MoreVertical className="text-lg w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <span className="font-mono text-xs text-white/90 bg-eye-bg p-2 block rounded border border-eye-border select-all">
-                    eyex_dev_••••••••••••p2r1
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border-eye-border">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-eye-text">RATE LIMIT</span>
-                    <span className="text-xs font-bold text-white">2,500 REQ/MIN</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-eye-text">CREATED</span>
-                    <span className="text-xs text-white">12 NOV 2023</span>
-                  </div>
-                </div>
+            {keys.length === 0 ? (
+              <div className="glass-panel p-12 rounded-sm text-center">
+                <Key className="w-12 h-12 text-eye-text mx-auto mb-4 opacity-40" />
+                <p className="text-sm text-white font-bold mb-2">No API keys yet</p>
+                <p className="text-xs text-eye-text mb-6">
+                  Generate your first key to start integrating with the QORX API.
+                </p>
+                <button
+                  onClick={() => setShowNewKeyModal(true)}
+                  className="bg-white text-eye-bg px-5 py-2 rounded-sm font-bold text-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Generate First Key
+                </button>
               </div>
-
-              {/* Key Card 3 - Revoked */}
-              <div className="glass-panel p-6 rounded-sm relative overflow-hidden group opacity-60">
-                <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity text-red-500">
-                  <Key className="text-6xl w-16 h-16" />
-                </div>
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-white mb-1">
-                      Legacy - Cloud Sync
-                    </h3>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 uppercase font-bold tracking-wider">
-                      Revoked
-                    </span>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {keys.slice(0, 6).map((k) => (
+                  <div
+                    key={k.id}
+                    className={`glass-panel p-6 rounded-sm relative overflow-hidden group ${
+                      !k.active ? "opacity-60" : ""
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity ${
+                        !k.active ? "text-red-500" : ""
+                      }`}
+                    >
+                      <Key className="text-6xl w-16 h-16" />
+                    </div>
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h3 className="text-sm font-bold text-white mb-1">{k.name}</h3>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider border ${
+                            k.active
+                              ? "bg-green-500/10 text-green-400 border-green-500/20"
+                              : "bg-red-500/10 text-red-400 border-red-500/20"
+                          }`}
+                        >
+                          {k.active ? "Active" : "Revoked"}
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        {k.active && (
+                          <>
+                            <button
+                              aria-label="Copy to clipboard"
+                              onClick={() => handleCopy(k.id, k.key)}
+                              className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors"
+                            >
+                              {copiedId === k.id ? (
+                                <Check className="text-green-400 w-5 h-5" />
+                              ) : (
+                                <Copy className="text-lg w-5 h-5" />
+                              )}
+                            </button>
+                            <button
+                              aria-label="Revoke key"
+                              onClick={() => handleRevokeKey(k.id)}
+                              className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="text-lg w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                        {!k.active && (
+                          <button
+                            aria-label="Delete key"
+                            onClick={() => handleDeleteKey(k.id)}
+                            className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-red-400 transition-colors"
+                          >
+                            <Trash2 className="text-lg w-5 h-5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-6">
+                      <span
+                        className={`font-mono text-xs text-white/90 bg-eye-bg p-2 block rounded border border-eye-border select-all ${
+                          !k.active ? "line-through text-eye-text" : ""
+                        }`}
+                      >
+                        {maskKey(k.key)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-eye-border">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-eye-text">STATUS</span>
+                        <span className={`text-xs font-bold ${k.active ? "text-white" : "text-eye-text"}`}>
+                          {k.active ? "10,000 REQ/MIN" : "DISABLED"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] text-eye-text">
+                          {k.active ? "CREATED" : "REVOKED"}
+                        </span>
+                        <span className="text-xs text-white">{formatDate(k.createdAt)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button aria-label="Delete API key" className="p-1.5 hover:bg-white/5 rounded text-eye-text transition-colors cursor-not-allowed">
-                      <Trash2 className="text-lg w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <span className="font-mono text-xs text-eye-text bg-eye-bg p-2 block rounded border border-eye-border line-through">
-                    eyex_old_••••••••••••a1b2
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border-eye-border">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-eye-text">RATE LIMIT</span>
-                    <span className="text-xs font-bold text-eye-text">DISABLED</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-eye-text">REVOKED</span>
-                    <span className="text-xs text-white">05 JAN 2024</span>
-                  </div>
-                </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Live Traffic Stream */}
+          {/* Request Log Section */}
           <div
             className="glass-panel rounded-sm overflow-hidden flex flex-col border border-primary-brand/20 shadow-[0_0_40px_rgba(56,189,248,0.05)]"
             data-fade-up
@@ -294,78 +399,55 @@ export function ApiPage() {
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <h3 className="text-sm font-bold text-white tracking-widest uppercase">
-                    Live Traffic Stream
+                    Request Log
                   </h3>
                 </div>
-                <div className="h-4 w-px bg-eye-border" />
-                <span className="font-mono text-[10px] text-eye-text">CLUSTER: HKG-01</span>
-              </div>
-              <div className="flex gap-3">
-                <button aria-label="Pause stream" className="text-eye-text hover:text-white transition-colors">
-                  <Pause className="text-lg w-5 h-5" />
-                </button>
-                <button aria-label="Download log" className="text-eye-text hover:text-white transition-colors">
-                  <Download className="text-lg w-5 h-5" />
-                </button>
-                <button aria-label="Close" className="text-eye-text hover:text-white transition-colors">
-                  <X className="text-lg w-5 h-5" />
-                </button>
               </div>
             </div>
-            <div className="bg-eye-bg p-6 h-[400px] overflow-y-auto custom-scrollbar font-mono text-[11px] leading-relaxed">
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:41.002]</span>
-                <span className="bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  GET
-                </span>
-                <span className="text-white shrink-0">/v1/network/nodes</span>
-                <span className="text-eye-text italic shrink-0">124ms</span>
-                <span className="text-green-400 font-bold ml-auto">200 OK</span>
+            <div className="bg-eye-bg p-6">
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Activity className="w-10 h-10 text-eye-text opacity-40 mb-4" />
+                <p className="text-sm text-white font-bold mb-2">No requests logged yet</p>
+                <p className="text-xs text-eye-text max-w-md">
+                  Request logging will be available when API keys are active. Once you start making
+                  calls with your API key, all requests will appear here with full audit trails.
+                </p>
               </div>
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:41.481]</span>
-                <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  POST
-                </span>
-                <span className="text-white shrink-0">/v1/auth/provision</span>
-                <span className="text-eye-text italic shrink-0">312ms</span>
-                <span className="text-green-400 font-bold ml-auto">201 CREATED</span>
+            </div>
+          </div>
+
+          {/* Documentation Section */}
+          <div className="glass-panel rounded-sm overflow-hidden" data-fade-up>
+            <div className="bg-eye-surface px-6 py-4 border-b border-eye-border">
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                API Documentation
+              </h3>
+            </div>
+            <div className="p-6 space-y-6">
+              <div>
+                <h4 className="text-sm font-bold text-white mb-2">Authentication</h4>
+                <p className="text-xs text-eye-text leading-relaxed">
+                  Include your API key in the <code className="bg-eye-bg px-1.5 py-0.5 rounded text-primary-brand font-mono">Authorization</code> header
+                  with every request:
+                </p>
+                <div className="mt-3 bg-eye-bg rounded border border-eye-border p-4 font-mono text-xs text-white/80">
+                  <span className="text-primary-brand">Authorization</span>: Bearer eyex_live_***
+                </div>
               </div>
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:42.115]</span>
-                <span className="bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  DEL
-                </span>
-                <span className="text-white shrink-0">/v1/cluster/0xf291</span>
-                <span className="text-eye-text italic shrink-0">45ms</span>
-                <span className="text-red-400 font-bold ml-auto">403 FORBIDDEN</span>
+              <div>
+                <h4 className="text-sm font-bold text-white mb-2">Rate Limits</h4>
+                <p className="text-xs text-eye-text leading-relaxed">
+                  Each API key allows up to 10,000 requests per minute. Exceeding this limit will
+                  return a <code className="bg-eye-bg px-1.5 py-0.5 rounded text-red-400 font-mono">429 Too Many Requests</code> response.
+                  Rate limit headers are included in every API response.
+                </p>
               </div>
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:42.990]</span>
-                <span className="bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  GET
-                </span>
-                <span className="text-white shrink-0">/v1/telemetry/health</span>
-                <span className="text-eye-text italic shrink-0">12ms</span>
-                <span className="text-green-400 font-bold ml-auto">200 OK</span>
-              </div>
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:43.042]</span>
-                <span className="bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  GET
-                </span>
-                <span className="text-white shrink-0">/v1/network/topology</span>
-                <span className="text-eye-text italic shrink-0">198ms</span>
-                <span className="text-green-400 font-bold ml-auto">200 OK</span>
-              </div>
-              <div className="flex items-center gap-4 py-1.5 opacity-90 border-b border-white/[0.02]">
-                <span className="text-eye-text w-32 shrink-0">[14:02:44.221]</span>
-                <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-bold w-14 text-center">
-                  POST
-                </span>
-                <span className="text-white shrink-0">/v1/events/ingest</span>
-                <span className="text-eye-text italic shrink-0">210ms</span>
-                <span className="text-green-400 font-bold ml-auto">202 ACCEPTED</span>
+              <div>
+                <h4 className="text-sm font-bold text-white mb-2">Base URL</h4>
+                <div className="mt-2 bg-eye-bg rounded border border-eye-border p-4 font-mono text-xs text-white/80">
+                  https://api.qorx.io/v1
+                </div>
               </div>
             </div>
           </div>
@@ -394,6 +476,95 @@ export function ApiPage() {
           </div>
         </footer>
       </main>
+
+      {/* New Key Modal */}
+      {showNewKeyModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="glass-panel rounded-sm w-full max-w-md mx-4 p-0 overflow-hidden border border-eye-border">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-eye-border">
+              <h3 className="text-sm font-bold text-white tracking-wide">Generate New API Key</h3>
+              <button
+                onClick={() => {
+                  setShowNewKeyModal(false);
+                  setRevealedKey(null);
+                }}
+                className="text-eye-text hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {revealedKey ? (
+              <div className="p-6">
+                <div className="bg-green-500/10 border border-green-500/20 rounded-sm p-4 mb-4 flex items-start gap-3">
+                  <Check className="text-green-400 w-5 h-5 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-green-400 mb-1">Key Created Successfully</p>
+                    <p className="text-[11px] text-eye-text">
+                      Copy this key now. It will not be shown again.
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-eye-bg rounded border border-eye-border p-4 font-mono text-xs text-white/90 select-all break-all mb-4">
+                  {revealedKey}
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(revealedKey);
+                      toast.success("Copied to clipboard");
+                    }}
+                    className="flex-1 bg-white text-eye-bg px-4 py-2.5 rounded-sm font-bold text-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all flex items-center justify-center gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Copy Key
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowNewKeyModal(false);
+                      setRevealedKey(null);
+                    }}
+                    className="px-4 py-2.5 rounded-sm font-bold text-sm border border-eye-border text-eye-text hover:text-white hover:border-white/20 transition-all"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6">
+                <label className="block mb-4">
+                  <span className="text-[10px] font-mono text-eye-text uppercase tracking-wider block mb-2">
+                    Key Name
+                  </span>
+                  <input
+                    type="text"
+                    value={newKeyName}
+                    onChange={(e) => setNewKeyName(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleCreateKey()}
+                    placeholder="e.g. Production - Edge Mesh"
+                    className="w-full bg-eye-bg border border-eye-border rounded-sm px-4 py-2.5 text-sm text-white placeholder:text-eye-text/50 focus:outline-none focus:border-primary-brand transition-colors"
+                    autoFocus
+                  />
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCreateKey}
+                    className="flex-1 bg-white text-eye-bg px-4 py-2.5 rounded-sm font-bold text-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all"
+                  >
+                    Generate Key
+                  </button>
+                  <button
+                    onClick={() => setShowNewKeyModal(false)}
+                    className="px-4 py-2.5 rounded-sm font-bold text-sm border border-eye-border text-eye-text hover:text-white hover:border-white/20 transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
