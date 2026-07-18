@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import { Card, Badge } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
+import { Calendar } from "lucide-react";
 
 export function CrmPage() {
   return <ModulePage title="CRM" subtitle="Customers · Deals · Pipeline" tabs={[
@@ -60,7 +60,7 @@ export function CrmPage() {
         <div className="p-5 space-y-3">
           {["Call with Sarah Chen (Acme)","Sent proposal to Adventure Works","Demo scheduled — Contoso","Email opened by Wayne Enterprises","Meeting notes: Globex QBR"].map((a,i) => (
             <div key={a} className="flex items-center gap-3 border-b border-border pb-3 last:border-0">
-              <span className="material-symbols-outlined text-muted-foreground text-[18px]">event</span>
+              <Calendar className="h-[18px] w-[18px] text-muted-foreground" />
               <div className="flex-1 text-sm text-white">{a}</div>
               <span className="text-[10px] font-mono text-muted-foreground">{i+1}h ago</span>
             </div>

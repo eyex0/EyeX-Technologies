@@ -21,6 +21,14 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Stitch generated screens (reference only)
+stitch-screens/
+stitch-about-screen.png
+stitch-about.html
+generate-screens.mjs
+gen-home.mjs
+test-fn.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

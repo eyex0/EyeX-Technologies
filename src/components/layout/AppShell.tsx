@@ -76,11 +76,11 @@ export function AppShell({
       >
         <div className="px-6 mb-8 flex items-center gap-2">
           <div className="h-7 w-7 flex items-center justify-center rounded-sm bg-white overflow-hidden">
-            <img src="/logo.png" alt="EyeX Logo" className="h-full w-full object-cover" />
+            <img src="/logo.svg" alt="EyeX Logo" className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-sm tracking-tight text-white leading-none">EYEX</span>
-            <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider leading-none mt-1">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider leading-none mt-1">
               Business OS
             </span>
           </div>

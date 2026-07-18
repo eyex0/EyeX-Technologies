@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import { Card, DataTable, Badge } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
 import { UploadService } from "@/services/upload.service";
 import { DynamicDashboard, DashboardConfig } from "@/components/dashboard/DynamicDashboard";
+import { RefreshCw, Upload, Database, Globe, Package } from "lucide-react";
 
 export function DataSourcesPage() {
   const [uploading, setUploading] = useState(false);
@@ -53,7 +53,7 @@ export function DataSourcesPage() {
 
       {uploading && (
         <div className="mb-6 p-4 border border-eye-border bg-surface rounded flex items-center gap-3">
-          <span className="material-symbols-outlined animate-spin text-primary">sync</span>
+          <RefreshCw className="h-5 w-5 animate-spin text-primary" />
           <span className="text-sm text-eye-white">Processing and analyzing data...</span>
         </div>
       )}
@@ -77,20 +77,24 @@ export function DataSourcesPage() {
             onClick={() => fileInputRef.current?.click()}
             className="bento-card rounded-lg p-5 flex flex-col gap-3 items-start hover:bg-secondary/20 transition"
           >
-            <span className="material-symbols-outlined text-white text-[22px]">upload_file</span>
+            <Upload className="h-[22px] w-[22px] text-white" />
             <span className="text-sm text-white font-medium">Upload File</span>
             <span className="text-[10px] font-mono text-muted-foreground uppercase">CSV / Excel</span>
           </button>
           {[
             { icon: "database", label: "Connect Database" },
             { icon: "api", label: "Connect API" },
-          ].map((a) => (
+          ].map((a) => {
+            const iconMap: Record<string, typeof Database> = { database: Database, api: Globe };
+            const Icon = iconMap[a.icon] ?? Package;
+            return (
             <button key={a.label} className="bento-card rounded-lg p-5 flex flex-col gap-3 items-start hover:bg-secondary/20 transition">
-              <span className="material-symbols-outlined text-white text-[22px]">{a.icon}</span>
+              <Icon className="h-[22px] w-[22px] text-white" />
               <span className="text-sm text-white font-medium">{a.label}</span>
               <span className="text-[10px] font-mono text-muted-foreground uppercase">Configure</span>
             </button>
-          ))}
+          );
+          })}
         </div>
       )}
 

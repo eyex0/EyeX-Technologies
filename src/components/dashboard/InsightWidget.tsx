@@ -1,18 +1,19 @@
 import { WidgetConfig } from "./DynamicDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
 
 export function InsightWidget({ widget }: { widget: WidgetConfig }) {
   const getIcon = () => {
     switch (widget.tone) {
       case "success":
-        return "check_circle";
+        return <CheckCircle className="h-5 w-5" />;
       case "danger":
-        return "error";
+        return <XCircle className="h-5 w-5" />;
       case "warn":
-        return "warning";
+        return <AlertTriangle className="h-5 w-5" />;
       case "info":
       default:
-        return "info";
+        return <Info className="h-5 w-5" />;
     }
   };
 
@@ -33,7 +34,7 @@ export function InsightWidget({ widget }: { widget: WidgetConfig }) {
   return (
     <Card className={`border overflow-hidden ${getColor()} lg:col-span-2`}>
       <CardHeader className="flex flex-row items-center gap-2 pb-2">
-        <span className="material-symbols-outlined h-5 w-5">{getIcon()}</span>
+        {getIcon()}
         <CardTitle className="text-sm font-medium uppercase tracking-wider">
           {widget.title}
         </CardTitle>

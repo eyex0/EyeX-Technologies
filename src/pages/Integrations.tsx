@@ -1,8 +1,19 @@
-import { useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import { Badge } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
+import {
+  Table, Database, DollarSign, ShoppingBag, Share2, Cloud,
+  BarChart3, Target, MessageSquare, FileText, Lightbulb, Package,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  table_chart: Table, table_view: Table, database: Database,
+  payments: DollarSign, storefront: ShoppingBag, hub: Share2,
+  cloud: Cloud, analytics: BarChart3, ads_click: Target,
+  chat: MessageSquare, sticky_note_2: FileText, receipt_long: FileText,
+  insights: Lightbulb,
+};
 
 export function IntegrationsPage() {
   return (
@@ -12,7 +23,7 @@ export function IntegrationsPage() {
           <div key={i.name} className="bento-card rounded-lg p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center">
-                <span className="material-symbols-outlined text-white text-[20px]">{i.icon}</span>
+                {(() => { const Icon = ICON_MAP[i.icon] ?? Package; return <Icon className="h-5 w-5 text-white" />; })()}
               </div>
               <Badge tone={i.status==="Connected"?"success":"info"}>{i.status}</Badge>
             </div>

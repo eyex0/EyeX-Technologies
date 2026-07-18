@@ -52,17 +52,17 @@ export function SiteFooter() {
           ))}
         </div>
         <div className="border-t border-eye-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[10px] text-eye-text font-label-mono">
+          <p className="text-[10px] text-eye-text font-mono">
             &copy; {new Date().getFullYear()} EyeX Technologies. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+            <span className="text-[10px] text-eye-text font-mono hover:text-eye-white cursor-pointer transition-colors">
               Privacy
             </span>
-            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+            <span className="text-[10px] text-eye-text font-mono hover:text-eye-white cursor-pointer transition-colors">
               Terms
             </span>
-            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+            <span className="text-[10px] text-eye-text font-mono hover:text-eye-white cursor-pointer transition-colors">
               Security
             </span>
           </div>

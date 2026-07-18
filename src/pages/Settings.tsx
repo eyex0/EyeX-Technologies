@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
+import { ModulePage, TableCard } from "@/components/common/SharedBlocks";
+import { Card, Kpi } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
 
 export function SettingsPage() {

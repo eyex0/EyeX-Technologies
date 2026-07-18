@@ -1,117 +1,449 @@
+import {
+  Users,
+  ShieldCheck,
+  BarChart3,
+  Globe,
+  Code,
+  Terminal,
+  ArrowRight,
+  Search,
+  Bell,
+  Share2,
+  Mail,
+} from "lucide-react";
+
 export function HomePage() {
   return (
     <>
-{/* Hero Section */}
-<header className="relative min-h-[85vh] w-full flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
-<div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center" data-fade-up>
-<h1 className="text-6xl md:text-8xl font-display font-medium text-eye-white tracking-[-0.03em] leading-[1.05] mb-8">
-                Intelligence,<br />Architected.
-            </h1>
-<p className="text-lg md:text-xl text-eye-text max-w-2xl mb-12 leading-relaxed font-light">The foundational infrastructure for the next generation of global enterprise. Secured by design, engineered for scale, and optimized for high-stakes operational environments.</p>
-<div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-<button className="luminous-btn-primary h-[48px] px-10 font-bold text-[10px] uppercase tracking-widest w-full sm:w-auto">
-                    Explore QORX
-                </button>
-<button className="luminous-btn-secondary h-[48px] px-10 font-bold text-[10px] uppercase tracking-widest w-full sm:w-auto">
+      {/* Top Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 h-16 z-50 glass-nav">
+        <div className="max-w-[1200px] mx-auto h-full flex items-center justify-between px-6">
+          <div className="flex items-center gap-3">
+            <img
+              alt="EyeX Logo"
+              className="w-8 h-8"
+              src="https://lh3.googleusercontent.com/aida/AP1WRLsQOWY1jiM2rbry7lohts-Rb8_y4zW5SHQStQwUwZ7oRfScVQ-WnE_KkvjHfnAFef-rz3vFxxUwxqL35TXLlYCqr9Bt61-ISaqM3cE4jyBF0ITRu_SosGsY9YAlga5THtqKeXjGOQJ_lMLRlpta0-d30nL1jxOIq3bzjfw_kDejF1OHgVW9D51iQqIWU5o9vS9kC6vcfnW3hsnsx3fqZjLo8MRWaeESFBRA7UajDJpDR0AJI2QkCQI0qNA"
+            />
+            <span className="text-[20px] font-medium tracking-tight text-eye-white">
+              EyeX Technologies
+            </span>
+          </div>
+          <div className="hidden md:flex items-center gap-8">
+            <a className="font-mono text-[12px] tracking-[0.15em] text-eye-text hover:text-eye-white transition-colors" href="#">
+              DASHBOARD
+            </a>
+            <a className="font-mono text-[12px] tracking-[0.15em] text-eye-text hover:text-eye-white transition-colors" href="#">
+              DOCUMENTS
+            </a>
+            <a className="font-mono text-[12px] tracking-[0.15em] text-eye-text hover:text-eye-white transition-colors" href="#">
+              ANALYTICS
+            </a>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="text-eye-text hover:text-eye-white transition-colors">
+              <Search size={20} />
+            </button>
+            <button className="text-eye-text hover:text-eye-white transition-colors">
+              <Bell size={20} />
+            </button>
+            <div className="w-8 h-8 rounded-full bg-eye-surface border border-eye-border flex items-center justify-center overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                alt="Profile"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7XJuwMx386ne72035k6h1dkjtu7rzcwn_7r99Vwx9MUU1DAQR6awiK1Qp6sSYW9Uxu-tYvy5Lc63K-VExGBmXym93WIJLhj3SIT7DlJWWLjlg5dimiDmlSeEr63oIHI5AbbmwS0H1pgzpYrXNnZdWvXjnigndRKBByHNDYYa2vei0GAoGwCbpSVYo53XhWjx6UT2zJzxeaH2-BX99W33D9tOqmVPkebjMofIFDLzJilg9WUk6nkR56pOHtonZtVZBFD3ybKwip18"
+              />
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="relative pt-16">
+        {/* Background Decorative Orbs */}
+        <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.1)_0%,rgba(56,189,248,0)_70%)] blur-[80px] z-[-1] pointer-events-none" />
+        <div
+          className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[80px] z-[-1] pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, rgba(56, 189, 248, 0) 70%)" }}
+        />
+
+        {/* Hero Section */}
+        <section className="max-w-[1200px] mx-auto px-6 pt-32 pb-24 text-center" data-fade-up>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-eye-border bg-eye-surface/50 mb-8">
+            <span className="w-2 h-2 rounded-full bg-primary-brand animate-pulse" />
+            <span className="font-mono text-[10px] text-eye-text tracking-widest uppercase">
+              System Status: Optimal
+            </span>
+          </div>
+          <h1 className="text-[72px] md:text-[84px] font-medium text-eye-white leading-[1] mb-8 tracking-[-0.04em]">
+            Intelligence,<br />
+            Architected.
+          </h1>
+          <p className="text-[20px] leading-[1.6] text-eye-text max-w-2xl mx-auto mb-12">
+            The foundational AI infrastructure layer for the world's most
+            ambitious companies. Secure, scalable, and built for the next
+            generation of intelligent systems.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a
+              className="luminous-btn-primary px-8 py-4 rounded-md font-medium text-[16px]"
+              href="#"
+            >
+              Get Started
+            </a>
+            <a
+              className="px-8 py-4 rounded-md font-medium text-[16px] text-eye-white border border-eye-border hover:border-primary-brand/50 transition-all flex items-center gap-2"
+              href="#"
+            >
+              View Documentation
+              <ArrowRight size={18} />
+            </a>
+          </div>
+        </section>
+
+        {/* Product Visual Section */}
+        <section className="max-w-[1200px] mx-auto px-6 mb-32" data-fade-up>
+          <div className="rounded-xl overflow-hidden border border-eye-border bg-eye-surface relative">
+            <img
+              alt="EyeX R&D Lab"
+              className="w-full h-auto opacity-80"
+              src="https://lh3.googleusercontent.com/aida/AP1WRLsbNJeyilLhaKujz0G9YjWVEIDuNcDN4Ai2KzrPvpB51BHkfQ9WJJiUno537UZnLxzT5wvwpFdVnbKpFpryJ3mFNwtBaoGpJVlbAzR7Weg67FysgkuI1FJh7XKnLTb5z5vZ-bGIb6JLaa5EX_E03apM29tJQk4cPSMpchLRJSHg3sEKhakBalaDWp_eaqOaYDcTk8_k-wV6M9UZXy6qFSHYay8iNXHbf2fpeX-0_s5Dhl5FbuAJVEVLDd8"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-eye-bg via-transparent to-transparent" />
+            <div className="absolute bottom-12 left-12 max-w-md">
+              <p className="font-mono text-primary-brand mb-2">
+                INFRASTRUCTURE LAYER 01
+              </p>
+              <h3 className="text-[36px] font-medium text-eye-white leading-[1.2] tracking-[-0.01em]">
+                Built for physical reliability.
+              </h3>
+            </div>
+          </div>
+        </section>
+
+        {/* Bento Grid Features */}
+        <section className="max-w-[1200px] mx-auto px-6 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Multi-Agent */}
+            <div className="bento-card p-8 rounded-xl md:col-span-2" data-fade-up>
+              <div className="flex justify-between items-start mb-12">
+                <div>
+                  <Users className="text-primary-brand mb-4" size={32} />
+                  <h3 className="text-[36px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                    Multi-Agent AI
+                  </h3>
+                  <p className="text-eye-text text-[14px] leading-[1.6] max-w-sm">
+                    Orchestrate autonomous workflows across distributed systems
+                    with unified state management.
+                  </p>
+                </div>
+                <div className="font-mono text-[10px] text-eye-text border border-eye-border px-2 py-1 rounded">
+                  V2.4.0
+                </div>
+              </div>
+              <div className="w-full h-48 bg-eye-bg rounded border border-eye-border flex items-center justify-center relative group">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-32 h-32 border border-primary-brand/20 rounded-full animate-[spin_10s_linear_infinite]" />
+                  <div className="w-24 h-24 border border-primary-brand/40 rounded-full animate-[spin_6s_linear_infinite_reverse] absolute" />
+                  <div className="w-4 h-4 bg-primary-brand rounded-full blur-[2px]" />
+                </div>
+                <span className="font-mono text-[10px] text-eye-text relative z-10">
+                  AGENT_ORCHESTRATOR_IDLE
+                </span>
+              </div>
+            </div>
+
+            {/* Card 2: Security */}
+            <div className="bento-card p-8 rounded-xl" data-fade-up>
+              <ShieldCheck className="text-primary-brand mb-4" size={32} />
+              <h3 className="text-[24px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                Enterprise Security
+              </h3>
+              <p className="text-eye-text text-[14px] leading-[1.6] mb-8">
+                Zero-trust architecture purpose-built for LLM data privacy and
+                residency.
+              </p>
+              <div className="space-y-3">
+                <div className="h-2 w-full bg-eye-border rounded-full overflow-hidden">
+                  <div className="h-full bg-primary-brand w-full animate-[pulse_2s_infinite]" />
+                </div>
+                <div className="flex justify-between font-mono text-[10px] text-eye-text">
+                  <span>ENCRYPTION ACTIVE</span>
+                  <span>AES-256</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Real-Time Analytics */}
+            <div className="bento-card p-8 rounded-xl" data-fade-up>
+              <BarChart3 className="text-primary-brand mb-4" size={32} />
+              <h3 className="text-[24px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                Real-Time Analytics
+              </h3>
+              <p className="text-eye-text text-[14px] leading-[1.6]">
+                Live system health metrics and observability dashboards.
+              </p>
+              <div className="mt-8 flex items-end gap-1 h-24">
+                <div className="w-full bg-primary-brand/20 h-[30%] rounded-sm" />
+                <div className="w-full bg-primary-brand/30 h-[50%] rounded-sm" />
+                <div className="w-full bg-primary-brand/20 h-[40%] rounded-sm" />
+                <div className="w-full bg-primary-brand/60 h-[80%] rounded-sm animate-pulse" />
+                <div className="w-full bg-primary-brand h-[100%] rounded-sm" />
+              </div>
+            </div>
+
+            {/* Card 4: Global Scale */}
+            <div className="bento-card p-8 rounded-xl md:col-span-2" data-fade-up>
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="flex-1">
+                  <Globe className="text-primary-brand mb-4" size={32} />
+                  <h3 className="text-[36px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                    Global Scale
+                  </h3>
+                  <p className="text-eye-text text-[14px] leading-[1.6]">
+                    Distributed edge clusters ensure low-latency inference
+                    regardless of user location.
+                  </p>
+                  <div className="mt-6 flex gap-4">
+                    <div className="px-3 py-1 bg-eye-surface border border-eye-border rounded font-mono text-[10px]">
+                      US-EAST-1
+                    </div>
+                    <div className="px-3 py-1 bg-eye-surface border border-eye-border rounded font-mono text-[10px]">
+                      EU-WEST-2
+                    </div>
+                    <div className="px-3 py-1 bg-eye-surface border border-eye-border rounded font-mono text-[10px]">
+                      AP-SOUTH-1
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 w-full h-40 bg-eye-surface rounded-lg border border-eye-border flex items-center justify-center opacity-50 overflow-hidden">
+                  <div className="relative w-full h-full">
+                    <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-primary-brand rounded-full shadow-[0_0_8px_#3abff8]" />
+                    <div className="absolute top-1/3 left-2/3 w-1 h-1 bg-primary-brand rounded-full shadow-[0_0_8px_#3abff8]" />
+                    <div className="absolute top-2/3 left-1/2 w-1 h-1 bg-primary-brand rounded-full shadow-[0_0_8px_#3abff8]" />
+                    <svg className="w-full h-full" viewBox="0 0 100 50">
+                      <path
+                        d="M10,25 Q30,5 50,25 T90,25"
+                        fill="none"
+                        stroke="rgba(56, 189, 248, 0.1)"
+                        strokeWidth="0.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 5: API-First */}
+            <div className="bento-card p-8 rounded-xl" data-fade-up>
+              <Code className="text-primary-brand mb-4" size={32} />
+              <h3 className="text-[24px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                API-First
+              </h3>
+              <p className="text-eye-text text-[14px] leading-[1.6]">
+                Native support for REST and gRPC endpoints for seamless
+                integration.
+              </p>
+              <div className="mt-6 font-mono text-[11px] text-primary-brand/80 bg-black/40 p-3 rounded border border-eye-border">
+                <span className="text-white">POST</span> /v1/orchestrate
+              </div>
+            </div>
+
+            {/* Card 6: Dev Experience */}
+            <div className="bento-card p-8 rounded-xl" data-fade-up>
+              <Terminal className="text-primary-brand mb-4" size={32} />
+              <h3 className="text-[24px] font-medium text-eye-white mb-2 leading-[1.2] tracking-[-0.01em]">
+                Developer Experience
+              </h3>
+              <p className="text-eye-text text-[14px] leading-[1.6]">
+                Typed SDKs and professional CLI tools for rapid deployment.
+              </p>
+              <div className="mt-6 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="font-mono text-[10px] text-eye-text">
+                  CLI READY
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Human Context Section */}
+        <section className="max-w-[1200px] mx-auto px-6 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div data-fade-up>
+              <h2 className="text-[36px] font-medium text-eye-white mb-6 leading-[1.2] tracking-[-0.01em]">
+                Engineered by architects, for architects.
+              </h2>
+              <p className="text-[20px] leading-[1.6] text-eye-text mb-8">
+                Our team consists of industry veterans who have built core
+                infrastructure for the world's leading technology providers. We
+                understand the mission-critical nature of your stack.
+              </p>
+              <div className="flex gap-4">
+                <div className="flex -space-x-3">
+                  <div className="w-10 h-10 rounded-full border-2 border-eye-bg bg-eye-surface" />
+                  <div className="w-10 h-10 rounded-full border-2 border-eye-bg bg-eye-surface" />
+                  <div className="w-10 h-10 rounded-full border-2 border-eye-bg bg-eye-surface" />
+                </div>
+                <div className="text-eye-white font-medium self-center">
+                  Trusted by 500+ Engineering Teams
+                </div>
+              </div>
+            </div>
+            <div className="rounded-xl overflow-hidden border border-eye-border" data-fade-up>
+              <img
+                alt="Engineering Team"
+                className="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 transition-all duration-700"
+                src="https://lh3.googleusercontent.com/aida/AP1WRLtdCX8IHniEQAkqFaTsBrEZES86Q61dq-ZpaYHTaMIpPh6OxeGZTJr9MbupUuxWSt7A0dmbrzgQZGKLLvSvuPptDym8hC0yHQy3Gkb0LgRibS48Ugd1eRFyXEINysszASBLa4UvTM7A651NcUBJZnZLa5E3ZJMuiEZY4Zw_rY6XlASXjy58FF2zZw-Zba3SowkzKSNTPOi7Rrz5Rh_yIf6-5zQ7H8b2ciO7PheqnOMQuDM2QpEUILf72pU"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="max-w-[1200px] mx-auto px-6 mb-32" data-fade-up>
+          <div className="bento-card p-16 rounded-2xl text-center relative">
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <div
+                className="w-full h-full"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(#3abff8 1px, transparent 1px)",
+                  backgroundSize: "32px 32px",
+                }}
+              />
+            </div>
+            <h2 className="text-[48px] text-eye-white mb-8 relative z-10 font-medium tracking-[-0.02em]">
+              Start building the future of enterprise AI today.
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
+              <button className="luminous-btn-primary px-10 py-5 rounded-md font-bold text-[18px]">
+                Initialize Stack
+              </button>
+              <button className="px-10 py-5 rounded-md font-bold text-[18px] text-eye-white border border-eye-border hover:bg-eye-surface transition-all">
+                Speak to an Architect
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-eye-border bg-eye-bg py-16">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-6">
+                <img
+                  alt="EyeX Logo"
+                  className="w-6 h-6"
+                  src="https://lh3.googleusercontent.com/aida/AP1WRLsQOWY1jiM2rbry7lohts-Rb8_y4zW5SHQStQwUwZ7oRfScVQ-WnE_KkvjHfnAFef-rz3vFxxUwxqL35TXLlYCqr9Bt61-ISaqM3cE4jyBF0ITRu_SosGsY9YAlga5THtqKeXjGOQJ_lMLRlpta0-d30nL1jxOIq3bzjfw_kDejF1OHgVW9D51iQqIWU5o9vS9kC6vcfnW3hsnsx3fqZjLo8MRWaeESFBRA7UajDJpDR0AJI2QkCQI0qNA"
+                />
+                <span className="text-[18px] font-medium text-eye-white">
+                  EyeX
+                </span>
+              </div>
+              <p className="text-eye-text text-[14px] leading-[1.6] max-w-xs">
+                The foundational AI infrastructure layer for high-precision
+                enterprise applications.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-mono text-[12px] tracking-[0.15em] text-eye-white mb-6">
+                PLATFORM
+              </h4>
+              <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Core Infrastructure
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Edge Clusters
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Security Layer
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Pricing
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-mono text-[12px] tracking-[0.15em] text-eye-white mb-6">
+                RESOURCES
+              </h4>
+              <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
                     Documentation
-                </button>
-</div>
-</div>
-</header>
-{/* Capabilities Bento Grid */}
-<section className="py-32 px-4 w-full flex justify-center border-t border-thin bg-eye-bg">
-<div className="max-w-[1200px] w-full flex flex-col gap-16">
-<div className="flex flex-col md:flex-row md:items-end justify-between gap-6" data-fade-up>
-<div className="max-w-xl">
-<h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-text mb-4">Foundation</h2>
-<h3 className="text-3xl md:text-4xl font-display font-medium text-eye-white tracking-tight">Enterprise-Grade Intelligence</h3>
-</div>
-<p className="text-eye-text max-w-md font-light">Robust architectural standards meet pioneering computational research to deliver predictable, high-performance outcomes.</p>
-</div>
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-{/* Main Feature */}
-<div className="bento-card md:col-span-2 md:row-span-2 flex flex-col" data-fade-up>
-<div className="aspect-video w-full overflow-hidden border-b border-thin bg-black">
-<div className="w-full h-full flex items-center justify-center opacity-20">
-<span className="text-[64px] font-extralight text-eye-white font-display">01</span>
-</div>
-</div>
-<div className="p-10">
-<h4 className="text-xl font-medium text-eye-white mb-3 tracking-tight">Proprietary Neural Architecture</h4>
-<p className="text-sm text-eye-text leading-relaxed font-light max-w-lg">Our hardware-optimized models utilize specialized structural processing to eliminate latency bottlenecks inherent in general-purpose cloud computing architectures.</p>
-</div>
-</div>
-{/* Security */}
-<div className="bento-card p-10 flex flex-col justify-between" data-fade-up>
-<div>
-<div className="w-6 h-6 border-2 border-eye-white rounded-sm mb-6 flex items-center justify-center">
-<div className="w-2 h-2 bg-eye-white rounded-full" />
-</div>
-<h4 className="text-lg font-medium text-eye-white mb-3 tracking-tight">Immutable Security</h4>
-<p className="text-sm text-eye-text font-light leading-relaxed">Zero-trust architecture with hardware-level isolation. SOC2 Type II and HIPAA compliant infrastructure for mission-critical data handling.</p>
-</div>
-</div>
-{/* Scale */}
-<div className="bento-card p-10 flex flex-col justify-between" data-fade-up>
-<div>
-<div className="w-6 h-6 border-t-2 border-eye-white mb-6 relative">
-<div className="absolute -right-1 top-0 w-0 h-0 border-l-[6px] border-l-eye-white border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent" />
-</div>
-<h4 className="text-lg font-medium text-eye-white mb-3 tracking-tight">Elastic Scalability</h4>
-<p className="text-sm text-eye-text font-light leading-relaxed">Instantaneous resource allocation across global nodes, ensuring consistent performance regardless of request volume or computational complexity.</p>
-</div>
-</div>
-{/* Suite */}
-<div className="bento-card md:col-span-3 p-10 flex flex-col md:flex-row items-center gap-12" data-fade-up>
-<div className="flex-1">
-<h4 className="text-2xl font-medium text-eye-white mb-4 tracking-tight">Integrated QORX Ecosystem</h4>
-<p className="text-sm text-eye-text max-w-xl mb-8 font-light leading-relaxed">From fine-tuning pipelines to real-time telemetry, our unified suite provides a single point of orchestration for the entire intelligence lifecycle.</p>
-<button className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-white hover:opacity-70 transition-opacity flex items-center gap-2">
-                            View Ecosystem →
-</button>
-</div>
-<div className="hidden md:block w-px h-24 bg-eye-border"></div>
-<div className="w-full md:w-1/4 flex flex-col gap-4">
-<div className="flex justify-between items-center text-[10px] font-mono text-eye-text">
-<span className="">SYSTEM LATENCY</span>
-<span className="text-eye-white">&lt;4ms</span>
-</div>
-<div className="w-full bg-eye-border h-[1px]"></div>
-<div className="flex justify-between items-center text-[10px] font-mono text-eye-text">
-<span className="">AVAILABILITY</span>
-<span className="text-eye-white">99.999%</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-{/* Human Expertise Section */}
-<section className="py-32 px-4 w-full flex justify-center bg-[#050505] border-t border-thin">
-<div className="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-<div data-fade-up>
-<h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-text mb-6">Expertise</h2>
-<h3 className="text-4xl md:text-5xl font-display font-medium text-eye-white tracking-tight leading-tight mb-8">Human insight,<br />algorithmically amplified.</h3>
-<p className="text-eye-text text-lg font-light leading-relaxed mb-10">Beyond the code, EyeX is built on the expertise of world-class engineers, designers, and industry veterans. We believe that true intelligence requires human perspective to remain grounded and ethical.</p>
-<div className="flex flex-col gap-6">
-<div className="flex items-start gap-4">
-<div className="w-5 h-5 rounded-full border-2 border-eye-white mt-0.5 flex items-center justify-center">
-<div className="w-1.5 h-1.5 bg-eye-white rounded-full" />
-</div>
-<div>
-<h5 className="text-eye-white font-medium mb-1">Principled Design</h5>
-<p className="text-sm text-eye-text font-light">Every model is refined by subject matter experts to ensure real-world utility.</p>
-</div>
-</div>
-</div>
-</div>
-<div className="relative" data-fade-up style={{ aspectRatio: "4/5" }}>
-<div className="w-full h-full overflow-hidden border border-thin bg-black flex items-center justify-center">
-<span className="text-[120px] font-extralight text-eye-white font-display opacity-10">EX</span>
-</div>
-</div>
-</div>
-</section>
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    API Reference
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    System Status
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Developer Portal
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-mono text-[12px] tracking-[0.15em] text-eye-white mb-6">
+                COMPANY
+              </h4>
+              <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-primary-brand transition-colors" href="#">
+                    Terms of Service
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-eye-border">
+            <p className="font-mono text-[10px] text-eye-text mb-4 md:mb-0">
+              © 2024 EYEX TECHNOLOGIES. ALL RIGHTS RESERVED.
+            </p>
+            <div className="flex gap-6">
+              <a className="text-eye-text hover:text-eye-white transition-colors" href="#">
+                <Share2 size={20} />
+              </a>
+              <a className="text-eye-text hover:text-eye-white transition-colors" href="#">
+                <Mail size={20} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
