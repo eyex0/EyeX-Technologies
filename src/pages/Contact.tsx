@@ -46,7 +46,6 @@ export function ContactPage() {
   });
 
   const onSubmit = (data: ContactFormData) => {
-    console.log("Contact form submitted:", data);
     toast.success("Message sent successfully! We'll get back to you soon.");
     reset();
   };
