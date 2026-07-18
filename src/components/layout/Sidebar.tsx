@@ -35,9 +35,9 @@ export function Sidebar() {
       <div className="flex h-14 items-center border-b border-gray-800 px-6">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center border border-gray-800">
-            <span className="text-white font-bold text-sm">E</span>
+            <span className="text-white font-bold text-sm">Q</span>
           </div>
-          <span className="font-semibold text-lg text-white">Enterprise</span>
+          <span className="font-semibold text-lg text-white">QORX</span>
         </Link>
       </div>
       <nav className="h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-4">

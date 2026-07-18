@@ -2,7 +2,7 @@
 
 ## Overview
 
-Corex AI uses a multi-agent orchestration system built on LangGraph. Each agent specializes in a specific analytical task, and the `AgentOrchestrator` routes requests, manages execution plans, and evaluates results.
+QORX uses a multi-agent orchestration system built on LangGraph. Each agent specializes in a specific analytical task, and the `AgentOrchestrator` routes requests, manages execution plans, and evaluates results.
 
 ## Agent System Design
 

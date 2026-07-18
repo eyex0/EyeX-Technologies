@@ -2,7 +2,7 @@
 
 ## System Overview
 
-Corex AI is an enterprise AI-powered BI platform built on a modern cloud-native architecture. The system uses a monorepo structure with three workspace packages, a React frontend, and Supabase backend.
+QORX is an Enterprise AI Operating System built on a modern cloud-native architecture. The system uses a monorepo structure with three workspace packages, a React frontend, and Supabase backend.
 
 ```
 ┌─────────────────────────────────────────────────────────┐

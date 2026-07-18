@@ -25,10 +25,10 @@ export function SignInPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-xl">C</span>
+            <span className="text-white font-bold text-xl">Q</span>
           </div>
-          <h1 className="text-2xl font-bold text-text-primary">Corex AI</h1>
-          <p className="text-text-muted text-sm mt-1">Enterprise Intelligence Platform</p>
+          <h1 className="text-2xl font-bold text-text-primary">QORX</h1>
+          <p className="text-text-muted text-sm mt-1">Enterprise AI Operating System</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-bg-secondary border border-border rounded-xl p-6 space-y-4">
