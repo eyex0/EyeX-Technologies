@@ -7,8 +7,8 @@ export function ProjectsPage() {
     { key: "proj", label: "Projects", render: () => (
       <TableCard title="All projects" columns={[
         { key: "name", label: "Project" },{ key: "lead", label: "Lead" },
-        { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="On Track"?"success":r.status==="At Risk"?"warn":r.status==="Complete"?"info":"neutral"}>{r.status}</Badge> },
-        { key: "progress", label: "Progress", render: (r:any) => <div className="flex items-center gap-2"><div className="flex-1 h-1 bg-border rounded"><div className="h-full bg-white" style={{width:`${r.progress}%`}}/></div><span className="text-[10px] font-mono text-muted-foreground">{r.progress}%</span></div> },
+        { key: "status", label: "Status", render: (r: typeof m.projects[number]) => <Badge tone={r.status==="On Track"?"success":r.status==="At Risk"?"warn":r.status==="Complete"?"info":"neutral"}>{r.status}</Badge> },
+        { key: "progress", label: "Progress", render: (r: typeof m.projects[number]) => <div className="flex items-center gap-2"><div className="flex-1 h-1 bg-border rounded"><div className="h-full bg-white" style={{width:`${r.progress}%`}}/></div><span className="text-[10px] font-mono text-muted-foreground">{r.progress}%</span></div> },
         { key: "due", label: "Due", align: "right" },
       ]} rows={m.projects}/>
     )},

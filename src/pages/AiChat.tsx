@@ -111,7 +111,7 @@ export function AiChatPage() {
               <span className="text-[9px] text-eye-text font-mono">L7-CLEARANCE</span>
             </div>
           </div>
-          <button className="text-eye-text hover:text-white transition-colors">
+          <button aria-label="Settings" className="text-eye-text hover:text-white transition-colors">
             <Settings className="text-lg w-5 h-5" />
           </button>
         </div>
@@ -139,7 +139,7 @@ export function AiChatPage() {
               <Share className="text-lg w-5 h-5" />
               <span className="text-xs font-mono">EXPORT</span>
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-eye-border-hover transition-colors">
+            <button aria-label="User profile" className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-eye-border-hover transition-colors">
               <User className="text-xl w-6 h-6" />
             </button>
           </div>
@@ -203,7 +203,7 @@ export function AiChatPage() {
                   <span className="font-mono text-[10px] text-eye-text uppercase tracking-tighter">
                     latency_monitor.py
                   </span>
-                  <button className="text-eye-text hover:text-white transition-all">
+                  <button aria-label="Copy code" className="text-eye-text hover:text-white transition-all">
                     <Copy className="text-sm w-4 h-4" />
                   </button>
                 </div>
@@ -312,7 +312,7 @@ export function AiChatPage() {
                         e.currentTarget.scrollHeight + "px";
                     }}
                   />
-                  <button className="w-10 h-10 flex-shrink-0 bg-white rounded-xl flex items-center justify-center text-background hover:shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:bg-primary-brand transition-all group">
+                  <button aria-label="Send message" className="w-10 h-10 flex-shrink-0 bg-white rounded-xl flex items-center justify-center text-background hover:shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:bg-primary-brand transition-all group">
                     <Send className="text-xl w-5 h-5 transition-transform group-active:scale-90" />
                   </button>
                 </div>

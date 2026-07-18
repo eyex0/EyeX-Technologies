@@ -16,7 +16,7 @@ export function CrmPage() {
         <TableCard title="All customers" columns={[
           { key: "name", label: "Customer" },{ key: "contact", label: "Contact" },{ key: "industry", label: "Industry" },
           { key: "value", label: "Value", align: "right" },
-          { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Active"?"success":r.status==="Prospect"?"info":"warn"}>{r.status}</Badge> },
+          { key: "status", label: "Status", render: (r: typeof m.customers[number]) => <Badge tone={r.status==="Active"?"success":r.status==="Prospect"?"info":"warn"}>{r.status}</Badge> },
         ]} rows={m.customers} />
       </>
     )},
@@ -28,7 +28,7 @@ export function CrmPage() {
     { key: "leads", label: "Leads", render: () => (
       <TableCard title="Leads" columns={[
         { key: "name", label: "Lead" },{ key: "owner", label: "Owner" },{ key: "stage", label: "Stage" },
-        { key: "score", label: "Score", render: (r:any) => <Badge tone={r.score>80?"success":r.score>60?"info":"warn"}>{r.score}</Badge> },
+        { key: "score", label: "Score", render: (r: typeof m.leads[number]) => <Badge tone={r.score>80?"success":r.score>60?"info":"warn"}>{r.score}</Badge> },
         { key: "value", label: "Value", align: "right" },
       ]} rows={m.leads} />
     )},

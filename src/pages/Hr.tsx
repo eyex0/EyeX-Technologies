@@ -14,7 +14,7 @@ export function HrPage() {
         ]}/>
         <TableCard title="All employees" columns={[
           { key: "name", label: "Name" },{ key: "role", label: "Role" },{ key: "dept", label: "Department" },{ key: "location", label: "Location" },
-          { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Active"?"success":"warn"}>{r.status}</Badge> },
+          { key: "status", label: "Status", render: (r: typeof m.employees[number]) => <Badge tone={r.status==="Active"?"success":"warn"}>{r.status}</Badge> },
         ]} rows={m.employees}/>
       </>
     )},

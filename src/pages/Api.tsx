@@ -180,10 +180,10 @@ export function ApiPage() {
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
+                    <button aria-label="Copy to clipboard" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
                       <Copy className="text-lg w-5 h-5" />
                     </button>
-                    <button className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
+                    <button aria-label="More options" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
                       <MoreVertical className="text-lg w-5 h-5" />
                     </button>
                   </div>
@@ -220,10 +220,10 @@ export function ApiPage() {
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
+                    <button aria-label="Copy API key" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
                       <Copy className="text-lg w-5 h-5" />
                     </button>
-                    <button className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
+                    <button aria-label="More options" className="p-1.5 hover:bg-white/5 rounded text-eye-text hover:text-white transition-colors">
                       <MoreVertical className="text-lg w-5 h-5" />
                     </button>
                   </div>
@@ -260,7 +260,7 @@ export function ApiPage() {
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 hover:bg-white/5 rounded text-eye-text transition-colors cursor-not-allowed">
+                    <button aria-label="Delete API key" className="p-1.5 hover:bg-white/5 rounded text-eye-text transition-colors cursor-not-allowed">
                       <Trash2 className="text-lg w-5 h-5" />
                     </button>
                   </div>
@@ -301,13 +301,13 @@ export function ApiPage() {
                 <span className="font-mono text-[10px] text-eye-text">CLUSTER: HKG-01</span>
               </div>
               <div className="flex gap-3">
-                <button className="text-eye-text hover:text-white transition-colors">
+                <button aria-label="Pause stream" className="text-eye-text hover:text-white transition-colors">
                   <Pause className="text-lg w-5 h-5" />
                 </button>
-                <button className="text-eye-text hover:text-white transition-colors">
+                <button aria-label="Download log" className="text-eye-text hover:text-white transition-colors">
                   <Download className="text-lg w-5 h-5" />
                 </button>
-                <button className="text-eye-text hover:text-white transition-colors">
+                <button aria-label="Close" className="text-eye-text hover:text-white transition-colors">
                   <X className="text-lg w-5 h-5" />
                 </button>
               </div>

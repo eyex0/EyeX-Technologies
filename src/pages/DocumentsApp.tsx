@@ -40,7 +40,7 @@ export function DocumentsAppPage() {
           <Card title="Files" icon="description">
             <DataTable columns={[
               { key: "name", label: "Name" },{ key: "type", label: "Type" },{ key: "owner", label: "Owner" },
-              { key: "tag", label: "Tag", render: (r:any) => <Badge>{r.tag}</Badge> },
+              { key: "tag", label: "Tag", render: (r: typeof m.documents[number]) => <Badge>{r.tag}</Badge> },
               { key: "updated", label: "Updated", align: "right" },
             ]} rows={rows}/>
           </Card>

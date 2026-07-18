@@ -18,14 +18,14 @@ export function SalesPage() {
     { key: "orders", label: "Orders", render: () => (
       <TableCard title="Recent orders" columns={[
         { key: "id", label: "Order" },{ key: "customer", label: "Customer" },{ key: "amount", label: "Amount" },
-        { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Fulfilled"?"success":r.status==="Pending"?"warn":"info"}>{r.status}</Badge> },
+        { key: "status", label: "Status", render: (r: typeof m.orders[number]) => <Badge tone={r.status==="Fulfilled"?"success":r.status==="Pending"?"warn":"info"}>{r.status}</Badge> },
         { key: "date", label: "Date", align: "right" },
       ]} rows={m.orders} />
     )},
     { key: "invoices", label: "Invoices", render: () => (
       <TableCard title="Invoices" columns={[
         { key: "id", label: "Invoice" },{ key: "customer", label: "Customer" },{ key: "amount", label: "Amount" },
-        { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Paid"?"success":r.status==="Overdue"?"danger":"info"}>{r.status}</Badge> },
+        { key: "status", label: "Status", render: (r: typeof m.invoices[number]) => <Badge tone={r.status==="Paid"?"success":r.status==="Overdue"?"danger":"info"}>{r.status}</Badge> },
         { key: "due", label: "Due", align: "right" },
       ]} rows={m.invoices} />
     )},

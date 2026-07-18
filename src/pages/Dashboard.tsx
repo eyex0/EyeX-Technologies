@@ -103,10 +103,10 @@ export function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-5">
-            <button className="text-outline hover:text-primary-brand transition-colors">
+            <button aria-label="Notifications" className="text-outline hover:text-primary-brand transition-colors">
               <Bell className="w-5 h-5" />
             </button>
-            <button className="text-outline hover:text-primary-brand transition-colors">
+            <button aria-label="Help" className="text-outline hover:text-primary-brand transition-colors">
               <HelpCircle className="w-5 h-5" />
             </button>
             <div className="h-6 w-[1px] bg-outline-variant mx-2" />

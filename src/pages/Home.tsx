@@ -6,10 +6,6 @@ import {
   Code,
   Terminal,
   ArrowRight,
-  Search,
-  Bell,
-  Share2,
-  Mail,
 } from "lucide-react";
 
 export function HomePage() {

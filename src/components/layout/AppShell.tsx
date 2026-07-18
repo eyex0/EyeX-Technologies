@@ -152,7 +152,7 @@ export function AppShell({
           <div className="flex items-center gap-2">
             {actions ?? (
               <>
-                <button className="bento-card w-9 h-9 hidden sm:flex items-center justify-center rounded-md text-muted-foreground hover:text-white">
+                <button aria-label="Refresh" className="bento-card w-9 h-9 hidden sm:flex items-center justify-center rounded-md text-muted-foreground hover:text-white">
                   <RefreshCw size={16} />
                 </button>
                 <button className="bg-white hover:bg-white/90 text-black px-4 h-9 rounded-md font-semibold text-xs flex items-center gap-2 transition-colors">

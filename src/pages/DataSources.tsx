@@ -24,9 +24,9 @@ export function DataSourcesPage() {
       const result = await UploadService.processUpload(file, file.name);
       // The analysis service now returns { widgets: [...] }
       setGeneratedDashboard(result.dashboard.layout as DashboardConfig);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "Failed to process upload");
+      setError(err instanceof Error ? err.message : "Failed to process upload");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -109,7 +109,7 @@ export function DataSourcesPage() {
             { key: "name", label: "Source" },
             { key: "type", label: "Type" },
             { key: "owner", label: "Owner" },
-            { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Synced"?"success":r.status==="Failed"?"danger":"info"}>{r.status}</Badge> },
+            { key: "status", label: "Status", render: (r: typeof m.sourcesConnected[number]) => <Badge tone={r.status==="Synced"?"success":r.status==="Failed"?"danger":"info"}>{r.status}</Badge> },
             { key: "lastSync", label: "Last Sync", align: "right" },
           ] as any}
           rows={m.sourcesConnected}

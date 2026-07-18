@@ -71,10 +71,10 @@ export function AnalyticsPage() {
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <button className="text-eye-text hover:text-primary transition-colors">
+          <button aria-label="Notifications" className="text-eye-text hover:text-primary transition-colors">
             <Bell className="w-5 h-5" />
           </button>
-          <button className="text-eye-text hover:text-primary transition-colors">
+          <button aria-label="Help" className="text-eye-text hover:text-primary transition-colors">
             <HelpCircle className="w-5 h-5" />
           </button>
           <div className="w-8 h-8 rounded-full bg-[#78d1ff] overflow-hidden border border-eye-border">

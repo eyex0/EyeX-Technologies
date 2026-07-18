@@ -18,7 +18,7 @@ export function FinancePage() {
     { key: "inv", label: "Invoices", render: () => (
       <TableCard title="Invoices" columns={[
         { key: "id", label: "Invoice" },{ key: "customer", label: "Customer" },{ key: "amount", label: "Amount" },
-        { key: "status", label: "Status", render: (r:any) => <Badge tone={r.status==="Paid"?"success":r.status==="Overdue"?"danger":"info"}>{r.status}</Badge> },
+        { key: "status", label: "Status", render: (r: typeof m.invoices[number]) => <Badge tone={r.status==="Paid"?"success":r.status==="Overdue"?"danger":"info"}>{r.status}</Badge> },
         { key: "due", label: "Due", align: "right" },
       ]} rows={m.invoices} />
     )},
