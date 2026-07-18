@@ -16,7 +16,7 @@
     "db:generate": "supabase gen types typescript --project-id arshrkjqptpquqpkfktd > src/lib/supabase/types.ts",
     "db:push": "supabase db push",
     "db:migrate": "supabase migration new",
-    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name x",
     "db:seed": "node scripts/seed-database.js",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy"
