@@ -1,49 +1,70 @@
 import { Link } from "@tanstack/react-router";
 import { BrandMark } from "./BrandMark";
 
+const FOOTER_LINKS = [
+  {
+    label: "Platform",
+    items: [
+      { to: "/dashboard", label: "Dashboard" },
+      { to: "/analytics", label: "Analytics" },
+      { to: "/ai-chat", label: "AI Chat" },
+      { to: "/api", label: "API" },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { to: "/documents", label: "Documents" },
+      { to: "/about", label: "About" },
+    ],
+  },
+];
+
 export function SiteFooter() {
   return (
-    <footer className="border-t border-thin py-20 px-6 bg-eye-bg">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="col-span-1 md:col-span-2">
-            <BrandMark className="mb-6" />
-            <p className="text-eye-text text-sm max-w-xs font-light leading-relaxed">
-              The standard for enterprise intelligence. Architected for the most
-              demanding environments on Earth.
+    <footer className="border-t border-eye-border bg-eye-bg">
+      <div className="max-w-[1200px] mx-auto px-6 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+          <div className="col-span-2 md:col-span-1">
+            <BrandMark />
+            <p className="mt-4 text-xs text-eye-text font-light leading-relaxed max-w-xs">
+              The foundational intelligence infrastructure for the next generation of global enterprise.
             </p>
           </div>
-          <div>
-            <h6 className="text-eye-white text-[10px] font-bold uppercase tracking-widest mb-6">
-              Product
-            </h6>
-            <ul className="flex flex-col gap-3 text-sm text-eye-text font-light">
-              <li><Link to="/" className="hover:text-eye-white transition-colors">Platform</Link></li>
-              <li><Link to="/dashboard" className="hover:text-eye-white transition-colors">Dashboard</Link></li>
-              <li><Link to="/ai-chat" className="hover:text-eye-white transition-colors">AI Chat</Link></li>
-              <li><Link to="/documents" className="hover:text-eye-white transition-colors">Documents</Link></li>
-              <li><Link to="/api" className="hover:text-eye-white transition-colors">API</Link></li>
-              <li><Link to="/analytics" className="hover:text-eye-white transition-colors">Analytics</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h6 className="text-eye-white text-[10px] font-bold uppercase tracking-widest mb-6">
-              Company
-            </h6>
-            <ul className="flex flex-col gap-3 text-sm text-eye-text font-light">
-              <li><Link to="/about" className="hover:text-eye-white transition-colors">About</Link></li>
-              <li><a href="#" className="hover:text-eye-white transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-eye-white transition-colors">Contact</a></li>
-              <li><a href="#" className="hover:text-eye-white transition-colors">Press</a></li>
-            </ul>
-          </div>
+          {FOOTER_LINKS.map((group) => (
+            <div key={group.label}>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-eye-white mb-4">
+                {group.label}
+              </h4>
+              <ul className="space-y-3">
+                {group.items.map((item) => (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      className="text-xs text-eye-text hover:text-eye-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-        <div className="border-t border-thin pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-eye-text">
-          <p>© {new Date().getFullYear()} EyeX Technologies. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-eye-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-eye-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-eye-white transition-colors">Security</a>
+        <div className="border-t border-eye-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] text-eye-text font-label-mono">
+            &copy; {new Date().getFullYear()} EyeX Technologies. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6">
+            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+              Privacy
+            </span>
+            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+              Terms
+            </span>
+            <span className="text-[10px] text-eye-text font-label-mono hover:text-eye-white cursor-pointer transition-colors">
+              Security
+            </span>
           </div>
         </div>
       </div>

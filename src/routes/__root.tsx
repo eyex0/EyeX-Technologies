@@ -101,8 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "EyeX Technologies is the foundational intelligence infrastructure for the next generation of global enterprise — secured by design, engineered for scale.",
       },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cacd0493-9fe7-412e-aa53-ed2acdc6d564/id-preview-f857cd7d--16c4b0a7-64a1-4989-9f1c-e58f35d43b4e.lovable.app-1783779327374.png" },
+
     ],
     links: [
       { rel: "stylesheet", href: appCss },
