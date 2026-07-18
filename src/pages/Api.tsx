@@ -1,3 +1,34 @@
+import {
+  Key, BarChart3, Webhook, Puzzle, Shield,
+  Plus, Copy, Terminal,
+} from "lucide-react";
+
+const SIDEBAR_ITEMS = [
+  { icon: Key, label: "API Keys", badge: "3", active: true },
+  { icon: BarChart3, label: "Usage Logs" },
+  { icon: Webhook, label: "Webhooks" },
+  { icon: Puzzle, label: "Endpoints" },
+  { icon: Shield, label: "Audit Trail" },
+];
+
+const KEYS = [
+  { name: "Production_Main", perm: "READ/WRITE", key: "sk_live_••••••••••••••••••••3a7b", used: "2 minutes ago", created: "Oct 12, 2023" },
+  { name: "Security_Audit_ReadOnly", perm: "READ_ONLY", key: "sk_live_••••••••••••••••••••f921", used: "4 hours ago", created: "Jan 05, 2024" },
+];
+
+const LOGS = [
+  { ts: "14:02:31.421", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/mesh/broadcast" },
+  { ts: "14:02:31.109", status: "200", code: "OK", method: "GET", path: "/v1/infrastructure/enclave/status" },
+  { ts: "14:02:30.887", status: "401", code: "ERR", method: "GET", path: "/v1/security/keys/audit", highlight: true },
+  { ts: "14:02:29.502", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/analysis/compute" },
+  { ts: "14:02:28.112", status: "500", code: "ERR", method: "POST", path: "/v1/network/gateway/tunnel", error: true },
+  { ts: "14:02:27.994", status: "200", code: "OK", method: "GET", path: "/v1/account/billing/usage" },
+  { ts: "14:02:27.101", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/mesh/broadcast" },
+  { ts: "14:02:26.544", status: "200", code: "OK", method: "GET", path: "/v1/infrastructure/nodes/list" },
+  { ts: "14:02:25.210", status: "200", code: "OK", method: "GET", path: "/v1/intelligence/models/available" },
+  { ts: "14:02:24.887", status: "404", code: "ERR", method: "GET", path: "/v1/legacy/v0/deprecated_endpoint", highlight: true },
+];
+
 export function ApiPage() {
   return (
     <>
@@ -24,13 +55,7 @@ export function ApiPage() {
           <div className="lg:col-span-3 flex flex-col gap-6">
             <div className="bento-card rounded-xl p-4" data-fade-up>
               <div className="space-y-1">
-                {[
-                  { icon: "key", label: "API Keys", badge: "3", active: true },
-                  { icon: "analytics", label: "Usage Logs" },
-                  { icon: "webhook", label: "Webhooks" },
-                  { icon: "settings_input_component", label: "Endpoints" },
-                  { icon: "shield", label: "Audit Trail" },
-                ].map((item) => (
+                {SIDEBAR_ITEMS.map((item) => (
                   <button
                     key={item.label}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
@@ -39,7 +64,7 @@ export function ApiPage() {
                         : "text-eye-text hover:bg-eye-border/30 hover:text-eye-white"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                    <item.icon size={18} />
                     <span className="text-xs font-medium">{item.label}</span>
                     {item.badge && (
                       <span className="ml-auto text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded border border-primary/20">
@@ -81,15 +106,12 @@ export function ApiPage() {
                   <p className="text-xs text-eye-text mt-1 font-light">Manage secret keys for authenticating with the EyeX API.</p>
                 </div>
                 <button className="luminous-btn-primary px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">add</span>
+                  <Plus size={14} />
                   Create New Key
                 </button>
               </div>
               <div className="divide-y divide-eye-border">
-                {[
-                  { name: "Production_Main", perm: "READ/WRITE", key: "sk_live_••••••••••••••••••••3a7b", used: "2 minutes ago", created: "Oct 12, 2023" },
-                  { name: "Security_Audit_ReadOnly", perm: "READ_ONLY", key: "sk_live_••••••••••••••••••••f921", used: "4 hours ago", created: "Jan 05, 2024" },
-                ].map((k) => (
+                {KEYS.map((k) => (
                   <div key={k.name} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -99,7 +121,7 @@ export function ApiPage() {
                       <div className="flex items-center gap-3 font-mono text-xs text-eye-text">
                         <code className="bg-eye-bg px-2 py-1 rounded border border-eye-border">{k.key}</code>
                         <button className="hover:text-primary transition-colors">
-                          <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                          <Copy size={16} />
                         </button>
                       </div>
                     </div>
@@ -132,18 +154,7 @@ export function ApiPage() {
                 <span className="font-mono text-[11px] text-eye-text">1.2ms Avg Latency</span>
               </div>
               <div className="p-4 h-[400px] font-mono text-xs leading-relaxed overflow-y-auto space-y-1">
-                {[
-                  { ts: "14:02:31.421", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/mesh/broadcast" },
-                  { ts: "14:02:31.109", status: "200", code: "OK", method: "GET", path: "/v1/infrastructure/enclave/status" },
-                  { ts: "14:02:30.887", status: "401", code: "ERR", method: "GET", path: "/v1/security/keys/audit", highlight: true },
-                  { ts: "14:02:29.502", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/analysis/compute" },
-                  { ts: "14:02:28.112", status: "500", code: "ERR", method: "POST", path: "/v1/network/gateway/tunnel", error: true },
-                  { ts: "14:02:27.994", status: "200", code: "OK", method: "GET", path: "/v1/account/billing/usage" },
-                  { ts: "14:02:27.101", status: "200", code: "OK", method: "POST", path: "/v1/intelligence/mesh/broadcast" },
-                  { ts: "14:02:26.544", status: "200", code: "OK", method: "GET", path: "/v1/infrastructure/nodes/list" },
-                  { ts: "14:02:25.210", status: "200", code: "OK", method: "GET", path: "/v1/intelligence/models/available" },
-                  { ts: "14:02:24.887", status: "404", code: "ERR", method: "GET", path: "/v1/legacy/v0/deprecated_endpoint", highlight: true },
-                ].map((log, i) => {
+                {LOGS.map((log, i) => {
                   let statusClass = "text-green-400";
                   if (log.status.startsWith("4")) statusClass = "text-yellow-400";
                   if (log.status.startsWith("5")) statusClass = "text-red-500";
@@ -160,7 +171,7 @@ export function ApiPage() {
                 })}
               </div>
               <div className="bg-eye-surface border-t border-eye-border p-3 flex items-center gap-3">
-                <span className="material-symbols-outlined text-eye-text text-sm">terminal</span>
+                <Terminal size={14} className="text-eye-text" />
                 <input
                   className="bg-transparent border-none focus:ring-0 text-xs w-full text-eye-white placeholder:text-eye-text/50 font-mono outline-none"
                   placeholder="Search logs or filter by status..."

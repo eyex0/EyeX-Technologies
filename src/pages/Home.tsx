@@ -3,7 +3,7 @@ export function HomePage() {
     <>
 {/* Hero Section */}
 <header className="relative min-h-[85vh] w-full flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
-<div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center fade-up visible">
+<div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center" data-fade-up>
 <h1 className="text-6xl md:text-8xl font-display font-medium text-eye-white tracking-[-0.03em] leading-[1.05] mb-8">
                 Intelligence,<br />Architected.
             </h1>
@@ -21,7 +21,7 @@ export function HomePage() {
 {/* Capabilities Bento Grid */}
 <section className="py-32 px-4 w-full flex justify-center border-t border-thin bg-eye-bg">
 <div className="max-w-[1200px] w-full flex flex-col gap-16">
-<div className="flex flex-col md:flex-row md:items-end justify-between gap-6 fade-up visible">
+<div className="flex flex-col md:flex-row md:items-end justify-between gap-6" data-fade-up>
 <div className="max-w-xl">
 <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-text mb-4">Foundation</h2>
 <h3 className="text-3xl md:text-4xl font-display font-medium text-eye-white tracking-tight">Enterprise-Grade Intelligence</h3>
@@ -30,10 +30,10 @@ export function HomePage() {
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 {/* Main Feature */}
-<div className="bento-card md:col-span-2 md:row-span-2 flex flex-col fade-up visible">
+<div className="bento-card md:col-span-2 md:row-span-2 flex flex-col" data-fade-up>
 <div className="aspect-video w-full overflow-hidden border-b border-thin bg-black">
 <div className="w-full h-full flex items-center justify-center opacity-20">
-<span className="material-symbols-outlined text-[64px] font-extralight text-eye-white">schema</span>
+<span className="text-[64px] font-extralight text-eye-white font-display">01</span>
 </div>
 </div>
 <div className="p-10">
@@ -42,28 +42,32 @@ export function HomePage() {
 </div>
 </div>
 {/* Security */}
-<div className="bento-card p-10 flex flex-col justify-between fade-up visible">
+<div className="bento-card p-10 flex flex-col justify-between" data-fade-up>
 <div>
-<span className="material-symbols-outlined text-[24px] text-eye-white mb-6">shield_lock</span>
+<div className="w-6 h-6 border-2 border-eye-white rounded-sm mb-6 flex items-center justify-center">
+<div className="w-2 h-2 bg-eye-white rounded-full" />
+</div>
 <h4 className="text-lg font-medium text-eye-white mb-3 tracking-tight">Immutable Security</h4>
 <p className="text-sm text-eye-text font-light leading-relaxed">Zero-trust architecture with hardware-level isolation. SOC2 Type II and HIPAA compliant infrastructure for mission-critical data handling.</p>
 </div>
 </div>
 {/* Scale */}
-<div className="bento-card p-10 flex flex-col justify-between fade-up visible">
+<div className="bento-card p-10 flex flex-col justify-between" data-fade-up>
 <div>
-<span className="material-symbols-outlined text-[24px] text-eye-white mb-6">dynamic_form</span>
+<div className="w-6 h-6 border-t-2 border-eye-white mb-6 relative">
+<div className="absolute -right-1 top-0 w-0 h-0 border-l-[6px] border-l-eye-white border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent" />
+</div>
 <h4 className="text-lg font-medium text-eye-white mb-3 tracking-tight">Elastic Scalability</h4>
 <p className="text-sm text-eye-text font-light leading-relaxed">Instantaneous resource allocation across global nodes, ensuring consistent performance regardless of request volume or computational complexity.</p>
 </div>
 </div>
 {/* Suite */}
-<div className="bento-card md:col-span-3 p-10 flex flex-col md:flex-row items-center gap-12 fade-up visible">
+<div className="bento-card md:col-span-3 p-10 flex flex-col md:flex-row items-center gap-12" data-fade-up>
 <div className="flex-1">
 <h4 className="text-2xl font-medium text-eye-white mb-4 tracking-tight">Integrated QORX Ecosystem</h4>
 <p className="text-sm text-eye-text max-w-xl mb-8 font-light leading-relaxed">From fine-tuning pipelines to real-time telemetry, our unified suite provides a single point of orchestration for the entire intelligence lifecycle.</p>
 <button className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-white hover:opacity-70 transition-opacity flex items-center gap-2">
-                            View Ecosystem <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                            View Ecosystem →
 </button>
 </div>
 <div className="hidden md:block w-px h-24 bg-eye-border"></div>
@@ -85,13 +89,15 @@ export function HomePage() {
 {/* Human Expertise Section */}
 <section className="py-32 px-4 w-full flex justify-center bg-[#050505] border-t border-thin">
 <div className="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-<div className="fade-up visible">
+<div data-fade-up>
 <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-eye-text mb-6">Expertise</h2>
 <h3 className="text-4xl md:text-5xl font-display font-medium text-eye-white tracking-tight leading-tight mb-8">Human insight,<br />algorithmically amplified.</h3>
 <p className="text-eye-text text-lg font-light leading-relaxed mb-10">Beyond the code, EyeX is built on the expertise of world-class engineers, designers, and industry veterans. We believe that true intelligence requires human perspective to remain grounded and ethical.</p>
 <div className="flex flex-col gap-6">
 <div className="flex items-start gap-4">
-<span className="material-symbols-outlined text-eye-white text-[20px]">verified_user</span>
+<div className="w-5 h-5 rounded-full border-2 border-eye-white mt-0.5 flex items-center justify-center">
+<div className="w-1.5 h-1.5 bg-eye-white rounded-full" />
+</div>
 <div>
 <h5 className="text-eye-white font-medium mb-1">Principled Design</h5>
 <p className="text-sm text-eye-text font-light">Every model is refined by subject matter experts to ensure real-world utility.</p>
@@ -99,9 +105,9 @@ export function HomePage() {
 </div>
 </div>
 </div>
-<div className="relative fade-up aspect-[4/5] overflow-hidden border border-thin bg-black visible">
-<div className="w-full h-full flex items-center justify-center opacity-10">
-<span className="material-symbols-outlined text-[120px] font-extralight text-eye-white">group</span>
+<div className="relative" data-fade-up style={{ aspectRatio: "4/5" }}>
+<div className="w-full h-full overflow-hidden border border-thin bg-black flex items-center justify-center">
+<span className="text-[120px] font-extralight text-eye-white font-display opacity-10">EX</span>
 </div>
 </div>
 </div>

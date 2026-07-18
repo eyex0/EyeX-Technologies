@@ -1,4 +1,19 @@
 import { useState, type ReactNode } from "react";
+import {
+  DollarSign, TrendingUp, Users, Rocket, LineChart,
+  Sparkles, Clock, Zap, Pin, FileText, MessageSquare,
+  Folder, Tag, Search, Table, Eye, User, TrendingDown,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+const ICONS: Record<string, LucideIcon> = {
+  payments: DollarSign, trending_up: TrendingUp, groups: Users,
+  rocket_launch: Rocket, show_chart: LineChart, auto_awesome: Sparkles,
+  history: Clock, bolt: Zap, push_pin: Pin, description: FileText,
+  chat: MessageSquare, folder: Folder, sell: Tag, search: Search,
+  table_rows: Table, visibility: Eye, person: User,
+  schedule: Clock, call_missed: TrendingDown,
+};
 
 export function Kpi({
   label,
@@ -14,13 +29,14 @@ export function Kpi({
   hint?: string;
 }) {
   const positive = delta?.startsWith("+");
+  const Icon = ICONS[icon] || FileText;
   return (
     <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
       <div className="flex justify-between items-start">
         <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
           {label}
         </span>
-        <span className="material-symbols-outlined text-muted-foreground text-[18px]">{icon}</span>
+        <Icon size={18} className="text-muted-foreground" />
       </div>
       <div className="flex items-baseline gap-2">
         <span className="text-2xl font-semibold tracking-tight text-white">{value}</span>
@@ -52,11 +68,12 @@ export function Card({
   children: ReactNode;
   className?: string;
 }) {
+  const Icon = icon ? ICONS[icon] || null : null;
   return (
     <div className={`bento-card rounded-lg flex flex-col overflow-hidden ${className}`}>
       <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-secondary/40">
         <h2 className="font-medium text-sm text-white flex items-center gap-2">
-          {icon && <span className="material-symbols-outlined text-[16px]">{icon}</span>}
+          {Icon && <Icon size={16} className="text-muted-foreground" />}
           {title}
         </h2>
         {action}

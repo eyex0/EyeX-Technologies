@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { Eye, User, Clock, TrendingDown } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
-import * as m from "@/lib/mock";
+import { KpiRow } from "@/components/common/SharedBlocks";
+import { Card, BarChart } from "@/components/common/primitives";
 
 export function AnalyticsPage() {
   return (
@@ -28,4 +27,3 @@ export function AnalyticsPage() {
     </AppShell>
   );
 }
-

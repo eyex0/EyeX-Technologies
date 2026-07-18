@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Card } from "@/components/common/primitives";
 import { ChatService } from "@/services/chat.service";
+import { MessageSquare, Zap, Clock, Loader2 } from "lucide-react";
 
 interface AgentStep {
   agent: string;
@@ -83,7 +84,7 @@ export function AiCopilotPage() {
                       {msg.steps.map((step, si) => (
                         <div
                           key={si}
-                          className="text-[10px] font-label-mono px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20"
+                          className="text-[10px] font-mono px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20"
                         >
                           {step.agent} · {(step.duration / 1000).toFixed(1)}s
                         </div>
@@ -96,7 +97,7 @@ export function AiCopilotPage() {
             {loading && (
               <div className="flex justify-start">
                 <div className="max-w-[70%] rounded-lg px-4 py-3 text-sm text-white bg-white/5 border border-white/10 flex items-center gap-2">
-                  <span className="material-symbols-outlined animate-spin h-4 w-4">sync</span>
+                  <Loader2 size={16} className="animate-spin" />
                   Routing to agents...
                 </div>
               </div>
@@ -110,7 +111,7 @@ export function AiCopilotPage() {
               ))}
             </div>
             <div className="flex items-center gap-2 border border-border rounded-md px-4 py-3 bg-background focus-within:border-primary/50 transition-colors">
-              <span className="material-symbols-outlined text-muted-foreground text-[18px]">chat</span>
+              <MessageSquare size={18} className="text-muted-foreground" />
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -149,4 +150,3 @@ export function AiCopilotPage() {
     </AppShell>
   );
 }
-

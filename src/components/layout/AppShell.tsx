@@ -1,5 +1,20 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import {
+  LayoutDashboard, BarChart3, Database, Sparkles, FileText,
+  Users, ShoppingBag, Megaphone, Wallet, Package,
+  Briefcase, Folder, Puzzle, Bell, Settings,
+  Menu, RefreshCw, Plus,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+const ICONS: Record<string, LucideIcon> = {
+  dashboard: LayoutDashboard, analytics: BarChart3, database: Database,
+  auto_awesome: Sparkles, description: FileText, groups: Users,
+  shopping_bag: ShoppingBag, campaign: Megaphone, account_balance: Wallet,
+  inventory_2: Package, badge: Briefcase, assignment: Briefcase,
+  folder: Folder, extension: Puzzle, notifications: Bell, settings: Settings,
+};
 
 type NavItem = { to: string; label: string; icon: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -9,7 +24,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Overview",
     items: [
       { to: "/dashboard", label: "Dashboard", icon: "dashboard" },
-      { to: "/analytics", label: "Analytics", icon: "bar_chart" },
+      { to: "/analytics", label: "Analytics", icon: "analytics" },
       { to: "/data-sources", label: "Data Sources", icon: "database" },
       { to: "/ai-copilot", label: "AI Copilot", icon: "auto_awesome" },
       { to: "/reports", label: "Reports", icon: "description" },
@@ -54,7 +69,6 @@ export function AppShell({
 
   return (
     <div className="fixed inset-0 top-0 bg-background flex overflow-hidden">
-      {/* Sidebar */}
       <nav
         className={`${
           mobileOpen ? "flex" : "hidden"
@@ -80,8 +94,8 @@ export function AppShell({
               </div>
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const active =
-                    pathname === item.to || pathname.startsWith(item.to + "/");
+                  const active = pathname === item.to || pathname.startsWith(item.to + "/");
+                  const Icon = ICONS[item.icon] || FileText;
                   return (
                     <Link
                       key={item.to}
@@ -93,12 +107,7 @@ export function AppShell({
                           : "text-muted-foreground hover:text-white hover:bg-white/[0.03]"
                       }`}
                     >
-                      <span
-                        className="material-symbols-outlined text-[18px]"
-                        style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
-                      >
-                        {item.icon}
-                      </span>
+                      <Icon size={16} className={active ? "text-white" : "text-muted-foreground"} />
                       <span className="font-medium">{item.label}</span>
                     </Link>
                   );
@@ -121,7 +130,6 @@ export function AppShell({
         </div>
       </nav>
 
-      {/* Main */}
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
         <header className="flex-shrink-0 border-b border-border px-6 md:px-8 py-4 md:py-5 flex items-center justify-between bg-background z-10">
           <div className="flex items-center gap-3">
@@ -130,7 +138,7 @@ export function AppShell({
               className="md:hidden w-9 h-9 border border-border rounded-md flex items-center justify-center text-muted-foreground"
               onClick={() => setMobileOpen((v) => !v)}
             >
-              <span className="material-symbols-outlined text-[18px]">menu</span>
+              <Menu size={16} />
             </button>
             <div>
               <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">{title}</h1>
@@ -145,10 +153,10 @@ export function AppShell({
             {actions ?? (
               <>
                 <button className="bento-card w-9 h-9 hidden sm:flex items-center justify-center rounded-md text-muted-foreground hover:text-white">
-                  <span className="material-symbols-outlined text-[18px]">refresh</span>
+                  <RefreshCw size={16} />
                 </button>
                 <button className="bg-white hover:bg-white/90 text-black px-4 h-9 rounded-md font-semibold text-xs flex items-center gap-2 transition-colors">
-                  <span className="material-symbols-outlined text-[16px] font-bold">add</span>
+                  <Plus size={16} />
                   New
                 </button>
               </>

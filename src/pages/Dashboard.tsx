@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Kpi, Card, DataTable, Tabs, Badge, BarChart, Sparkline } from "@/components/common/primitives";
+import { MessageSquare } from "lucide-react";
 import * as mock from "@/lib/mock";
-/* ---------------- Dashboard ---------------- */
 
 export function DashboardPage() {
   return (
@@ -83,7 +83,7 @@ export function DashboardPage() {
               ))}
             </div>
             <div className="flex items-center gap-2 border border-border rounded-md px-4 py-3 bg-background">
-              <span className="material-symbols-outlined text-muted-foreground text-[18px]">chat</span>
+              <MessageSquare size={18} className="text-muted-foreground" />
               <input className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground" placeholder="Ask Copilot..." />
               <button className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded">Send</button>
             </div>
@@ -133,4 +133,3 @@ function ActivityFeed() {
     </div>
   );
 }
-

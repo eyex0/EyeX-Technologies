@@ -1,3 +1,12 @@
+import { Brain, ShieldCheck, Puzzle, Users } from "lucide-react";
+
+const VALUES = [
+  { icon: Brain, title: "Intelligence", desc: "Pushing the boundaries of what machine reasoning can achieve in real-time environments." },
+  { icon: ShieldCheck, title: "Trust", desc: "Built with an intelligence-first security posture. Your sovereignty is our architecture." },
+  { icon: Puzzle, title: "Simplicity", desc: "Hiding the complexity. Precise interfaces that allow you to command vast compute effortlessly." },
+  { icon: Users, title: "Human Impact", desc: "Technology is a tool for human brilliance. We build to amplify, not replace, our users." },
+];
+
 export function AboutPage() {
   return (
     <>
@@ -71,14 +80,9 @@ export function AboutPage() {
       <section className="py-32 px-6">
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "psychology", title: "Intelligence", desc: "Pushing the boundaries of what machine reasoning can achieve in real-time environments." },
-              { icon: "verified_user", title: "Trust", desc: "Built with an intelligence-first security posture. Your sovereignty is our architecture." },
-              { icon: "architecture", title: "Simplicity", desc: "Hiding the complexity. Precise interfaces that allow you to command vast compute effortlessly." },
-              { icon: "groups", title: "Human Impact", desc: "Technology is a tool for human brilliance. We build to amplify, not replace, our users." },
-            ].map((v, i) => (
+            {VALUES.map((v, i) => (
               <div key={i} className="bento-card rounded-xl p-8 group hover:border-primary/30 transition-all duration-300" data-fade-up>
-                <span className="material-symbols-outlined text-primary text-3xl mb-6">{v.icon}</span>
+                <v.icon size={28} className="text-primary mb-6" />
                 <h4 className="text-xl font-display font-medium text-eye-white mb-4">{v.title}</h4>
                 <p className="text-sm text-eye-text font-light leading-relaxed">{v.desc}</p>
               </div>

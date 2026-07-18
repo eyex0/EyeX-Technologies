@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { Search } from "lucide-react";
+import { Card, DataTable, Badge } from "@/components/common/primitives";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart, Sparkline, Kpi } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
+import { useState } from "react";
 
 export function DocumentsAppPage() {
   const [tag, setTag] = useState("All");
@@ -28,7 +28,7 @@ export function DocumentsAppPage() {
         <div className="lg:col-span-3 space-y-4">
           <div className="flex gap-2 items-center">
             <div className="flex items-center gap-2 border border-border rounded-md px-4 py-2 bg-background flex-1">
-              <span className="material-symbols-outlined text-muted-foreground text-[18px]">search</span>
+              <Search size={18} className="text-muted-foreground" />
               <input className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground" placeholder="Search documents..." />
             </div>
             <div className="flex gap-1">
@@ -49,4 +49,3 @@ export function DocumentsAppPage() {
     </AppShell>
   );
 }
-
