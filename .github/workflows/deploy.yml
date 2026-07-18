@@ -21,4 +21,4 @@ jobs:
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy dist --project-name=eyex-technologies
+          command: pages deploy dist --project-name=x
