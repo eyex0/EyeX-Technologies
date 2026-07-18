@@ -3,7 +3,7 @@ import { SiteHeader } from './SiteHeader'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-950">
       <Sidebar />
       <div className="pl-64">
         <SiteHeader />
