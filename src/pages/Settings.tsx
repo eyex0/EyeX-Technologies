@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { AppShell } from "@/components/layout/AppShell";
 import { ModulePage, TableCard } from "@/components/common/SharedBlocks";
 import { Card, Kpi } from "@/components/common/primitives";
 import * as m from "@/lib/mock";

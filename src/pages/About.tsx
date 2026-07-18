@@ -1,4 +1,4 @@
-import { ArrowRight, Brain, ShieldCheck, Layers, Globe } from "lucide-react";
+import { Brain, ShieldCheck, Layers, Globe } from "lucide-react";
 
 export function AboutPage() {
   return (

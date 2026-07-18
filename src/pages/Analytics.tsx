@@ -9,8 +9,6 @@ import {
   BarChart3,
   Download,
   ChevronDown,
-  Eye,
-  Users,
   FileText,
   Settings,
   LayoutDashboard,

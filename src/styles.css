@@ -13,6 +13,20 @@
   --color-eye-white: #FAFAFA;
   --color-primary-brand: #38BDF8;
 
+  /* MD3 surface tokens (used by Stitch-generated pages) */
+  --color-surface: #0A0A0C;
+  --color-surface-container-lowest: #050505;
+  --color-surface-container-low: #0A0A0C;
+  --color-surface-container: #111113;
+  --color-surface-container-high: #1A1A1C;
+  --color-surface-container-highest: #232325;
+  --color-on-surface: #FAFAFA;
+  --color-on-surface-variant: #A1A1AA;
+  --color-on-background: #FAFAFA;
+  --color-outline: #3A3A3C;
+  --color-outline-variant: #2A2A2C;
+  --color-eye-border-hover: #27272A;
+
   --font-display: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
@@ -225,4 +239,11 @@
 /* Glow on hover (Stitch) */
 .glow-hover:hover {
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+}
+
+@utility glass-panel {
+  background: rgba(10, 10, 12, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #1A1A1C;
 }
