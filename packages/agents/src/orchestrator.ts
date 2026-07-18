@@ -1,8 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { OpenAI } from 'openai';
-import { Anthropic } from '@anthropic-ai/sdk';
 import type { Database } from '../../src/lib/supabase/types';
-import { BaseAgent, type AgentContext, type TokenBudget, type AgentOutput, type LLMProvider, type LLMOptions, type LLMResponse, type ToolRegistry } from './base';
+import { BaseAgent, type AgentContext, type TokenBudget, type AgentOutput, type LLMProvider, type LLMOptions, type LLMResponse, type ToolRegistry, OpenAILLMProvider } from './base';
 import { SQLAgent } from './sql-agent';
 import { InsightAgent } from './insight-agent';
 import { ActionAgent } from './action-agent';
@@ -81,16 +79,29 @@ export class AgentOrchestrator {
   private evaluator: EvaluatorAgent;
   private memory: ConversationMemory;
   private toolRegistry: ToolRegistry;
+  private llm: LLMProvider;
+  private db: ReturnType<typeof createClient<Database>>;
+  private config: OrchestratorConfig;
 
-  constructor(
-    private llm: LLMProvider,
-    private db: ReturnType<typeof createClient<Database>>,
-    private config: OrchestratorConfig
-  ) {
+  constructor(config: {
+    openaiApiKey: string;
+    supabaseUrl: string;
+    supabaseServiceKey: string;
+    maxTokensPerRequest?: number;
+    defaultTimeoutMs?: number;
+    maxRetries?: number;
+  }) {
+    this.llm = new OpenAILLMProvider(config.openaiApiKey);
+    this.db = createClient(config.supabaseUrl, config.supabaseServiceKey);
+    this.config = {
+      maxTokensPerRequest: config.maxTokensPerRequest ?? 100000,
+      defaultTimeoutMs: config.defaultTimeoutMs ?? 30000,
+      maxRetries: config.maxRetries ?? 3,
+    };
     this.registerAgents();
-    this.planner = new PlannerAgent(llm);
-    this.evaluator = new EvaluatorAgent(llm);
-    this.memory = new ConversationMemory(db);
+    this.planner = new PlannerAgent(this.llm);
+    this.evaluator = new EvaluatorAgent(this.llm);
+    this.memory = new ConversationMemory(this.db);
     this.toolRegistry = new ToolRegistry();
   }
 

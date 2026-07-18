@@ -1,4 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './base';
+import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider } from './base';
 
 interface RootCauseInput {
   metric: string;
@@ -261,11 +261,4 @@ SELECT * FROM filtered;
   }
 }
 
-// Type definitions
-interface LLMProvider {
-  complete(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }>;
-}
 
-function createClient<Database>() {
-  return {} as any;
-}

@@ -312,10 +312,4 @@ interface ForecastComponents {
   weekly: number[];
 }
 
-interface LLMProvider {
-  complete(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }>;
-}
 
-function createClient<Database>() {
-  return {} as any;
-}

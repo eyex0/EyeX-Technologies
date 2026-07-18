@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../../src/lib/supabase/types';
+import { OpenAI } from 'openai';
 import fs from 'fs';
 import path from 'path';
 
@@ -39,6 +40,38 @@ export interface LLMProvider {
 
 export interface ToolRegistry {
   execute(name: string, args: Record<string, unknown>): Promise<unknown>;
+}
+
+export class OpenAILLMProvider implements LLMProvider {
+  private client: OpenAI;
+
+  constructor(private apiKey: string) {
+    this.client = new OpenAI({ apiKey });
+  }
+
+  async complete(prompt: string, options?: LLMOptions): Promise<LLMResponse> {
+    try {
+      const response = await this.client.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: options?.temperature ?? 0.7,
+        max_tokens: options?.maxTokens ?? 2048,
+        stop: options?.stop ?? undefined,
+      });
+
+      return {
+        content: response.choices[0]?.message?.content || '',
+        tokensUsed: response.usage?.total_tokens ?? 0,
+        finishReason: response.choices[0]?.finish_reason ?? 'stop',
+      };
+    } catch (error) {
+      return {
+        content: '',
+        tokensUsed: 0,
+        finishReason: `error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+    }
+  }
 }
 
 export abstract class BaseAgent {

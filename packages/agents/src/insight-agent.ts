@@ -1,4 +1,5 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './base';
+import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider } from './base';
+import { createClient, type Database } from '../../src/lib/supabase/client';
 
 interface TimeSeriesPoint {
   timestamp: Date;
@@ -506,11 +507,3 @@ class Segmenter {
   }
 }
 
-interface LLMProvider {
-  complete(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }>;
-}
-
-function createClient<Database>() {
-  // Mock for TypeScript
-  return {} as any;
-}

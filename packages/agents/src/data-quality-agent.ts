@@ -1,4 +1,4 @@
-import { BaseAgent, type AgentContext, type AgentOutput } from './base';
+import { BaseAgent, type AgentContext, type AgentOutput, type LLMProvider } from './base';
 
 interface DataQualityInput {
   sourceId?: string;
@@ -244,6 +244,4 @@ export class DataQualityAgent extends BaseAgent {
   }
 }
 
-interface LLMProvider {
-  complete(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }>;
-}
+

@@ -125,14 +125,14 @@ export class SQLAgent extends BaseAgent {
   ): Promise<SQLCandidate[]> {
     const prompt = this.buildPrompt(question, schema, semanticLayer, userContext);
     
-    const response = await this.llm.complete(prompt, { 
-      temperature: 0.1, 
-      maxTokens: 4000,
-      stop: ['```'],
-      n: 3,
-    });
+    const temperatures = [0.1, 0.2, 0.3];
+    const responses = await Promise.all(
+      temperatures.map(temp =>
+        this.llm.complete(prompt, { temperature: temp, maxTokens: 4000, stop: ['```'] })
+      )
+    );
 
-    return response.choices.map(choice => this.parseSQL(choice.text));
+    return responses.map(r => this.parseSQL(r.content));
   }
 
   private buildPrompt(
