@@ -211,12 +211,18 @@
   background: #27272A;
 }
 
-/* Material Symbols visual balance */
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 300,
-    "GRAD" 0,
-    "opsz" 24;
-  vertical-align: middle;
+/* Premium border (Stitch) */
+.premium-border {
+  border: 0.5px solid #1A1A1C;
+}
+
+/* Timeline gradient line (Stitch) */
+.timeline-line {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, #1A1A1C, #3ABFF8, #1A1A1C, transparent);
+}
+
+/* Glow on hover (Stitch) */
+.glow-hover:hover {
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
 }
