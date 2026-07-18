@@ -805,61 +805,61 @@ export const db = {
 
   // Domain-specific methods for page components
   async getCustomers(): Promise<any[]> {
-    const { data, error } = await supabase.from('customers').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('crm_customers').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getLeads(): Promise<any[]> {
-    const { data, error } = await supabase.from('leads').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('crm_leads').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getDeals(): Promise<any[]> {
-    const { data, error } = await supabase.from('deals').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('crm_deals').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getActivities(): Promise<any[]> {
-    const { data, error } = await supabase.from('activities').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('crm_activities').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getInvoices(): Promise<any[]> {
-    const { data, error } = await supabase.from('invoices').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('finance_invoices').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getBudgets(): Promise<any[]> {
-    const { data, error } = await supabase.from('budgets').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('finance_budgets').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getTransactions(): Promise<any[]> {
-    const { data, error } = await supabase.from('transactions').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('finance_transactions').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getEmployees(): Promise<any[]> {
-    const { data, error } = await supabase.from('employees').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('hr_employees').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getDepartments(): Promise<any[]> {
-    const { data, error } = await supabase.from('departments').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('hr_departments').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getPayroll(): Promise<any[]> {
-    const { data, error } = await supabase.from('payroll').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('hr_payroll').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
@@ -883,7 +883,7 @@ export const db = {
   },
 
   async getOrders(): Promise<any[]> {
-    const { data, error } = await supabase.from('orders').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('sales_orders').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
@@ -895,13 +895,13 @@ export const db = {
   },
 
   async getProjects(): Promise<any[]> {
-    const { data, error } = await supabase.from('projects').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('projects_projects').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
 
   async getTasks(): Promise<any[]> {
-    const { data, error } = await supabase.from('tasks').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('projects_tasks').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },
@@ -924,7 +924,7 @@ export const db = {
   },
 
   async getDataSources(): Promise<any[]> {
-    const { data, error } = await supabase.from('data_sources_v2').select('*').eq('organization_id', await getCurrentOrgId());
+    const { data, error } = await supabase.from('data_sources').select('*').eq('organization_id', await getCurrentOrgId());
     if (error) return [];
     return data ?? [];
   },

@@ -2,6 +2,8 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { createRoute, createRouter, createRootRoute, Outlet } from '@tanstack/react-router'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageLoading } from '@/components/Loading'
+import { useAuth } from '@/lib/auth'
+import { SignInPage } from '@/pages/SignIn'
 
 function LazyLoad({ component: LazyComponent }: { component: React.LazyExoticComponent<() => ReactNode> }) {
   return (
@@ -11,6 +13,12 @@ function LazyLoad({ component: LazyComponent }: { component: React.LazyExoticCom
   )
 }
 
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <PageLoading text="Loading..." />
+  if (!user) return <SignInPage />
+  return <>{children}</>
+}
 const DashboardPage = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.DashboardPage })))
 const FinancePage = lazy(() => import('@/pages/Finance').then(m => ({ default: m.FinancePage })))
 const CrmPage = lazy(() => import('@/pages/Crm').then(m => ({ default: m.CrmPage })))
@@ -32,11 +40,13 @@ const SettingsPage = lazy(() => import('@/pages/Settings').then(m => ({ default:
 
 const rootRoute = createRootRoute({
   component: () => (
-    <AppShell>
-      <Suspense fallback={<PageLoading text="Loading..." />}>
-        <Outlet />
-      </Suspense>
-    </AppShell>
+    <ProtectedRoute>
+      <AppShell>
+        <Suspense fallback={<PageLoading text="Loading..." />}>
+          <Outlet />
+        </Suspense>
+      </AppShell>
+    </ProtectedRoute>
   ),
 })
 

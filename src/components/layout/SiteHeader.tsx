@@ -1,7 +1,10 @@
-import { Bell, Search } from 'lucide-react'
+import { Bell, Search, LogOut } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth'
 
 export function SiteHeader() {
+  const { signOut } = useAuth()
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-800 bg-gray-950 px-6">
       <div className="flex-1" />
@@ -21,6 +24,9 @@ export function SiteHeader() {
           <p className="font-medium text-white">Admin</p>
           <p className="text-gray-500 text-xs">Administrator</p>
         </div>
+        <button onClick={signOut} className="p-2 hover:bg-gray-800 rounded-lg transition-colors" title="Sign out">
+          <LogOut className="h-4 w-4 text-gray-400" />
+        </button>
       </div>
     </header>
   )
