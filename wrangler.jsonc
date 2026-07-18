@@ -1,8 +1,17 @@
 {
-  "name": "x",
-  "pages_build_output_dir": "./dist",
-  "vars": {
-    "VITE_SUPABASE_URL": "https://arshrkjqptpquqpkfktd.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyc2hya2pxcHRwcXVxcGtma3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5MjU5OTMsImV4cCI6MjA1ODUwMTk5M30.vwMRlWTrF8l7LMWiWCGNQ2MRsDy18lxBmdsqG-qNYsQ"
-  }
+  "name": "eyex-technologies",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2025-07-18",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "../public"
+  },
+  "no_bundle": true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"]
+    }
+  ]
 }
