@@ -143,6 +143,7 @@ const APP_ROUTES = [
   "/dashboard","/analytics","/data-sources","/ai-copilot","/reports",
   "/crm","/sales","/marketing","/finance","/inventory","/hr","/projects",
   "/documents","/integrations","/notifications","/settings",
+  "/ai-chat","/api",
 ];
 
 function RootComponent() {

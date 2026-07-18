@@ -1,5 +1,5 @@
 import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
-import { Card, DataTable, Badge, BarChart } from "@/components/common/primitives";
+import { Card, Badge, BarChart } from "@/components/common/primitives";
 import * as m from "@/lib/mock";
 
 export function HrPage() {

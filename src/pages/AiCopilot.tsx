@@ -217,8 +217,8 @@ export function AiCopilotPage() {
       <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-8 pointer-events-none">
         <div className="rounded-full mb-8 max-w-2xl mx-auto border border-surface-container-high/30 shadow-[0_0_30px_rgba(56,189,248,0.1)] bg-surface-container-high/90 backdrop-blur-xl flex justify-center py-3 px-8 pointer-events-auto cursor-pointer hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] hover:border-primary-brand transition-all">
           <div className="flex items-center gap-3">
-            <Terminal className="text-surface-container-high w-5 h-5" />
-            <span className="font-mono text-surface-container-high">Command AI</span>
+            <Terminal className="text-primary-brand w-5 h-5" />
+            <span className="font-mono text-primary-brand">Command AI</span>
           </div>
         </div>
       </div>

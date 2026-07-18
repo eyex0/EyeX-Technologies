@@ -3,6 +3,9 @@ import {
   DollarSign, TrendingUp, Users, Rocket, LineChart,
   Sparkles, Clock, Zap, Pin, FileText, MessageSquare,
   Folder, Tag, Search, Table, Eye, User, TrendingDown,
+  Activity, BarChart3, AlertTriangle, CheckCircle, Package,
+  Calendar, ShoppingBag, Receipt, Award, UserPlus, MousePointerClick,
+  GitBranch, Briefcase, Smile, Gem, Ban,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -13,6 +16,12 @@ const ICONS: Record<string, LucideIcon> = {
   chat: MessageSquare, folder: Folder, sell: Tag, search: Search,
   table_rows: Table, visibility: Eye, person: User,
   schedule: Clock, call_missed: TrendingDown,
+  activity: Activity, bar_chart: BarChart3, warning: AlertTriangle,
+  check_circle: CheckCircle, package: Package, inventory_2: Package,
+  event: Calendar, shopping_bag: ShoppingBag, receipt: Receipt,
+  emoji_events: Award, person_add: UserPlus, ads_click: MousePointerClick,
+  conversion_path: GitBranch, workspace_premium: Award, work: Briefcase,
+  sentiment_satisfied: Smile, diamond: Gem, block: Ban, savings: DollarSign,
 };
 
 export function Kpi({

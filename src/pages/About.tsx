@@ -9,39 +9,6 @@ export function AboutPage() {
         <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-primary-brand/5 rounded-full blur-[120px]" />
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full h-16 bg-eye-bg/60 glass-nav border-b border-eye-border z-50">
-        <div className="flex justify-between items-center px-6 max-w-[1200px] mx-auto h-full">
-          <div className="flex items-center gap-2 cursor-pointer transition-all active:scale-95">
-            <img
-              alt="EyeX Logo"
-              className="w-8 h-8 invert"
-              src="https://lh3.googleusercontent.com/aida/AP1WRLsQOWY1jiM2rbry7lohts-Rb8_y4zW5SHQStQwUwZ7oRfScVQ-WnE_KkvjHfnAFef-rz3vFxxUwxqL35TXLlYCqr9Bt61-ISaqM3cE4jyBF0ITRu_SosGsY9YAlga5THtqKeXjGOQJ_lMLRlpta0-d30nL1jxOIq3bzjfw_kDejF1OHgVW9D51iQqIWU5o9vS9kC6vcfnW3hsnsx3fqZjLo8MRWaeESFBRA7UajDJpDR0AJI2QkCQI0qNA"
-            />
-            <span className="text-2xl tracking-tighter text-eye-white font-medium">
-              EyeX
-            </span>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-[14px] leading-[1.6] text-eye-text">
-            <a className="hover:text-eye-white transition-colors duration-300" href="#">
-              Network
-            </a>
-            <a className="hover:text-eye-white transition-colors duration-300" href="#">
-              Infrastructure
-            </a>
-            <a className="hover:text-eye-white transition-colors duration-300 font-medium text-eye-white" href="#">
-              Intelligence
-            </a>
-            <a className="hover:text-eye-white transition-colors duration-300" href="#">
-              Enterprise
-            </a>
-          </div>
-          <button className="bg-[#FAFAFA] text-[#050505] px-6 py-2 rounded-full text-[14px] leading-[1.6] font-medium hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all active:scale-95">
-            Deploy Now
-          </button>
-        </div>
-      </nav>
-
       <main className="pt-32">
         {/* Hero Section */}
         <section className="max-w-[1200px] mx-auto px-6 mb-[6rem] text-center relative" data-fade-up>
@@ -342,93 +309,7 @@ export function AboutPage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-eye-bg border-t border-eye-border py-[6rem]">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-[2.5rem] max-w-[1200px] mx-auto px-6">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <img
-                alt="EyeX Logo"
-                className="w-6 h-6 invert"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLsQOWY1jiM2rbry7lohts-Rb8_y4zW5SHQStQwUwZ7oRfScVQ-WnE_KkvjHfnAFef-rz3vFxxUwxqL35TXLlYCqr9Bt61-ISaqM3cE4jyBF0ITRu_SosGsY9YAlga5THtqKeXjGOQJ_lMLRlpta0-d30nL1jxOIq3bzjfw_kDejF1OHgVW9D51iQqIWU5o9vS9kC6vcfnW3hsnsx3fqZjLo8MRWaeESFBRA7UajDJpDR0AJI2QkCQI0qNA"
-              />
-              <span className="text-xl tracking-tighter text-eye-white font-medium">
-                EyeX
-              </span>
-            </div>
-            <p className="text-eye-text text-sm leading-relaxed mb-6">
-              © 2024 EyeX Systems. All rights reserved. Precise. Powerful.
-              Formidable.
-            </p>
-          </div>
-          <div>
-            <h6 className="text-eye-white font-mono text-[12px] tracking-[0.15em] mb-6">
-              Resources
-            </h6>
-            <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Changelog
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Network Status
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h6 className="text-eye-white font-mono text-[12px] tracking-[0.15em] mb-6">
-              Company
-            </h6>
-            <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Contact Support
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h6 className="text-eye-white font-mono text-[12px] tracking-[0.15em] mb-6">
-              Legal
-            </h6>
-            <ul className="space-y-4 text-[14px] leading-[1.6] text-eye-text">
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary-brand transition-colors" href="#">
-                  Compliance
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+
     </>
   );
 }

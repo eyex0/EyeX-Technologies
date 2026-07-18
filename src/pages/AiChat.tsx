@@ -3,7 +3,6 @@ import {
   Send,
   Plus,
   Search,
-  Bot,
   User,
   Settings,
   Shield,
