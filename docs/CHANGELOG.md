@@ -1,5 +1,27 @@
 # EyeX Technologies — Changelog
 
+## 2026-07-20
+
+### Security: Secret Hygiene
+- **Changed:** Replaced real credentials in `.env.example` with placeholder values.
+- **Changed:** Added `SECURITY.md` with exposed-credential notice and rotation instructions.
+- **Changed:** Verified `.env` and `eyex-backend/.env` are not tracked by git.
+- **Files modified:** `.env.example`, `SECURITY.md`
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** Future secret commits prevented; rotation instructions documented.
+
+### Release: RC1 — Production Readiness
+- **Changed:** Hardened security: production secret validation, encryption key enforcement, security headers middleware, CORS restrictions.
+- **Changed:** Fixed all critical runtime bugs: missing imports, SQLAlchemy boolean anti-patterns, async Alembic engine, exception naming, enum types.
+- **Changed:** Optimized performance: Redis caching for billing/GTM/health endpoints, agent timeouts, input truncation, request metrics.
+- **Changed:** Added observability: structured JSON logging, `/metrics` endpoint, request metrics middleware.
+- **Changed:** Added production infrastructure: `Dockerfile.prod`, `docker-compose.prod.yml`, `.env.production.example`, `scripts/backup.sh`, `scripts/entrypoint.sh`.
+- **Changed:** Added CI/CD: `.github/workflows/ci.yml` (lint/test/build), `.github/workflows/deploy.yml` (staging/production deploy).
+- **Changed:** Eliminated all pytest warnings by fixing agent fallback test mocks.
+- **Files modified:** 60+ files across `eyex-backend/`
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** EyeX RC1 is ready for production deployment
+
 ## 2026-07-19
 
 ### Feature: Full MVP Wiring

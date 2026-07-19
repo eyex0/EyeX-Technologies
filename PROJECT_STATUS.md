@@ -1,14 +1,34 @@
 # EyeX Technologies — Project Status
 
+## Continuous Improvement — Security & Auth Hardening
+
+- **Status:** 🔄 In progress — highest-impact issues being addressed.
+- **Test suite:** 390 passed, 0 failed, 0 warnings.
+- **Frontend build:** Success.
+- **Backend lint:** All runtime-critical rules pass.
+
+### Security hygiene
+- [x] Removed real secrets from `.env.example` and created `SECURITY.md` with rotation instructions.
+- [x] Verified `.env` files are not tracked by git.
+
+### Critical fixes applied (RC1 baseline)
+- [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
+- [x] Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.
+- [x] Fixed `desc` variable shadowing in `app/services/gtm_sales.py`.
+- [x] Replaced `== True` with `.is_(True)` in `app/api/v1/billing.py` and `app/services/gtm_proof.py`.
+- [x] Updated `alembic/env.py` to use `async_engine_from_config`.
+- [x] Removed all unused imports and variables flagged by Ruff.
+- [x] Renamed exception classes to use `Error` suffix with backward-compatible aliases.
+- [x] Converted `(str, Enum)` enums to `StrEnum`.
+- [x] Fixed ambiguous variable name `l` in GitHub tools.
+- [x] Fixed `test_web_fetch` mock type (`AsyncMock` → `MagicMock`) for synchronous `raise_for_status`.
+- [x] Fixed all 7 agent fallback tests to use synchronous `MagicMock` for `with_structured_output` and `bind_tools`, eliminating all pytest ResourceWarnings.
+
 ## Release Candidate 1 (RC1) — Ready for Production
 
 - **Goal:** Freeze features and prepare EyeX for production (quality, reliability, scalability).
 - **Status:** ✅ RC1 complete — `PRODUCTION_READINESS_REPORT.md` generated.
-- **Test suite:** 390 passed, 0 failed, 0 warnings.
-- **Frontend build:** Success.
-- **Backend lint:** All runtime-critical rules pass (F821, F401, F841, F402, E741, N818, UP042, E712).
-- **Frontend lint:** 3,170 mostly Prettier formatting issues; build unaffected.
-- **Critical fixes applied:**
+- **Critical fixes applied:
   - Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
   - Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.
   - Fixed `desc` variable shadowing in `app/services/gtm_sales.py`.
