@@ -183,15 +183,20 @@
   }
 }
 
-/* data-fade-up attribute for hook-based IntersectionObserver */
+/* data-fade-up: visible by default, JS hides then animates in */
 [data-fade-up] {
-  opacity: 0;
-  transform: translateY(12px);
+  opacity: 1;
+  transform: translateY(0);
   transition:
     opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-[data-fade-up].visible {
+/* When JS initializes, it adds data-js-ready to <html>. Only then hide elements. */
+html[data-js-ready] [data-fade-up] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+html[data-js-ready] [data-fade-up].visible {
   opacity: 1;
   transform: translateY(0);
 }

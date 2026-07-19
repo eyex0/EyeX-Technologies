@@ -95,9 +95,11 @@ export function Card({
 export function DataTable<T extends Record<string, any>>({
   columns,
   rows,
+  onRowClick,
 }: {
   columns: { key: keyof T; label: string; align?: "left" | "right"; render?: (row: T) => ReactNode }[];
   rows: T[];
+  onRowClick?: (row: T) => void;
 }) {
   return (
     <div className="w-full">
@@ -112,7 +114,10 @@ export function DataTable<T extends Record<string, any>>({
         {rows.map((row, i) => (
           <div
             key={i}
-            className="grid gap-4 px-5 py-3 border-b border-border items-center hover:bg-secondary/40 transition-colors text-xs"
+            onClick={() => onRowClick?.(row)}
+            className={`grid gap-4 px-5 py-3 border-b border-border items-center transition-colors text-xs ${
+              onRowClick ? "cursor-pointer hover:bg-secondary/40" : ""
+            }`}
             style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
           >
             {columns.map((c) => (

@@ -1,6 +1,6 @@
 # EyeX Technologies — Project Status
 
-> Source of truth. Last audited: 2026-07-19
+> Source of truth. Last audited: 2026-07-19 — Full audit report in `PROJECT_AUDIT_REPORT.md` at the repository root. Backend: 390 tests passed. Frontend build: success. Critical runtime issues fixed.
 
 ## Completed Features
 

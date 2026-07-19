@@ -356,6 +356,18 @@ CREATE TABLE IF NOT EXISTS import_mappings (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- 27. Contact Submissions (public contact form)
+CREATE TABLE IF NOT EXISTS contact_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  company TEXT,
+  subject TEXT NOT NULL,
+  message TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_finance_invoices_org ON finance_invoices(organization_id);
 CREATE INDEX IF NOT EXISTS idx_finance_transactions_org ON finance_transactions(organization_id);
@@ -384,6 +396,7 @@ BEGIN
       'projects_projects','projects_tasks',
       'inventory_products','inventory_warehouses','inventory_suppliers',
       'documents','notifications','dashboards','data_sources',
+      'contact_submissions',
       'imported_datasets','import_mappings'
     ])
   LOOP
@@ -391,33 +404,99 @@ BEGIN
   END LOOP;
 END $$;
 
--- RLS Policies (simplified: authenticated users can access their org's data)
-CREATE POLICY "org_access" ON organizations FOR ALL USING (true);
-CREATE POLICY "org_access" ON profiles FOR ALL USING (true);
-CREATE POLICY "org_access" ON org_members FOR ALL USING (true);
-CREATE POLICY "org_access" ON finance_invoices FOR ALL USING (true);
-CREATE POLICY "org_access" ON finance_budgets FOR ALL USING (true);
-CREATE POLICY "org_access" ON finance_transactions FOR ALL USING (true);
-CREATE POLICY "org_access" ON crm_customers FOR ALL USING (true);
-CREATE POLICY "org_access" ON crm_leads FOR ALL USING (true);
-CREATE POLICY "org_access" ON crm_deals FOR ALL USING (true);
-CREATE POLICY "org_access" ON crm_activities FOR ALL USING (true);
-CREATE POLICY "org_access" ON sales_orders FOR ALL USING (true);
-CREATE POLICY "org_access" ON sales_products FOR ALL USING (true);
-CREATE POLICY "org_access" ON hr_employees FOR ALL USING (true);
-CREATE POLICY "org_access" ON hr_departments FOR ALL USING (true);
-CREATE POLICY "org_access" ON hr_payroll FOR ALL USING (true);
-CREATE POLICY "org_access" ON projects_projects FOR ALL USING (true);
-CREATE POLICY "org_access" ON projects_tasks FOR ALL USING (true);
-CREATE POLICY "org_access" ON inventory_products FOR ALL USING (true);
-CREATE POLICY "org_access" ON inventory_warehouses FOR ALL USING (true);
-CREATE POLICY "org_access" ON inventory_suppliers FOR ALL USING (true);
-CREATE POLICY "org_access" ON documents FOR ALL USING (true);
-CREATE POLICY "org_access" ON notifications FOR ALL USING (true);
-CREATE POLICY "org_access" ON dashboards FOR ALL USING (true);
-CREATE POLICY "org_access" ON data_sources FOR ALL USING (true);
-CREATE POLICY "org_access" ON imported_datasets FOR ALL USING (true);
-CREATE POLICY "org_access" ON import_mappings FOR ALL USING (true);
+-- RLS Policies (organization-scoped: users can only access their org's data)
+-- Helper: get the current user's organization_id
+CREATE OR REPLACE FUNCTION auth.user_org_id()
+RETURNS UUID
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT organization_id FROM public.profiles WHERE id = auth.uid()
+$$;
+
+-- Helper: check if user belongs to the target organization
+CREATE OR REPLACE FUNCTION auth.is_org_member(org_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.org_members
+    WHERE organization_id = org_id AND user_id = auth.uid()
+  )
+$$;
+
+-- Organizations: users can see their own org
+CREATE POLICY "org_access" ON organizations
+  FOR ALL USING (id = auth.user_org_id());
+
+-- Profiles: users can see profiles in their org + their own profile
+CREATE POLICY "org_access" ON profiles
+  FOR ALL USING (
+    id = auth.uid() OR
+    organization_id = auth.user_org_id()
+  );
+
+-- Org members: users can see members of their orgs
+CREATE POLICY "org_access" ON org_members
+  FOR ALL USING (
+    user_id = auth.uid() OR
+    auth.is_org_member(organization_id)
+  );
+
+-- Business tables: scoped by organization_id
+CREATE POLICY "org_access" ON finance_invoices
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON finance_budgets
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON finance_transactions
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON crm_customers
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON crm_leads
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON crm_deals
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON crm_activities
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON sales_orders
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON sales_products
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON hr_employees
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON hr_departments
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON hr_payroll
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON projects_projects
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON projects_tasks
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON inventory_products
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON inventory_warehouses
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON inventory_suppliers
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON documents
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON notifications
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON dashboards
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON data_sources
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON imported_datasets
+  FOR ALL USING (auth.is_org_member(organization_id));
+CREATE POLICY "org_access" ON import_mappings
+  FOR ALL USING (auth.is_org_member(organization_id));
+
+-- Contact submissions: anyone can insert (public form), only authed users can view
+CREATE POLICY "insert_public" ON contact_submissions
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "select_authed" ON contact_submissions
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Auto-provisioning trigger: create org + profile on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

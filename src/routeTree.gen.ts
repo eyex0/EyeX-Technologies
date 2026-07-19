@@ -11,19 +11,26 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AiChatRouteImport } from './routes/ai-chat'
 import { Route as AiCopilotRouteImport } from './routes/ai-copilot'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as ApiRouteImport } from './routes/api'
+import { Route as BillingRouteImport } from './routes/billing'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DataSourcesRouteImport } from './routes/data-sources'
 import { Route as DocumentsRouteImport } from './routes/documents'
+import { Route as EnterpriseRouteImport } from './routes/enterprise'
+import { Route as EnterpriseDemoRouteImport } from './routes/enterprise-demo'
+import { Route as EnterpriseReportsRouteImport } from './routes/enterprise-reports'
 import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as HrRouteImport } from './routes/hr'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as IntelligenceRouteImport } from './routes/intelligence'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MarketingRouteImport } from './routes/marketing'
@@ -34,6 +41,7 @@ import { Route as SalesRouteImport } from './routes/sales'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TasksRouteImport } from './routes/tasks'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -43,6 +51,16 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiChatRoute = AiChatRouteImport.update({
@@ -63,6 +81,11 @@ const AnalyticsRoute = AnalyticsRouteImport.update({
 const ApiRoute = ApiRouteImport.update({
   id: '/api',
   path: '/api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -90,6 +113,21 @@ const DocumentsRoute = DocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnterpriseRoute = EnterpriseRouteImport.update({
+  id: '/enterprise',
+  path: '/enterprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnterpriseDemoRoute = EnterpriseDemoRouteImport.update({
+  id: '/enterprise-demo',
+  path: '/enterprise-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnterpriseReportsRoute = EnterpriseReportsRouteImport.update({
+  id: '/enterprise-reports',
+  path: '/enterprise-reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinanceRoute = FinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
@@ -108,6 +146,11 @@ const HrRoute = HrRouteImport.update({
 const IntegrationsRoute = IntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntelligenceRoute = IntelligenceRouteImport.update({
+  id: '/intelligence',
+  path: '/intelligence',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryRoute = InventoryRouteImport.update({
@@ -160,23 +203,35 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/agents': typeof AgentsRoute
   '/ai-chat': typeof AiChatRoute
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/billing': typeof BillingRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/enterprise-demo': typeof EnterpriseDemoRoute
+  '/enterprise-reports': typeof EnterpriseReportsRoute
   '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
+  '/intelligence': typeof IntelligenceRoute
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
@@ -187,23 +242,31 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/agents': typeof AgentsRoute
   '/ai-chat': typeof AiChatRoute
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/billing': typeof BillingRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/enterprise-demo': typeof EnterpriseDemoRoute
+  '/enterprise-reports': typeof EnterpriseReportsRoute
   '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
+  '/intelligence': typeof IntelligenceRoute
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
@@ -214,24 +277,32 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/agents': typeof AgentsRoute
   '/ai-chat': typeof AiChatRoute
   '/ai-copilot': typeof AiCopilotRoute
   '/analytics': typeof AnalyticsRoute
   '/api': typeof ApiRoute
+  '/billing': typeof BillingRoute
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/data-sources': typeof DataSourcesRoute
   '/documents': typeof DocumentsRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/enterprise-demo': typeof EnterpriseDemoRoute
+  '/enterprise-reports': typeof EnterpriseReportsRoute
   '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/hr': typeof HrRoute
   '/integrations': typeof IntegrationsRoute
+  '/intelligence': typeof IntelligenceRoute
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/marketing': typeof MarketingRoute
@@ -242,25 +313,33 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
+    | '/agents'
     | '/ai-chat'
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/billing'
     | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
+    | '/enterprise'
+    | '/enterprise-demo'
+    | '/enterprise-reports'
     | '/finance'
     | '/forgot-password'
     | '/hr'
     | '/integrations'
+    | '/intelligence'
     | '/inventory'
     | '/login'
     | '/marketing'
@@ -271,23 +350,31 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/sitemap.xml'
+    | '/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
+    | '/agents'
     | '/ai-chat'
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/billing'
     | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
+    | '/enterprise'
+    | '/enterprise-demo'
+    | '/enterprise-reports'
     | '/finance'
     | '/forgot-password'
     | '/hr'
     | '/integrations'
+    | '/intelligence'
     | '/inventory'
     | '/login'
     | '/marketing'
@@ -298,23 +385,31 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/sitemap.xml'
+    | '/tasks'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
+    | '/agents'
     | '/ai-chat'
     | '/ai-copilot'
     | '/analytics'
     | '/api'
+    | '/billing'
     | '/contact'
     | '/crm'
     | '/dashboard'
     | '/data-sources'
     | '/documents'
+    | '/enterprise'
+    | '/enterprise-demo'
+    | '/enterprise-reports'
     | '/finance'
     | '/forgot-password'
     | '/hr'
     | '/integrations'
+    | '/intelligence'
     | '/inventory'
     | '/login'
     | '/marketing'
@@ -325,24 +420,32 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/sitemap.xml'
+    | '/tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  AgentsRoute: typeof AgentsRoute
   AiChatRoute: typeof AiChatRoute
   AiCopilotRoute: typeof AiCopilotRoute
   AnalyticsRoute: typeof AnalyticsRoute
   ApiRoute: typeof ApiRoute
+  BillingRoute: typeof BillingRoute
   ContactRoute: typeof ContactRoute
   CrmRoute: typeof CrmRoute
   DashboardRoute: typeof DashboardRoute
   DataSourcesRoute: typeof DataSourcesRoute
   DocumentsRoute: typeof DocumentsRoute
+  EnterpriseRoute: typeof EnterpriseRoute
+  EnterpriseDemoRoute: typeof EnterpriseDemoRoute
+  EnterpriseReportsRoute: typeof EnterpriseReportsRoute
   FinanceRoute: typeof FinanceRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   HrRoute: typeof HrRoute
   IntegrationsRoute: typeof IntegrationsRoute
+  IntelligenceRoute: typeof IntelligenceRoute
   InventoryRoute: typeof InventoryRoute
   LoginRoute: typeof LoginRoute
   MarketingRoute: typeof MarketingRoute
@@ -353,6 +456,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TasksRoute: typeof TasksRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -369,6 +473,20 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-chat': {
@@ -397,6 +515,13 @@ declare module '@tanstack/react-router' {
       path: '/api'
       fullPath: '/api'
       preLoaderRoute: typeof ApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -434,6 +559,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/enterprise': {
+      id: '/enterprise'
+      path: '/enterprise'
+      fullPath: '/enterprise'
+      preLoaderRoute: typeof EnterpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enterprise-demo': {
+      id: '/enterprise-demo'
+      path: '/enterprise-demo'
+      fullPath: '/enterprise-demo'
+      preLoaderRoute: typeof EnterpriseDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enterprise-reports': {
+      id: '/enterprise-reports'
+      path: '/enterprise-reports'
+      fullPath: '/enterprise-reports'
+      preLoaderRoute: typeof EnterpriseReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/finance': {
       id: '/finance'
       path: '/finance'
@@ -460,6 +606,13 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/integrations'
       preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intelligence': {
+      id: '/intelligence'
+      path: '/intelligence'
+      fullPath: '/intelligence'
+      preLoaderRoute: typeof IntelligenceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inventory': {
@@ -532,25 +685,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  AgentsRoute: AgentsRoute,
   AiChatRoute: AiChatRoute,
   AiCopilotRoute: AiCopilotRoute,
   AnalyticsRoute: AnalyticsRoute,
   ApiRoute: ApiRoute,
+  BillingRoute: BillingRoute,
   ContactRoute: ContactRoute,
   CrmRoute: CrmRoute,
   DashboardRoute: DashboardRoute,
   DataSourcesRoute: DataSourcesRoute,
   DocumentsRoute: DocumentsRoute,
+  EnterpriseRoute: EnterpriseRoute,
+  EnterpriseDemoRoute: EnterpriseDemoRoute,
+  EnterpriseReportsRoute: EnterpriseReportsRoute,
   FinanceRoute: FinanceRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   HrRoute: HrRoute,
   IntegrationsRoute: IntegrationsRoute,
+  IntelligenceRoute: IntelligenceRoute,
   InventoryRoute: InventoryRoute,
   LoginRoute: LoginRoute,
   MarketingRoute: MarketingRoute,
@@ -561,6 +728,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TasksRoute: TasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

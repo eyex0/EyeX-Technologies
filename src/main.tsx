@@ -10,6 +10,8 @@ if (!root.dataset.hydrated) {
   hydrateRoot(root, <StartClient router={getRouter()} />);
 }
 
+document.documentElement.setAttribute("data-js-ready", "");
+
 const observer = new IntersectionObserver(
   (entries) => {
     for (const entry of entries) {

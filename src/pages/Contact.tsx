@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase/client";
 import { Mail, MapPin, Clock, Send, Building2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -45,9 +47,28 @@ export function ContactPage() {
     resolver: zodResolver(contactSchema),
   });
 
+  const submitMutation = useMutation({
+    mutationFn: async (data: ContactFormData) => {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: data.name,
+        email: data.email,
+        company: data.company || null,
+        subject: data.subject,
+        message: data.message,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      reset();
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to send message. Please try again.");
+    },
+  });
+
   const onSubmit = (data: ContactFormData) => {
-    toast.success("Message sent successfully! We'll get back to you soon.");
-    reset();
+    submitMutation.mutate(data);
   };
 
   return (

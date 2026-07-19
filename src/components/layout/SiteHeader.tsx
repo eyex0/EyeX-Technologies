@@ -6,6 +6,10 @@ import { BrandMark } from "./BrandMark";
 const NAV = [
   { to: "/", label: "Platform" },
   { to: "/dashboard", label: "Dashboard" },
+  { to: "/enterprise", label: "Enterprise" },
+  { to: "/enterprise-demo", label: "Demo" },
+  { to: "/enterprise-reports", label: "Reports" },
+  { to: "/intelligence", label: "Intelligence" },
   { to: "/ai-chat", label: "AI Chat" },
   { to: "/documents", label: "Documents" },
   { to: "/api", label: "API" },

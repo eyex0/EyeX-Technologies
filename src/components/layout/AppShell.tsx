@@ -14,6 +14,7 @@ const ICONS: Record<string, LucideIcon> = {
   shopping_bag: ShoppingBag, campaign: Megaphone, account_balance: Wallet,
   inventory_2: Package, badge: Briefcase, assignment: Briefcase,
   folder: Folder, extension: Puzzle, notifications: Bell, settings: Settings,
+  memory: Database, history: BarChart3, credit_card: Wallet,
 };
 
 type NavItem = { to: string; label: string; icon: string };
@@ -44,10 +45,18 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "Agents",
+    items: [
+      { to: "/agents", label: "Agents", icon: "auto_awesome" },
+      { to: "/tasks", label: "Task History", icon: "history" },
+    ],
+  },
+  {
     label: "Platform",
     items: [
       { to: "/integrations", label: "Integrations", icon: "extension" },
       { to: "/notifications", label: "Notifications", icon: "notifications" },
+      { to: "/billing", label: "Billing", icon: "credit_card" },
       { to: "/settings", label: "Settings", icon: "settings" },
     ],
   },

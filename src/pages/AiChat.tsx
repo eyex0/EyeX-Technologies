@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { chatWithCopilotFn } from "@/services/chat.service";
+import { AgentService } from "@/services/agent-unified.service";
 import {
   Send,
   Plus,
@@ -22,6 +22,7 @@ interface ChatMessage {
   role: "user" | "assistant";
   text: string;
   timestamp: string;
+  source?: "python-backend" | "node-orchestrator";
 }
 
 export function AiChatPage() {
@@ -34,24 +35,27 @@ export function AiChatPage() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  interface ChatResponse {
-    success: boolean;
-    text?: string;
-    error?: string;
-  }
-
-  const chatMutation = useMutation<ChatResponse, Error, { message: string; history: { role: string; text: string }[] }>({
-    mutationFn: async ({ message, history }) => {
-      return chatWithCopilotFn({ data: { message, history } }) as Promise<ChatResponse>;
+  const chatMutation = useMutation({
+    mutationFn: async ({ message, history }: { message: string; history: { role: string; text: string }[] }) => {
+      return AgentService.chat(message, history);
     },
     onSuccess: (result) => {
-      if (result.success && result.text) {
+      if (result.text) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", text: result.text!, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+          {
+            role: "assistant",
+            text: result.text,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            source: result.source,
+          },
         ]);
+        if (result.steps.length > 0) {
+          const agents = [...new Set(result.steps.map((s) => s.agent))].join(", ");
+          console.debug(`[${result.source}] Agents used: ${agents} in ${result.steps.length} steps`);
+        }
       } else {
-        toast.error(result.error || "Failed to get response");
+        toast.error("Failed to get response");
       }
     },
     onError: (error: Error) => {

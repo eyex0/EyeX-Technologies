@@ -1,585 +1,279 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  LayoutDashboard,
-  BarChart3,
-  MessageSquare,
-  FileText,
-  Settings,
-  HeadphonesIcon,
-  Search,
-  Bell,
-  HelpCircle,
-  Server,
-} from "lucide-react";
-import {
-  FinanceService,
-  CrmService,
-  SalesService,
-  HrService,
-} from "@/services/data";
+import { BackendApi } from "@/services/backend-api.service";
+import { AppShell } from "@/components/layout/AppShell";
+import { Card, Badge, Sparkline } from "@/components/common/primitives";
+import { useAuth } from "@/components/providers/auth-provider";
+import { Activity, Cpu, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 
-function formatCurrency(value: number): string {
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}k`;
-  return `$${value.toFixed(2)}`;
+function SkeletonLine() {
+  return <div className="h-3 w-full bg-white/5 rounded animate-pulse" />;
 }
 
-function formatNumber(value: number): string {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
-  return value.toLocaleString();
-}
-
-function SkeletonCard() {
-  return (
-    <div className="glass-panel p-5 relative overflow-hidden">
-      <div className="flex justify-between items-start mb-4">
-        <div className="h-3 w-24 bg-surface-container-highest rounded animate-pulse" />
-        <div className="h-3 w-12 bg-surface-container-highest rounded animate-pulse" />
-      </div>
-      <div className="h-8 w-32 bg-surface-container-highest rounded animate-pulse" />
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-        <div className="h-full bg-primary-brand/30 w-full animate-pulse" />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonRow() {
-  return (
-    <div className="flex gap-3 items-start animate-pulse">
-      <div className="w-2 h-2 mt-2 bg-surface-container-highest rounded" />
-      <div className="space-y-1.5">
-        <div className="h-2.5 w-20 bg-surface-container-highest rounded" />
-        <div className="h-3 w-48 bg-surface-container-highest rounded" />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonTable() {
-  return (
-    <div className="space-y-4 p-6">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="flex gap-6 animate-pulse">
-          <div className="h-3 w-24 bg-surface-container-highest rounded" />
-          <div className="h-3 w-28 bg-surface-container-highest rounded" />
-          <div className="h-3 w-20 bg-surface-container-highest rounded" />
-          <div className="h-3 w-16 bg-surface-container-highest rounded" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function EmptyState({ label }: { label: string }) {
-  return (
-    <div className="flex items-center justify-center py-8">
-      <p className="text-outline text-sm font-mono">No {label} data available</p>
-    </div>
-  );
+function EmptyBlock({ label }: { label: string }) {
+  return <div className="text-center py-8 text-muted-foreground text-xs">{label}</div>;
 }
 
 export function DashboardPage() {
-  const finance = useQuery({
-    queryKey: ["finance-summary"],
-    queryFn: () => FinanceService.getSummary(),
+  const { user } = useAuth();
+  const name = user?.user_metadata?.full_name ?? user?.email ?? "User";
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: () => BackendApi.getDashboardStats(),
+    refetchInterval: 15000,
   });
 
-  const crm = useQuery({
-    queryKey: ["crm-summary"],
-    queryFn: () => CrmService.getSummary(),
+  const { data: workspaces } = useQuery({
+    queryKey: ["workspaces"],
+    queryFn: () => BackendApi.listWorkspaces(),
   });
 
-  const sales = useQuery({
-    queryKey: ["sales-summary"],
-    queryFn: () => SalesService.getSummary(),
+  const { data: usage } = useQuery({
+    queryKey: ["usage-summary"],
+    queryFn: () => BackendApi.getUsageSummary(),
+    refetchInterval: 30000,
   });
 
-  const hr = useQuery({
-    queryKey: ["hr-summary"],
-    queryFn: () => HrService.getSummary(),
+  const { data: systemStatus } = useQuery({
+    queryKey: ["system-status"],
+    queryFn: () => BackendApi.getSystemStatus(),
+    refetchInterval: 10000,
   });
 
-  const transactions = useQuery({
-    queryKey: ["finance-transactions"],
-    queryFn: () => FinanceService.getTransactions(),
-  });
-
-  const activities = useQuery({
-    queryKey: ["crm-activities"],
-    queryFn: () => CrmService.getActivities(),
-  });
-
-  const isLoading = finance.isLoading || crm.isLoading || sales.isLoading || hr.isLoading;
+  const workspaceCount = workspaces?.total ?? 0;
+  const agentCount = stats?.active_agents_count ?? 0;
+  const taskTotal = stats?.total_tasks ?? 0;
+  const taskToday = stats?.tasks_today ?? 0;
+  const successRate = stats?.success_rate ?? 0;
+  const tokensUsed = stats?.total_tokens_used ?? 0;
+  const membersCount = stats?.members_count ?? 0;
+  const recentTasks = stats?.recent_tasks ?? [];
 
   return (
-    <div className="dark bg-eye-bg">
-      {/* Sidebar Navigation */}
-      <aside className="fixed left-0 top-0 h-full w-[240px] border-r border-outline-variant backdrop-blur-[20px] bg-opacity-90 bg-surface flex flex-col py-6 px-4 z-50">
-        <div className="mb-10 px-2 flex items-center gap-3">
-          <img
-            alt="EyeX Technologies Logo"
-            className="w-10 h-10"
-            src="https://lh3.googleusercontent.com/aida/AP1WRLsQOWY1jiM2rbry7lohts-Rb8_y4zW5SHQStQwUwZ7oRfScVQ-WnE_KkvjHfnAFef-rz3vFxxUwxqL35TXLlYCqr9Bt61-ISaqM3cE4jyBF0ITRu_SosGsY9YAlga5THtqKeXjGOQJ_lMLRlpta0-d30nL1jxOIq3bzjfw_kDejF1OHgVW9D51iQqIWU5o9vS9kC6vcfnW3hsnsx3fqZjLo8MRWaeESFBRA7UajDJpDR0AJI2QkCQI0qNA"
-          />
-          <div>
-            <h1 className="text-[20px] font-bold text-primary-brand leading-tight">EyeX OS</h1>
-            <p className="text-[10px] uppercase tracking-widest text-outline">Enterprise Suite</p>
+    <AppShell title={`Welcome, ${name}`} subtitle="Agent platform overview">
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
+          <div className="flex justify-between items-start">
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Agent Tasks</span>
+            <Activity size={18} className="text-muted-foreground" />
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : taskTotal.toLocaleString()}</span>
+            <span className="text-[10px] font-mono text-emerald-400">+{taskToday} today</span>
           </div>
         </div>
-        <nav className="flex-1 space-y-1">
-          <a
-            className="flex items-center gap-3 py-3 px-4 text-primary-brand border-l-2 border-primary-brand bg-primary-brand/5 transition-colors text-sm"
-            href="#"
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            <span>Dashboard</span>
-          </a>
-          <a
-            className="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm"
-            href="#"
-          >
-            <BarChart3 className="w-5 h-5" />
-            <span>Analytics</span>
-          </a>
-          <a
-            className="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm"
-            href="#"
-          >
-            <MessageSquare className="w-5 h-5" />
-            <span>AI Chat</span>
-          </a>
-          <a
-            className="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm"
-            href="#"
-          >
-            <FileText className="w-5 h-5" />
-            <span>Documents</span>
-          </a>
-          <a
-            className="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm"
-            href="#"
-          >
-            <Settings className="w-5 h-5" />
-            <span>Settings</span>
-          </a>
-        </nav>
-        <div className="mt-auto pt-6 border-t border-outline-variant">
-          <button className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary-brand text-eye-bg font-bold transition-all active:scale-95 text-sm">
-            <HeadphonesIcon className="w-[18px] h-[18px]" />
-            <span>Support</span>
-          </button>
+        <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
+          <div className="flex justify-between items-start">
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Success Rate</span>
+            <CheckCircle size={18} className="text-emerald-400" />
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : `${successRate}%`}</span>
+            {statsLoading ? null : successRate >= 80 ? <span className="text-[10px] font-mono text-emerald-400">Healthy</span> : <span className="text-[10px] font-mono text-amber-400">Needs attention</span>}
+          </div>
         </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="ml-[240px] relative min-h-screen pb-16">
-        {/* Ambient Decor */}
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary-brand opacity-[0.08] blur-[80px] rounded-full pointer-events-none z-[-1]" />
-        <div className="absolute bottom-[10%] left-[-5%] w-[600px] h-[600px] opacity-[0.05] blur-[80px] rounded-full pointer-events-none z-[-1]" style={{ background: "radial-gradient(circle, rgba(144, 215, 255, 0.05) 0%, transparent 70%)" }} />
-
-        {/* Top Header */}
-        <header className="sticky top-0 w-full h-16 border-b border-outline-variant bg-surface/80 backdrop-blur-[20px] flex justify-between items-center px-8 z-40">
-          <div className="flex items-center gap-6">
-            <div className="relative w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
-              <input
-                className="w-full bg-eye-bg border border-eye-border py-2 pl-10 pr-4 text-sm font-mono placeholder:text-outline-variant text-on-surface"
-                placeholder="Global system search..."
-                type="text"
-              />
-            </div>
-            <div className="flex gap-4">
-              <span className="text-on-surface-variant hover:text-primary-brand transition-all font-bold text-sm cursor-pointer">
-                Systems
-              </span>
-              <span className="text-on-surface-variant hover:text-primary-brand transition-all font-bold text-sm cursor-pointer">
-                Networks
-              </span>
-              <span className="text-on-surface-variant hover:text-primary-brand transition-all font-bold text-sm cursor-pointer">
-                Security
-              </span>
-            </div>
+        <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
+          <div className="flex justify-between items-start">
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Active Agents</span>
+            <Cpu size={18} className="text-sky-400" />
           </div>
-          <div className="flex items-center gap-5">
-            <button aria-label="Notifications" className="text-outline hover:text-primary-brand transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button aria-label="Help" className="text-outline hover:text-primary-brand transition-colors">
-              <HelpCircle className="w-5 h-5" />
-            </button>
-            <div className="h-6 w-[1px] bg-outline-variant mx-2" />
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-sm font-bold text-on-surface leading-none">Administrator</p>
-                <p className="text-[10px] text-outline font-mono">ROOT_AUTH_01</p>
-              </div>
-              <div className="w-10 h-10 rounded-sm bg-surface-container-highest border border-outline-variant overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIicL4SPXitdl03a-2MxVyZD9r8M1UaYfyCyY7hEquc7hOvckF-G7BMp15AY-PwTaEl7TI91cHoARFaOd-7eiOdiPwQHsxebxMyfurFcF_gTKBaOPLNZzPI2Yt4uRYzZQqcJtjkhPvLyQNRdmR66-Tx6-f31Ztm60g2jo806Yi7fzhdR3O0S6LGLBxmw1r1GH2qTd4m1Rj4d7vkgi094jYxzFZj3J-rgZdGbqlHpAF0ygYo_DbCrnuRyBY4E3wNtz8IX0fmOeBsVg"
-                  alt="Administrator avatar"
-                />
-              </div>
-            </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : agentCount}</span>
+            <span className="text-[10px] font-mono text-muted-foreground">online</span>
           </div>
-        </header>
-
-        {/* Dashboard Content */}
-        <div className="px-8 pt-8 max-w-[1400px] mx-auto">
-          {/* KPI Cards Row */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10" data-fade-up>
-            {isLoading ? (
-              <>
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-              </>
-            ) : (
-              <>
-                {/* Card 1 - Total Revenue */}
-                <div className="glass-panel p-5 relative overflow-hidden group">
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-outline text-[12px] uppercase font-mono">Total Revenue</p>
-                    <span className="text-primary-brand text-[14px] font-mono font-bold">
-                      {finance.data?.totalRevenue ? `${formatCurrency(finance.data.totalRevenue)}` : "--"}
-                    </span>
-                  </div>
-                  <h3 className="text-3xl font-bold text-on-surface">
-                    {formatCurrency(finance.data?.totalRevenue ?? 0)}
-                  </h3>
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                    <div className="h-full bg-primary-brand w-[70%] shadow-[0_0_10px_#38BDF8]" />
-                  </div>
-                </div>
-
-                {/* Card 2 - Active Users (CRM) */}
-                <div className="glass-panel p-5 relative overflow-hidden group">
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-outline text-[12px] uppercase font-mono">Active Customers</p>
-                    <span className="text-primary-brand text-[14px] font-mono font-bold">
-                      {crm.data?.activeCustomers ?? 0}
-                    </span>
-                  </div>
-                  <h3 className="text-3xl font-bold text-on-surface">
-                    {formatNumber(crm.data?.totalCustomers ?? 0)}
-                  </h3>
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                    <div className="h-full bg-primary-brand w-[45%] shadow-[0_0_10px_#38BDF8]" />
-                  </div>
-                </div>
-
-                {/* Card 3 - Pipeline Value */}
-                <div className="glass-panel p-5 relative overflow-hidden group">
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-outline text-[12px] uppercase font-mono">Pipeline Value</p>
-                    <span className="text-primary-brand text-[14px] font-mono font-bold">
-                      {crm.data?.conversionRate.toFixed(1)}% CVR
-                    </span>
-                  </div>
-                  <h3 className="text-3xl font-bold text-on-surface">
-                    {formatCurrency(crm.data?.pipelineValue ?? 0)}
-                  </h3>
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                    <div className="h-full bg-primary-brand w-[80%] shadow-[0_0_10px_#38BDF8]" />
-                  </div>
-                </div>
-
-                {/* Card 4 - Employees */}
-                <div className="glass-panel p-5 relative overflow-hidden group">
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-outline text-[12px] uppercase font-mono">Employees</p>
-                    <span className="text-primary-brand text-[14px] font-mono font-bold">
-                      {hr.data?.activeEmployees} active
-                    </span>
-                  </div>
-                  <h3 className="text-3xl font-bold text-on-surface">
-                    {formatNumber(hr.data?.totalEmployees ?? 0)}
-                  </h3>
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-brand/20">
-                    <div className="h-full bg-primary-brand w-[99%] shadow-[0_0_10px_#38BDF8]" />
-                  </div>
-                </div>
-              </>
-            )}
+        </div>
+        <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
+          <div className="flex justify-between items-start">
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Tokens Used</span>
+            <Clock size={18} className="text-muted-foreground" />
           </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : tokensUsed.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
 
-          {/* Middle Section: Revenue Chart & Activity Feed */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10" data-fade-up>
-            {/* Revenue Chart */}
-            <div className="lg:col-span-2 glass-panel p-6 flex flex-col min-h-[400px]">
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h2 className="text-base font-bold text-on-surface">Revenue Over Time</h2>
-                  <p className="text-sm text-outline">
-                    Performance analysis across infrastructure nodes
-                  </p>
-                </div>
-                <div className="flex border border-eye-border bg-eye-bg p-1">
-                  <button className="px-3 py-1 text-[12px] font-mono font-bold bg-primary-brand text-eye-bg">
-                    24H
-                  </button>
-                  <button className="px-3 py-1 text-[12px] font-mono text-outline hover:text-on-surface transition-colors">
-                    7D
-                  </button>
-                  <button className="px-3 py-1 text-[12px] font-mono text-outline hover:text-on-surface transition-colors">
-                    30D
-                  </button>
-                </div>
+      {/* Middle Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Recent Agent Activity */}
+        <div className="lg:col-span-2 bento-card rounded-lg overflow-hidden">
+          <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-secondary/40">
+            <h2 className="font-medium text-sm text-white flex items-center gap-2">
+              <Activity size={16} className="text-muted-foreground" />
+              Recent Agent Activity
+            </h2>
+            <span className="text-[10px] font-mono text-muted-foreground">{recentTasks.length} events</span>
+          </div>
+          <div className="bg-background">
+            {statsLoading ? (
+              <div className="p-6 space-y-4">
+                {[...Array(5)].map((_, i) => <SkeletonLine key={i} />)}
               </div>
-              <div className="flex-1 relative flex items-end">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(#1A1A1C 1px, transparent 1px), linear-gradient(90deg, #1A1A1C 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                  }}
-                />
-                <div className="w-full h-[80%] relative overflow-hidden">
-                  <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 800 200">
-                    <defs>
-                      <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#38BDF8" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#38BDF8" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d="M0,200 L0,140 Q100,100 200,130 T400,80 T600,110 T800,40 L800,200 Z"
-                      fill="url(#chartGradient)"
-                    />
-                    <path
-                      d="M0,140 Q100,100 200,130 T400,80 T600,110 T800,40"
-                      fill="none"
-                      stroke="#38BDF8"
-                      strokeWidth="2"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Activity Feed */}
-            <div className="glass-panel p-6 flex flex-col h-[400px]">
-              <h2 className="text-base font-bold text-on-surface mb-6">System Activity</h2>
-              <div className="flex-1 overflow-y-auto space-y-4">
-                {activities.isLoading ? (
-                  <>
-                    <SkeletonRow />
-                    <SkeletonRow />
-                    <SkeletonRow />
-                    <SkeletonRow />
-                    <SkeletonRow />
-                  </>
-                ) : activities.data && activities.data.length > 0 ? (
-                  activities.data.slice(0, 6).map((activity) => (
-                    <div key={activity.id} className="flex gap-3 items-start group">
-                      <div className="w-2 h-2 mt-2 bg-primary-brand group-hover:shadow-[0_0_8px_#38BDF8]" />
+            ) : recentTasks.length > 0 ? (
+              <div className="divide-y divide-border">
+                {recentTasks.map((task) => (
+                  <div key={task.id} className="px-5 py-3 flex items-center justify-between hover:bg-secondary/40 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-sm ${
+                        task.status === "completed" ? "bg-emerald-400" :
+                        task.status === "failed" ? "bg-rose-400" :
+                        task.status === "running" ? "bg-sky-400" : "bg-amber-400"
+                      }`} />
                       <div>
-                        <p className="text-[12px] font-mono text-outline">
-                          [{new Date(activity.created_at).toLocaleTimeString()}] {activity.type?.toUpperCase() ?? "ACTIVITY"}
-                        </p>
-                        <p className="text-sm text-on-surface">
-                          <span className="text-primary-brand">{activity.subject || "System"}</span>{" "}
-                          {activity.description || "Event recorded"}
-                        </p>
+                        <span className="text-xs text-white font-medium">{task.agent_role ?? "Agent"}</span>
+                        <span className="text-[10px] text-muted-foreground ml-2 font-mono">
+                          {task.created_at ? new Date(task.created_at).toLocaleTimeString() : ""}
+                        </span>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <EmptyState label="activity" />
-                )}
+                    <div className="flex items-center gap-2">
+                      <Badge tone={
+                        task.status === "completed" ? "success" :
+                        task.status === "failed" ? "danger" :
+                        task.status === "running" ? "info" : "warn"
+                      }>{task.status}</Badge>
+                      {task.duration_ms != null && (
+                        <span className="text-[10px] font-mono text-muted-foreground">{task.duration_ms}ms</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <button className="mt-4 w-full py-2 text-[12px] font-mono text-outline-variant hover:text-primary-brand transition-colors border border-outline-variant/20 uppercase tracking-widest">
-                View Detailed Logs
-              </button>
-            </div>
-          </div>
-
-          {/* Bottom Section: Transactions & Infrastructure */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" data-fade-up>
-            {/* Recent Transactions */}
-            <div className="lg:col-span-2 glass-panel overflow-hidden">
-              <div className="p-6 border-b border-eye-border flex justify-between items-center">
-                <h2 className="text-base font-bold text-on-surface">Recent Transactions</h2>
-                <button className="text-primary-brand text-sm hover:underline">
-                  Export CSV
-                </button>
-              </div>
-              {transactions.isLoading ? (
-                <SkeletonTable />
-              ) : transactions.data && transactions.data.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-surface-container-low border-b border-eye-border">
-                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                          Transaction ID
-                        </th>
-                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                          Description
-                        </th>
-                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                          Amount
-                        </th>
-                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                          Type
-                        </th>
-                        <th className="px-6 py-4 text-[12px] text-outline uppercase font-mono">
-                          Date
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-eye-border">
-                      {transactions.data.slice(0, 5).map((tx) => (
-                        <tr key={tx.id} className="hover:bg-primary-brand/5 transition-colors">
-                          <td className="px-6 py-4 font-mono text-on-surface text-sm">
-                            {tx.id.slice(0, 8).toUpperCase()}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-bold">
-                            {tx.description || tx.category || "Transaction"}
-                          </td>
-                          <td className="px-6 py-4 font-mono text-on-surface font-bold">
-                            {formatCurrency(Number(tx.amount))}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span
-                              className={`px-2 py-0.5 text-[10px] font-mono font-bold border ${
-                                tx.type === "revenue"
-                                  ? "bg-primary-brand/10 text-primary-brand border-primary-brand/20"
-                                  : "bg-red-400/10 text-red-400 border-red-400/20"
-                              }`}
-                            >
-                              {tx.type?.toUpperCase() ?? "N/A"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 font-mono text-outline text-[12px]">
-                            {tx.transaction_date
-                              ? new Date(tx.transaction_date).toLocaleDateString()
-                              : "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <EmptyState label="transaction" />
-              )}
-            </div>
-
-            {/* Infrastructure Status */}
-            <div className="glass-panel p-6">
-              <h2 className="text-base font-bold text-on-surface mb-8">Infrastructure Status</h2>
-              <div className="space-y-8">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">Total Revenue</span>
-                    <span className="font-mono text-primary-brand font-bold">
-                      {formatCurrency(finance.data?.totalRevenue ?? 0)}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full bg-eye-border">
-                    <div
-                      className="h-full bg-primary-brand"
-                      style={{
-                        width: `${Math.min(
-                          ((finance.data?.totalRevenue ?? 0) /
-                            Math.max(finance.data?.totalInvoiced ?? 1, 1)) *
-                            100,
-                          100
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">Net Income</span>
-                    <span className="font-mono text-primary-brand font-bold">
-                      {formatCurrency(finance.data?.netIncome ?? 0)}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full bg-eye-border">
-                    <div
-                      className="h-full bg-primary-brand"
-                      style={{
-                        width: `${Math.min(
-                          ((finance.data?.netIncome ?? 0) /
-                            Math.max(finance.data?.totalRevenue ?? 1, 1)) *
-                            100,
-                          100
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold">Pending Invoices</span>
-                    <span className="font-mono text-red-400 font-bold">
-                      {finance.data?.pendingInvoices ?? 0}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full bg-eye-border">
-                    <div
-                      className="h-full bg-red-400"
-                      style={{
-                        width: `${Math.min(
-                          ((finance.data?.pendingInvoices ?? 0) /
-                            Math.max(
-                              (finance.data?.pendingInvoices ?? 0) +
-                                (finance.data?.overdueInvoices ?? 0),
-                              1
-                            )) *
-                            100,
-                          100
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-10 p-4 border border-outline-variant/20 bg-surface-container-low flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary-brand/10 flex items-center justify-center border border-primary-brand/20">
-                  <Server className="text-primary-brand w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-[12px] font-mono text-primary-brand font-bold">
-                    All systems operational
-                  </p>
-                  <p className="text-[10px] text-outline uppercase tracking-widest">
-                    Global Cluster: ACTIVE
-                  </p>
-                </div>
-              </div>
-            </div>
+            ) : (
+              <EmptyBlock label="No agent activity yet. Start a conversation in AI Copilot." />
+            )}
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="absolute bottom-0 right-0 w-full border-t border-outline-variant flex justify-between items-center px-8 py-4 bg-surface">
-          <div className="flex items-center gap-2">
-            <span className="uppercase tracking-widest text-primary-brand font-bold">EyeX</span>
-            <span className="text-outline">
-              &copy; 2024 EyeX Technologies. Surgical Precision Data.
-            </span>
+        {/* System Status */}
+        <div className="bento-card rounded-lg overflow-hidden">
+          <div className="px-5 py-4 border-b border-border bg-secondary/40">
+            <h2 className="font-medium text-sm text-white flex items-center gap-2">
+              <Cpu size={16} className="text-muted-foreground" />
+              System Status
+            </h2>
           </div>
-          <div className="flex gap-6">
-            <a className="text-outline hover:text-on-surface transition-opacity duration-150" href="#">
-              Status
-            </a>
-            <a className="text-outline hover:text-on-surface transition-opacity duration-150" href="#">
-              Privacy
-            </a>
-            <a className="text-outline hover:text-on-surface transition-opacity duration-150" href="#">
-              Docs
-            </a>
+          <div className="bg-background p-5 space-y-4">
+            {systemStatus ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Status</span>
+                  <Badge tone="success">{systemStatus.status}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Uptime</span>
+                  <span className="text-xs font-mono text-white">{Math.floor(systemStatus.uptime_seconds / 3600)}h {Math.floor((systemStatus.uptime_seconds % 3600) / 60)}m</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Active Sessions</span>
+                  <span className="text-xs font-mono text-white">{systemStatus.sessions_active}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Workflows Completed</span>
+                  <span className="text-xs font-mono text-white">{systemStatus.workflows_completed}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Workflows Failed</span>
+                  <span className="text-xs font-mono text-rose-400">{systemStatus.workflows_failed}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Tools Available</span>
+                  <span className="text-xs font-mono text-white">{systemStatus.tools_count}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-center py-4"><Loader2 className="animate-spin text-muted-foreground" size={16} /></div>
+            )}
           </div>
-        </footer>
-      </main>
-    </div>
+        </div>
+      </div>
+
+      {/* Bottom Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Workspaces Summary */}
+        <Card title="Workspaces" icon="folder">
+          <div className="p-5 space-y-3">
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Total Workspaces</span>
+              <span className="text-sm font-semibold text-white">{workspaceCount}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Team Members</span>
+              <span className="text-sm font-semibold text-white">{membersCount}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Active Agents</span>
+              <span className="text-sm font-semibold text-white">{agentCount}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Monthly Tasks</span>
+              <span className="text-sm font-semibold text-white">{usage?.tasks_this_month.toLocaleString() ?? "—"}</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Usage Summary */}
+        <Card title="Usage Summary" icon="bar_chart">
+          <div className="p-5 space-y-3">
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Total Tasks</span>
+              <span className="text-sm font-semibold text-white">{usage?.total_tasks.toLocaleString() ?? "—"}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Total Tokens</span>
+              <span className="text-sm font-semibold text-white">{usage?.total_tokens.toLocaleString() ?? "—"}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-border pb-3">
+              <span className="text-xs text-muted-foreground">Total Cost</span>
+              <span className="text-sm font-semibold text-white">${usage?.total_cost.toFixed(2) ?? "0.00"}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Active Members</span>
+              <span className="text-sm font-semibold text-white">{usage?.active_members ?? 0}</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Quick Stats */}
+        <Card title="Agent Performance">
+          <div className="p-5">
+            {statsLoading ? (
+              <div className="space-y-3"><SkeletonLine /><SkeletonLine /><SkeletonLine /></div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Avg Duration</span>
+                    <span className="text-white font-mono">{Math.round(stats?.avg_duration_ms ?? 0)}ms</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                    <div className="h-full bg-white/60 rounded-full" style={{ width: `${Math.min((stats?.avg_duration_ms ?? 0) / 20, 100)}%` }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Tasks This Month</span>
+                    <span className="text-white font-mono">{stats?.tasks_this_month.toLocaleString() ?? 0}</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400/60 rounded-full" style={{ width: `${Math.min((stats?.tasks_this_month ?? 0) / 5, 100)}%` }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Success Rate</span>
+                    <span className="text-white font-mono">{successRate}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${successRate}%` }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+    </AppShell>
   );
 }

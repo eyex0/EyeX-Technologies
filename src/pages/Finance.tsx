@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ModulePage, KpiRow, TableCard } from "@/components/common/SharedBlocks";
 import { Card, Badge, BarChart } from "@/components/common/primitives";
 import { FinanceService } from "@/services/data";
-import { reportsList } from "@/lib/mock";
 
 const SKELETON = <div className="h-4 w-full animate-pulse rounded bg-[#1A1A1C]" />;
 
@@ -127,9 +126,9 @@ export function FinancePage() {
       )
     )},
     { key: "rep", label: "Reports", render: () => (
-      <TableCard title="Financial reports" columns={[
-        { key: "name", label: "Report" },{ key: "owner", label: "Owner" },{ key: "updated", label: "Updated", align: "right" },
-      ]} rows={reportsList.filter(r=>r.cat==="Financial")} />
+      <Card title="Financial reports">
+        <p className="text-sm text-[#A1A1AA] p-5">Connect a reporting tool to generate financial reports.</p>
+      </Card>
     )},
     { key: "fcst", label: "Forecast", render: () => (
       <Card title="Revenue forecast"><BarChart data={["Q1","Q2","Q3","Q4"].map((l,i)=>({label:l,value:20+i*15}))}/></Card>

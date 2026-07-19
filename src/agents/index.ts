@@ -20,3 +20,15 @@ export type {
   ActionRecommendation,
 } from "./types";
 export type { OrchestratorStep, OrchestrationResult } from "./orchestrator";
+
+// LangGraph-style multi-agent workflow
+export { WorkflowGraph, createDefaultWorkflow } from "./workflow/graph";
+export type {
+  WorkflowState,
+  NodeConfig,
+  NodeHandler,
+  GraphEdge,
+  NodeMessage,
+  NodeName,
+  WorkflowGraphConfig,
+} from "./workflow/types";
