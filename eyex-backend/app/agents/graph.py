@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 import uuid
@@ -25,6 +26,7 @@ from app.agents.risk import create_risk_agent
 from app.agents.strategist import create_strategist_agent
 from app.agents.supervisor import SupervisorAgent
 from app.agents.tester import create_testing_agent
+from app.config import get_settings
 
 logger = logging.getLogger("eyex.agents.graph")
 
@@ -390,10 +392,13 @@ def route_from_coder(state: AgentWorkflowState) -> list[str]:
 
 
 def route_from_quality_gate(state: AgentWorkflowState) -> str:
-    review = state.get("reviewer_result") or {}
-    approved = review.get("approved", True)
-    if not isinstance(approved, bool):
-        approved = True
+    # Prefer the decision materialized by the quality gate node.
+    approved = state.get("approved")
+    if approved is None:
+        review = state.get("reviewer_result") or {}
+        approved = review.get("approved", True)
+        if not isinstance(approved, bool):
+            approved = True
     iteration = state.get("iteration_count", 0)
 
     if not approved and iteration < MAX_WORKFLOW_ITERATIONS:
@@ -548,9 +553,20 @@ class AgentGraph:
 
         try:
             config = {"configurable": {"thread_id": run_id}}
-            final: AgentWorkflowState = await self.graph.ainvoke(initial, config)
+            timeout = get_settings().graph_timeout_seconds or 120
+            final: AgentWorkflowState = await asyncio.wait_for(
+                self.graph.ainvoke(initial, config), timeout=timeout
+            )
             logger.info("[%s] Graph completed: status=%s, nodes=%d", run_id, final.get("status"), len(final.get("nodes_executed", [])))
             return final
+        except asyncio.TimeoutError:
+            logger.error("[%s] Graph execution timed out after %s seconds", run_id, timeout)
+            return {
+                **initial,
+                "status": "failed",
+                "error": f"Workflow timed out after {timeout} seconds",
+                "nodes_executed": [{"node": "graph", "status": "timeout", "duration_ms": timeout * 1000, "started_at": time.time()}],
+            }
         except Exception as exc:
             logger.exception("[%s] Graph execution failed", run_id)
             return {
@@ -566,11 +582,16 @@ async def _quality_gate_node(state: AgentWorkflowState) -> dict[str, Any]:
     start = time.perf_counter()
     review = state.get("reviewer_result") or {}
     tester = state.get("tester_result") or {}
-    approved = review.get("approved", True) if not isinstance(review.get("approved"), bool) else review.get("approved", True)
+
+    raw_approved = review.get("approved")
+    approved = raw_approved if isinstance(raw_approved, bool) else True
     score = review.get("score", 75) if review else 75
+
     logger.info("[%s] Quality gate: approved=%s, score=%s, has_tests=%s", rid, approved, score, bool(tester))
     return {
         "nodes_executed": _record_node(state, "quality_gate", "completed", time.perf_counter() - start),
         "status": "running",
         "iteration_count": state.get("iteration_count", 0),
+        "approved": approved,
+        "score": score,
     }

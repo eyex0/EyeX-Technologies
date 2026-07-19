@@ -15,6 +15,11 @@
 - [x] Added admin role checks (`is_superuser`) to `/admin/*` routes.
 - [x] Updated frontend `backend-api.service.ts` to use `import.meta.env.VITE_PYTHON_BACKEND_URL` and send Supabase access tokens.
 
+### LangGraph reliability
+- [x] Fixed quality gate logging bug (`approved` was always `True` due to default fallback).
+- [x] Materialized quality gate decision (`approved`, `score`) into workflow state.
+- [x] Added `graph_timeout_seconds` config and `asyncio.wait_for` guard around `graph.ainvoke`.
+
 ### Critical fixes applied (RC1 baseline)
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
 - [x] Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.

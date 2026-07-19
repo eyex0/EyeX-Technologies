@@ -56,6 +56,7 @@ class Settings(BaseSettings):
 
     # AI Agent tuning
     agent_timeout_seconds: int = 60
+    graph_timeout_seconds: int = 120
 
     # Auth
     access_token_expire_minutes: int = 30

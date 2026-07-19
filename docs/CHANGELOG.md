@@ -2,6 +2,14 @@
 
 ## 2026-07-20
 
+### Reliability: LangGraph Quality Gate & Timeout Guards
+- **Changed:** Fixed quality gate bug where `approved` always defaulted to `True`.
+- **Changed:** Materialized quality gate decision (`approved`, `score`) into workflow state for single-source-of-truth routing.
+- **Changed:** Added `graph_timeout_seconds` config and `asyncio.wait_for` guard around `graph.ainvoke` to prevent runaway workflows.
+- **Files modified:** `app/agents/graph.py`, `app/config.py`
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** Quality gate decisions are accurate; workflows cannot hang indefinitely.
+
 ### Security: Endpoint Authentication & Admin Authorization
 - **Changed:** Added Supabase JWT validation (`app/core/supabase_auth.py`) and dual-token support in `app/dependencies.py`.
 - **Changed:** Added `get_current_user` authentication to `/chat/*`, `/memory/*`, `/intelligence/*`, and WebSocket endpoints.
