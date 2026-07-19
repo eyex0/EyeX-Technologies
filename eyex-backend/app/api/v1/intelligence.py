@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
 from app.api.dependencies import get_memory_service
 from app.db.memory import PersistentMemory
+from app.dependencies import get_current_user
+from app.models.user import User
 from app.models.workspace import TaskExecution
 from app.services.agent_service import AgentOrchestratorService
 
@@ -22,6 +24,7 @@ async def analyze_business(
     context: str | None = Form(None),
     session_id: str | None = Form(None),
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ):
     enriched = query
     if context:
@@ -54,6 +57,7 @@ async def analyze_business_stream(
     context: str | None = Form(None),
     session_id: str | None = Form(None),
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ):
     from starlette.responses import StreamingResponse
 
@@ -91,6 +95,7 @@ async def store_knowledge(
     category: str = Form("fact"),
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Form("default"),
+    user: User = Depends(get_current_user),
 ):
     await memory.remember(
         session_id=session_id,
@@ -107,6 +112,7 @@ async def get_knowledge(
     category: str | None = Query(None),
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
+    user: User = Depends(get_current_user),
 ):
     if category:
         records = await memory.recall_by_type(session_id, category)
@@ -121,6 +127,7 @@ async def upload_document(
     file: UploadFile = File(...),
     session_id: str = Form("default"),
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ):
     content = await file.read()
     text = content.decode("utf-8", errors="replace")
@@ -158,6 +165,7 @@ async def upload_document(
 async def list_documents(
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
+    user: User = Depends(get_current_user),
 ):
     raw = await memory.recall_all(session_id, min_importance=0.0)
     docs = {}
@@ -172,6 +180,7 @@ async def get_document(
     filename: str,
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
+    user: User = Depends(get_current_user),
 ):
     raw = await memory.recall_all(session_id, min_importance=0.0)
     chunks = []
@@ -186,6 +195,7 @@ async def get_document(
 async def get_report(
     session_id: str,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ):
     try:
         conversation = await memory.get_conversation(session_id, limit=100)

@@ -1,4 +1,13 @@
-const BASE_URL = process.env.PYTHON_BACKEND_URL || "http://eyex-api:8000";
+import { supabase } from "@/lib/supabase/client";
+
+const BASE_URL = import.meta.env.VITE_PYTHON_BACKEND_URL || "/api/v1";
+
+async function getAuthToken(): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data.session) return null;
+  return data.session.access_token;
+}
 
 export interface ChatRequest {
   message: string;
@@ -207,13 +216,13 @@ export interface UsageSummary {
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("backend_token") : null;
+  const token = await getAuthToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options?.headers as Record<string, string>),
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  const response = await fetch(`${BASE_URL}/api/v1${path}`, { ...options, headers });
+  const response = await fetch(`${BASE_URL}${path}`, { ...options, headers });
   if (!response.ok) {
     const error = await response.text();
     throw new Error(`API ${response.status}: ${error}`);
@@ -396,10 +405,13 @@ export const BackendApi = {
     formData.append("query", query);
     if (context) formData.append("context", context);
     if (sessionId) formData.append("session_id", sessionId);
-    const resp = await fetch(`${BASE_URL}/api/v1/intelligence/analyze`, {
+    const token = await getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const resp = await fetch(`${BASE_URL}/intelligence/analyze`, {
       method: "POST",
       body: formData,
-      headers: await this._authHeaders(),
+      headers,
     });
     if (!resp.ok) throw new Error(`Analysis failed: ${resp.status}`);
     return resp.json();
@@ -416,20 +428,13 @@ export const BackendApi = {
   async getReport(sessionId: string) {
     return apiFetch(`/intelligence/report/${sessionId}`);
   },
-
-  async _authHeaders(): Promise<Record<string, string>> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("backend_token") : null;
-    const headers: Record<string, string> = {};
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-    return headers;
-  },
 };
 
 /* Activity WebSocket */
-export function createActivitySocket(workspaceId: string, onEvent: (event: Record<string, unknown>) => void): WebSocket {
-  const token = typeof window !== "undefined" ? localStorage.getItem("backend_token") : null;
+export async function createActivitySocket(workspaceId: string, onEvent: (event: Record<string, unknown>) => void): Promise<WebSocket> {
+  const token = await getAuthToken();
   const wsBase = BASE_URL.replace(/^http/, "ws");
-  const ws = new WebSocket(`${wsBase}/api/v1/ws/activity/${workspaceId}?token=${token}`);
+  const ws = new WebSocket(`${wsBase}/ws/activity/${workspaceId}?token=${token}`);
   ws.onmessage = (msg) => {
     try {
       onEvent(JSON.parse(msg.data));

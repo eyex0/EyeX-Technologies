@@ -63,6 +63,11 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     bcrypt_rounds: int = 12
 
+    # Supabase integration
+    supabase_url: str = ""
+    supabase_anon_key: str = ""
+    supabase_jwt_secret: str = ""
+
     # OpenTelemetry
     otlp_endpoint: str = ""
 

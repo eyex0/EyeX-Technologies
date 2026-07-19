@@ -9,7 +9,10 @@ from starlette.responses import StreamingResponse
 
 from app.api.dependencies import get_memory_service
 from app.core.security import decode_token
+from app.core.supabase_auth import decode_supabase_token, extract_user_id, is_supabase_token
 from app.db.memory import PersistentMemory
+from app.dependencies import get_current_user
+from app.models.user import User
 from app.schemas.agent import AgentRequest, WorkflowResult
 from app.schemas.chat import ChatRequest, ChatResponse, ConversationHistory
 from app.services.agent_service import AgentOrchestratorService
@@ -24,6 +27,7 @@ async def send_message(
     body: ChatRequest,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> ChatResponse:
     service = AgentOrchestratorService(memory_service=memory)
     result: WorkflowResult = await service.execute(
@@ -43,6 +47,7 @@ async def get_conversation(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> ConversationHistory:
     messages = await memory.get_conversation(session_id, limit=200)
     return ConversationHistory(
@@ -65,6 +70,7 @@ async def delete_conversation(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> dict:
     count = await memory.delete_conversation(session_id)
     return {"deleted": count, "session_id": session_id}
@@ -75,6 +81,7 @@ async def stream_chat(
     body: ChatRequest,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> StreamingResponse:
     service = AgentOrchestratorService(memory_service=memory)
 
@@ -112,8 +119,11 @@ async def stream_chat(
 
 @chat_router.websocket("/ws")
 async def websocket_chat(websocket: WebSocket, token: str = Query(...)) -> None:
-    payload = decode_token(token)
-    if not payload.get("sub"):
+    if is_supabase_token(token):
+        payload = decode_supabase_token(token)
+    else:
+        payload = decode_token(token)
+    if not extract_user_id(payload):
         await websocket.close(code=4001, reason="Unauthorized")
         return
     await websocket.accept()

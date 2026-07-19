@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, Request
 
 from app.api.dependencies import get_memory_service
 from app.db.memory import PersistentMemory
+from app.dependencies import get_current_user
+from app.models.user import User
 from app.schemas.chat import ConversationHistory
 from app.schemas.memory import (
     LongTermMemoryEntry,
@@ -25,6 +27,7 @@ async def get_memory_summary(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> MemorySummary:
     msg_count = await memory.count_conversation_messages(session_id)
     long_term = await memory.recall_all(session_id)
@@ -48,6 +51,7 @@ async def get_session_conversation(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> ConversationHistory:
     messages = await memory.get_conversation(session_id, limit=200)
     return ConversationHistory(
@@ -70,6 +74,7 @@ async def get_long_term_memory(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> list[LongTermMemoryEntry]:
     all_mem = await memory.recall_all(session_id)
     return [
@@ -84,6 +89,7 @@ async def store_long_term_memory(
     body: MemoryStoreRequest,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> MemoryOperationResult:
     await memory.remember(
         session_id=session_id,
@@ -101,6 +107,7 @@ async def forget_long_term_memory(
     key: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> MemoryOperationResult:
     forgotten = await memory.forget(session_id, key)
     return MemoryOperationResult(success=forgotten)
@@ -111,6 +118,7 @@ async def clear_all_memory(
     session_id: str,
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
+    user: User = Depends(get_current_user),
 ) -> MemoryDeleteResult:
     conv_deleted = await memory.delete_conversation(session_id)
     lt_deleted = await memory.clear_long_term(session_id)

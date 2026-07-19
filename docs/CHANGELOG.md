@@ -2,6 +2,15 @@
 
 ## 2026-07-20
 
+### Security: Endpoint Authentication & Admin Authorization
+- **Changed:** Added Supabase JWT validation (`app/core/supabase_auth.py`) and dual-token support in `app/dependencies.py`.
+- **Changed:** Added `get_current_user` authentication to `/chat/*`, `/memory/*`, `/intelligence/*`, and WebSocket endpoints.
+- **Changed:** Added `is_superuser` role checks to `/admin/*` routes.
+- **Changed:** Updated frontend `backend-api.service.ts` to send Supabase access tokens and use `VITE_PYTHON_BACKEND_URL`.
+- **Files modified:** `app/dependencies.py`, `app/core/supabase_auth.py`, `app/config.py`, `app/api/v1/chat.py`, `app/api/v1/memory.py`, `app/api/v1/intelligence.py`, `app/api/v1/admin.py`, `src/services/backend-api.service.ts`, plus tests.
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** AI endpoints are no longer publicly accessible; admin routes require superuser role.
+
 ### Security: Secret Hygiene
 - **Changed:** Replaced real credentials in `.env.example` with placeholder values.
 - **Changed:** Added `SECURITY.md` with exposed-credential notice and rotation instructions.

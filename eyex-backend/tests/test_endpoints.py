@@ -6,11 +6,25 @@ import pytest
 from httpx import AsyncClient
 
 from app.api.dependencies import get_memory_service
+from app.dependencies import get_current_user
 from app.main import app
 
 
 @pytest.fixture
-def mock_memory():
+def mock_user():
+    from app.models.user import User
+    return User(
+        id="00000000-0000-0000-0000-000000000002",
+        email="user@test.com",
+        hashed_password="x",
+        is_active=True,
+        is_superuser=False,
+    )
+
+
+@pytest.fixture
+def mock_memory(mock_user):
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     m = AsyncMock()
     m.health.return_value = {"postgresql": True, "redis": True, "healthy": True}
     m.count_conversation_messages.return_value = 3

@@ -10,6 +10,10 @@
 ### Security hygiene
 - [x] Removed real secrets from `.env.example` and created `SECURITY.md` with rotation instructions.
 - [x] Verified `.env` files are not tracked by git.
+- [x] Added Supabase JWT validation support in backend (`app/core/supabase_auth.py`).
+- [x] Secured AI, chat, memory, intelligence, and admin endpoints with authentication.
+- [x] Added admin role checks (`is_superuser`) to `/admin/*` routes.
+- [x] Updated frontend `backend-api.service.ts` to use `import.meta.env.VITE_PYTHON_BACKEND_URL` and send Supabase access tokens.
 
 ### Critical fixes applied (RC1 baseline)
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.

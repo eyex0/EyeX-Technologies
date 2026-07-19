@@ -11,7 +11,12 @@ from app.main import app
 async def authed_client() -> AsyncClient:
     async def mock_user():
         from app.models.user import User
-        u = User(id="00000000-0000-0000-0000-000000000001", email="admin@test.com", hashed_password="x")
+        u = User(
+            id="00000000-0000-0000-0000-000000000001",
+            email="admin@test.com",
+            hashed_password="x",
+            is_superuser=True,
+        )
         return u
     app.dependency_overrides[get_current_user] = mock_user
     transport = ASGITransport(app=app)
