@@ -20,6 +20,13 @@
 - [x] Materialized quality gate decision (`approved`, `score`) into workflow state.
 - [x] Added `graph_timeout_seconds` config and `asyncio.wait_for` guard around `graph.ainvoke`.
 
+### Scalability: Memory pagination & limits
+- [x] Reduced default conversation limit from 200 to 50; capped at 100.
+- [x] Added `offset`/`limit` pagination to `get_conversation` and API endpoints.
+- [x] Added default `min_importance=0.3` and `limit=200` to `recall_all`.
+- [x] Added limits to `recall_by_type` and `get_all_agent_memory`.
+- [x] Updated `/chat/{session_id}` and `/memory/{session_id}/conversation` to accept `limit`/`offset` query params.
+
 ### Critical fixes applied (RC1 baseline)
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
 - [x] Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.

@@ -2,6 +2,15 @@
 
 ## 2026-07-20
 
+### Scalability: Memory Pagination & Limits
+- **Changed:** Reduced default conversation limit to 50 and capped at 100.
+- **Changed:** Added `offset`/`limit` pagination to `PersistentMemory.get_conversation` and API endpoints.
+- **Changed:** Added default `min_importance=0.3` and `limit=200` to `recall_all`.
+- **Changed:** Added limits to `recall_by_type` and `get_all_agent_memory`.
+- **Files modified:** `app/db/memory.py`, `app/api/v1/chat.py`, `app/api/v1/memory.py`
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** Memory queries are bounded, preventing unbounded data loads as sessions grow.
+
 ### Reliability: LangGraph Quality Gate & Timeout Guards
 - **Changed:** Fixed quality gate bug where `approved` always defaulted to `True`.
 - **Changed:** Materialized quality gate decision (`approved`, `score`) into workflow state for single-source-of-truth routing.

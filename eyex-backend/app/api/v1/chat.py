@@ -46,10 +46,12 @@ async def send_message(
 async def get_conversation(
     session_id: str,
     request: Request,
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
 ) -> ConversationHistory:
-    messages = await memory.get_conversation(session_id, limit=200)
+    messages = await memory.get_conversation(session_id, limit=limit, offset=offset)
     return ConversationHistory(
         session_id=session_id,
         messages=[

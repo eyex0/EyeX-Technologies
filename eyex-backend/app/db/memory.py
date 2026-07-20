@@ -18,7 +18,10 @@ logger = logging.getLogger("eyex.db.memory")
 SHORT_TERM_TTL = 3600
 WORKING_TTL = 86400
 LOCK_TTL = 30
-MAX_CONVERSATION_LIMIT = 200
+MAX_CONVERSATION_LIMIT = 100
+DEFAULT_CONVERSATION_LIMIT = 50
+MAX_LONG_TERM_LIMIT = 200
+DEFAULT_LONG_TERM_MIN_IMPORTANCE = 0.3
 
 
 class PersistentMemory:
@@ -71,16 +74,20 @@ class PersistentMemory:
     async def get_conversation(
         self,
         session_id: str,
-        limit: int = 50,
+        limit: int = DEFAULT_CONVERSATION_LIMIT,
+        offset: int = 0,
         since: datetime | None = None,
         org_id: str | None = None,
     ) -> list[dict[str, Any]]:
+        limit = max(1, min(limit, MAX_CONVERSATION_LIMIT))
+        offset = max(0, offset)
         async with self.session_factory() as db:  # type: ignore[union-attr]
             query = (
                 select(ConversationMessage)
                 .where(ConversationMessage.session_id == session_id)
                 .order_by(ConversationMessage.created_at.asc())
-                .limit(min(limit, MAX_CONVERSATION_LIMIT))
+                .offset(offset)
+                .limit(limit)
             )
             if org_id:
                 query = query.where(ConversationMessage.org_id == org_id)
@@ -188,12 +195,19 @@ class PersistentMemory:
         self,
         session_id: str,
         memory_type: str | None = None,
-        min_importance: float = 0.0,
+        min_importance: float = DEFAULT_LONG_TERM_MIN_IMPORTANCE,
+        limit: int = MAX_LONG_TERM_LIMIT,
     ) -> dict[str, str]:
+        limit = max(1, min(limit, MAX_LONG_TERM_LIMIT))
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            query = select(LongTermMemory).where(
-                LongTermMemory.session_id == session_id,
-                LongTermMemory.importance >= min_importance,
+            query = (
+                select(LongTermMemory)
+                .where(
+                    LongTermMemory.session_id == session_id,
+                    LongTermMemory.importance >= min_importance,
+                )
+                .order_by(LongTermMemory.importance.desc())
+                .limit(limit)
             )
             if memory_type:
                 query = query.where(LongTermMemory.memory_type == memory_type)
@@ -212,7 +226,13 @@ class PersistentMemory:
 
             return results
 
-    async def recall_by_type(self, session_id: str, memory_type: str) -> list[dict[str, Any]]:
+    async def recall_by_type(
+        self,
+        session_id: str,
+        memory_type: str,
+        limit: int = MAX_LONG_TERM_LIMIT,
+    ) -> list[dict[str, Any]]:
+        limit = max(1, min(limit, MAX_LONG_TERM_LIMIT))
         async with self.session_factory() as db:  # type: ignore[union-attr]
             result = await db.execute(
                 select(LongTermMemory)
@@ -221,6 +241,7 @@ class PersistentMemory:
                     LongTermMemory.memory_type == memory_type,
                 )
                 .order_by(LongTermMemory.importance.desc())
+                .limit(limit)
             )
             return [
                 {"key": r.key, "value": r.value, "importance": r.importance, "updated_at": r.updated_at.isoformat()}
@@ -300,13 +321,17 @@ class PersistentMemory:
         self,
         session_id: str,
         agent_name: str,
+        limit: int = 100,
     ) -> dict[str, str]:
+        limit = max(1, min(limit, 200))
         async with self.session_factory() as db:  # type: ignore[union-attr]
             result = await db.execute(
-                select(AgentMemoryRecord).where(
+                select(AgentMemoryRecord)
+                .where(
                     AgentMemoryRecord.session_id == session_id,
                     AgentMemoryRecord.agent_name == agent_name,
                 )
+                .limit(limit)
             )
             return {r.key: r.value for r in result.scalars().all()}
 
