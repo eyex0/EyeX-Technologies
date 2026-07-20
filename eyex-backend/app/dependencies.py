@@ -6,8 +6,10 @@ from uuid import UUID
 
 from fastapi import Depends, Header, HTTPException
 
+from app.config import get_settings
 from app.core.context import org_id_ctx
 from app.core.exceptions import ForbiddenException, UnauthorizedException
+from app.core.quota import get_quota_service
 from app.core.security import decode_token
 from app.core.supabase_auth import decode_supabase_token, is_supabase_token
 from app.database import async_session_factory
@@ -129,3 +131,53 @@ async def get_current_org_id(
         yield org_id
     finally:
         org_id_ctx.reset(token)
+
+
+def require_chat_quota() -> Depends:
+    """Dependency factory that enforces the daily chat message limit per user."""
+    async def _check_quota(user: User = Depends(get_current_user)) -> None:
+        settings = get_settings()
+        limit = settings.chat_daily_message_limit
+        if limit <= 0:
+            return
+        service = get_quota_service()
+        allowed, count = await service.check_and_increment(
+            str(user.id), "chat_messages", limit
+        )
+        if not allowed:
+            from fastapi import HTTPException
+
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Daily chat limit reached ({limit} messages). "
+                    f"Current usage: {count}."
+                ),
+            )
+
+    return Depends(_check_quota)
+
+
+def require_intelligence_quota() -> Depends:
+    """Dependency factory that enforces the daily intelligence request limit per user."""
+    async def _check_quota(user: User = Depends(get_current_user)) -> None:
+        settings = get_settings()
+        limit = settings.intelligence_daily_request_limit
+        if limit <= 0:
+            return
+        service = get_quota_service()
+        allowed, count = await service.check_and_increment(
+            str(user.id), "intelligence_requests", limit
+        )
+        if not allowed:
+            from fastapi import HTTPException
+
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Daily intelligence request limit reached ({limit}). "
+                    f"Current usage: {count}."
+                ),
+            )
+
+    return Depends(_check_quota)

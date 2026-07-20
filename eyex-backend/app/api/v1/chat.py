@@ -13,7 +13,7 @@ from app.core.security import decode_token
 from app.core.supabase_auth import decode_supabase_token, extract_user_id, is_supabase_token
 from app.database import async_session_factory
 from app.db.memory import PersistentMemory
-from app.dependencies import get_current_org_id, get_current_user
+from app.dependencies import get_current_org_id, get_current_user, require_chat_quota
 from app.models.user import User
 from app.schemas.agent import AgentRequest, WorkflowResult
 from app.schemas.chat import ChatRequest, ChatResponse, ConversationHistory
@@ -31,6 +31,7 @@ async def send_message(
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
     org_id: str = Depends(get_current_org_id),
+    _quota: None = require_chat_quota(),
 ) -> ChatResponse:
     service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
     result: WorkflowResult = await service.execute(
@@ -90,6 +91,7 @@ async def stream_chat(
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
     org_id: str = Depends(get_current_org_id),
+    _quota: None = require_chat_quota(),
 ) -> StreamingResponse:
     service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
 

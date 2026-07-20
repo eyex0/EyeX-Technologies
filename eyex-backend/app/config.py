@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     agent_timeout_seconds: int = 60
     graph_timeout_seconds: int = 120
 
+    # User quotas (0 = unlimited)
+    chat_daily_message_limit: int = 100
+    intelligence_daily_request_limit: int = 50
+
     # Auth
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7

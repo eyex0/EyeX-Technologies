@@ -368,3 +368,52 @@ async def test_memory_forget_not_found(client: AsyncClient, mock_memory):
     assert resp.status_code == 200
     data = resp.json()
     assert data["success"] is False
+
+
+@pytest.mark.asyncio
+async def test_chat_message_too_long(client: AsyncClient, mock_memory):
+    app.dependency_overrides[get_memory_service] = lambda: mock_memory
+    resp = await client.post("/api/v1/chat", json={
+        "message": "x" * 13_000,
+        "session_id": "test-session",
+    })
+    assert resp.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_chat_daily_quota_enforced(client: AsyncClient, mock_memory, monkeypatch):
+    from app import dependencies as deps_module
+    from app.config import Settings, get_settings
+    from app.core.quota import reset_quota_service
+    from app.services.agent_service import AgentOrchestratorService
+
+    app.dependency_overrides[get_memory_service] = lambda: mock_memory
+    get_settings.cache_clear()
+    reset_quota_service()
+
+    base_settings = get_settings()
+    limited_settings = Settings(
+        **{
+            **base_settings.model_dump(),
+            "chat_daily_message_limit": 2,
+        }
+    )
+    monkeypatch.setattr(deps_module, "get_settings", lambda: limited_settings)
+
+    with patch.object(AgentOrchestratorService, "execute") as mock_exec:
+        mock_exec.return_value = AsyncMock(
+            success=True, output="hi", steps=[], thread_id="test-session", error=None
+        )
+        for _ in range(2):
+            resp = await client.post("/api/v1/chat", json={
+                "message": "hello",
+                "session_id": "test-session",
+            })
+            assert resp.status_code == 200
+
+        resp = await client.post("/api/v1/chat", json={
+            "message": "hello",
+            "session_id": "test-session",
+        })
+        assert resp.status_code == 429
+        assert "Daily chat limit reached" in resp.json()["detail"]

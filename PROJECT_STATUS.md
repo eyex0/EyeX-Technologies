@@ -61,6 +61,16 @@
 - [x] Updated WebSocket auth to resolve the user and set org context.
 - [x] Tests: 390 passed, 0 failed, 0 warnings.
 
+### Operations: AI cost/runaway guards
+
+- [x] Added `UserQuotaService` with Redis + in-memory fallback for per-user daily limits.
+- [x] Added `chat_daily_message_limit` (default 100) and `intelligence_daily_request_limit` (default 50).
+- [x] Added `require_chat_quota` and `require_intelligence_quota` dependencies.
+- [x] Enforced limits on `/chat`, `/chat/stream`, and `/intelligence/analyze` endpoints.
+- [x] Reduced `ChatRequest.message` max length from 100,000 to 12,000 characters.
+- [x] Added tests for message length validation and daily quota enforcement.
+- [x] Tests: 392 passed, 0 failed, 0 warnings.
+
 ### Critical fixes applied (RC1 baseline)
 
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.

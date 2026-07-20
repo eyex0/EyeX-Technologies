@@ -31,6 +31,16 @@
 - **Tests:** 390 passed, 0 failed, 0 warnings
 - **Result:** Users can no longer access chat or memory sessions belonging to another organization.
 
+### Operations: AI Cost/Runaway Guards
+
+- **Changed:** Added `UserQuotaService` with Redis + in-memory fallback for per-user daily limits.
+- **Changed:** Added `chat_daily_message_limit` (default 100) and `intelligence_daily_request_limit` (default 50).
+- **Changed:** Enforced quotas on `/chat`, `/chat/stream`, and `/intelligence/analyze`.
+- **Changed:** Reduced `ChatRequest.message` max length to 12,000 characters.
+- **Files modified:** `app/core/quota.py`, `app/config.py`, `app/dependencies.py`, `app/schemas/chat.py`, `app/api/v1/chat.py`, `app/api/v1/intelligence.py`, plus tests.
+- **Tests:** 392 passed, 0 failed, 0 warnings
+- **Result:** Users hit a clear 429 daily limit instead of unbounded AI spend.
+
 ### Performance: Offload CPU-Bound Pipeline Work to Thread Pool
 
 - **Changed:** `CognitiveDataPipeline` now supports an optional `ThreadPoolExecutor`.

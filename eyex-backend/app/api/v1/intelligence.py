@@ -8,7 +8,11 @@ from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
 from app.api.dependencies import get_memory_service
 from app.db.memory import PersistentMemory
-from app.dependencies import get_current_org_id, get_current_user
+from app.dependencies import (
+    get_current_org_id,
+    get_current_user,
+    require_intelligence_quota,
+)
 from app.models.user import User
 from app.models.workspace import TaskExecution
 from app.services.agent_service import AgentOrchestratorService
@@ -26,6 +30,7 @@ async def analyze_business(
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
     org_id: str = Depends(get_current_org_id),
+    _quota: None = require_intelligence_quota(),
 ):
     enriched = query
     if context:
@@ -60,6 +65,7 @@ async def analyze_business_stream(
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
     org_id: str = Depends(get_current_org_id),
+    _quota: None = require_intelligence_quota(),
 ):
     from starlette.responses import StreamingResponse
 
