@@ -27,6 +27,12 @@
 - [x] Added limits to `recall_by_type` and `get_all_agent_memory`.
 - [x] Updated `/chat/{session_id}` and `/memory/{session_id}/conversation` to accept `limit`/`offset` query params.
 
+### Performance: Offload CPU-bound pipeline work to thread pool
+- [x] Added `ThreadPoolExecutor` support to `CognitiveDataPipeline`.
+- [x] Offloaded `canonical_builder.build`, `quality_engine.analyze`, `knowledge_graph.build_graph`, and `confidence_engine.batch_assess` to executor.
+- [x] Used `asyncio.gather` for parallel quality and confidence assessments.
+- [x] Tests: 390 passed, 0 failed, 0 warnings.
+
 ### Critical fixes applied (RC1 baseline)
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
 - [x] Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.

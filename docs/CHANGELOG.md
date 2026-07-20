@@ -2,6 +2,14 @@
 
 ## 2026-07-20
 
+### Performance: Offload CPU-Bound Pipeline Work to Thread Pool
+- **Changed:** `CognitiveDataPipeline` now supports an optional `ThreadPoolExecutor`.
+- **Changed:** `canonical_builder.build`, `quality_engine.analyze`, `knowledge_graph.build_graph`, and `confidence_engine.batch_assess` now run in a thread pool to avoid blocking the async event loop.
+- **Changed:** Quality and confidence assessments run in parallel via `asyncio.gather`.
+- **Files modified:** `app/cognitive_data_layer/pipeline.py`
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** Async endpoints remain responsive during heavy data processing.
+
 ### Scalability: Memory Pagination & Limits
 - **Changed:** Reduced default conversation limit to 50 and capped at 100.
 - **Changed:** Added `offset`/`limit` pagination to `PersistentMemory.get_conversation` and API endpoints.
