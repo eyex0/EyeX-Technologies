@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncGenerator
 from uuid import UUID
 
 from fastapi import Depends, Header, HTTPException
 
-from app.core.exceptions import UnauthorizedException
+from app.core.context import org_id_ctx
+from app.core.exceptions import ForbiddenException, UnauthorizedException
 from app.core.security import decode_token
 from app.core.supabase_auth import decode_supabase_token, is_supabase_token
 from app.database import async_session_factory
@@ -96,3 +98,34 @@ def require_active_user() -> Depends:
             raise UnauthorizedException("Account is disabled")
         return user
     return Depends(_require_active)
+
+
+async def get_current_org_id(
+    user: User = Depends(get_current_user),
+    x_org_id: str | None = Header(None, alias="X-Organization-Id"),
+) -> AsyncGenerator[str, None]:
+    """Resolve the current organization/workspace for the authenticated user.
+
+    Uses the X-Organization-Id header when provided and the user is a member,
+    otherwise falls back to the user's first organization, then 'default'.
+    Sets a context variable so downstream services can read the org id without
+    threading it through every call.
+    """
+    org_id: str | None = None
+    user_org_ids = {str(m.organization_id) for m in user.organizations}
+
+    if x_org_id:
+        if x_org_id in user_org_ids:
+            org_id = x_org_id
+        else:
+            raise ForbiddenException("User is not a member of this organization")
+    elif user_org_ids:
+        org_id = next(iter(user_org_ids))
+    else:
+        org_id = "default"
+
+    token = org_id_ctx.set(org_id)
+    try:
+        yield org_id
+    finally:
+        org_id_ctx.reset(token)

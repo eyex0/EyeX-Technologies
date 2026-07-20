@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Query, Request
 
 from app.api.dependencies import get_memory_service
 from app.db.memory import PersistentMemory
-from app.dependencies import get_current_user
+from app.dependencies import get_current_org_id, get_current_user
 from app.models.user import User
 from app.schemas.chat import ConversationHistory
 from app.schemas.memory import (
@@ -28,13 +28,14 @@ async def get_memory_summary(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> MemorySummary:
-    msg_count = await memory.count_conversation_messages(session_id)
-    long_term = await memory.recall_all(session_id)
+    msg_count = await memory.count_conversation_messages(session_id, org_id=org_id)
+    long_term = await memory.recall_all(session_id, org_id=org_id)
 
     agent_memories: dict[str, dict[str, str]] = {}
     for agent_name in ("planner", "researcher", "coder", "reviewer", "tester", "documenter", "devops"):
-        am = await memory.get_all_agent_memory(session_id, agent_name)
+        am = await memory.get_all_agent_memory(session_id, agent_name, org_id=org_id)
         if am:
             agent_memories[agent_name] = am
 
@@ -54,8 +55,9 @@ async def get_session_conversation(
     offset: int = Query(0, ge=0),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> ConversationHistory:
-    messages = await memory.get_conversation(session_id, limit=limit, offset=offset)
+    messages = await memory.get_conversation(session_id, limit=limit, offset=offset, org_id=org_id)
     return ConversationHistory(
         session_id=session_id,
         messages=[
@@ -77,8 +79,9 @@ async def get_long_term_memory(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> list[LongTermMemoryEntry]:
-    all_mem = await memory.recall_all(session_id)
+    all_mem = await memory.recall_all(session_id, org_id=org_id)
     return [
         LongTermMemoryEntry(key=k, value=v, importance=0.5)
         for k, v in all_mem.items()
@@ -92,6 +95,7 @@ async def store_long_term_memory(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> MemoryOperationResult:
     await memory.remember(
         session_id=session_id,
@@ -99,6 +103,7 @@ async def store_long_term_memory(
         value=body.value,
         memory_type=body.memory_type,
         importance=body.importance,
+        org_id=org_id,
     )
     return MemoryOperationResult(success=True)
 
@@ -110,8 +115,9 @@ async def forget_long_term_memory(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> MemoryOperationResult:
-    forgotten = await memory.forget(session_id, key)
+    forgotten = await memory.forget(session_id, key, org_id=org_id)
     return MemoryOperationResult(success=forgotten)
 
 
@@ -121,10 +127,11 @@ async def clear_all_memory(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> MemoryDeleteResult:
-    conv_deleted = await memory.delete_conversation(session_id)
-    lt_deleted = await memory.clear_long_term(session_id)
-    am_deleted = await memory.clear_agent_memory(session_id)
+    conv_deleted = await memory.delete_conversation(session_id, org_id=org_id)
+    lt_deleted = await memory.clear_long_term(session_id, org_id=org_id)
+    am_deleted = await memory.clear_agent_memory(session_id, org_id=org_id)
     await memory.clear_short_term(session_id)
     await memory.clear_working_state(session_id)
     return MemoryDeleteResult(deleted={

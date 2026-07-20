@@ -51,6 +51,16 @@
 - [x] Added `alembic upgrade head` step before tests.
 - [x] Updated `alembic/env.py` to read `DATABASE_URL` from the environment when available.
 
+### Security: Org/Workspace-level session ownership
+
+- [x] Added `get_current_org_id` dependency that resolves org from `X-Organization-Id` header or the user's first organization.
+- [x] Added `org_id_ctx` context variable so org scoping propagates through async call stacks without rewriting every signature.
+- [x] Scoped all chat, memory, and intelligence endpoints to the current org.
+- [x] Updated `PersistentMemory` to read/write `org_id` on conversation, long-term, and agent memory records.
+- [x] Updated `AgentOrchestratorService` to accept `org_id` and set the context before running the agent graph.
+- [x] Updated WebSocket auth to resolve the user and set org context.
+- [x] Tests: 390 passed, 0 failed, 0 warnings.
+
 ### Critical fixes applied (RC1 baseline)
 
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.

@@ -10,10 +10,15 @@ from redis.asyncio import Redis
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core.context import org_id_ctx
 from app.db.models.memory import AgentMemoryRecord, ConversationMessage, LongTermMemory
 from app.db.session import get_redis_pool
 
 logger = logging.getLogger("eyex.db.memory")
+
+
+def _current_org_id(org_id: str | None) -> str | None:
+    return org_id if org_id is not None else org_id_ctx.get()
 
 SHORT_TERM_TTL = 3600
 WORKING_TTL = 86400
@@ -54,8 +59,9 @@ class PersistentMemory:
         content: str,
         agent_name: str | None = None,
         metadata: dict | None = None,
-        org_id: str = "default",
+        org_id: str | None = None,
     ) -> str:
+        org_id = _current_org_id(org_id) or "default"
         async with self.session_factory() as db:  # type: ignore[union-attr]
             msg = ConversationMessage(
                 session_id=session_id,
@@ -79,6 +85,7 @@ class PersistentMemory:
         since: datetime | None = None,
         org_id: str | None = None,
     ) -> list[dict[str, Any]]:
+        org_id = _current_org_id(org_id)
         limit = max(1, min(limit, MAX_CONVERSATION_LIMIT))
         offset = max(0, offset)
         async with self.session_factory() as db:  # type: ignore[union-attr]
@@ -109,16 +116,28 @@ class PersistentMemory:
                 for m in messages
             ]
 
-    async def delete_conversation(self, session_id: str) -> int:
+    async def delete_conversation(
+        self,
+        session_id: str,
+        org_id: str | None = None,
+    ) -> int:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
             stmt = delete(ConversationMessage).where(ConversationMessage.session_id == session_id)
+            if org_id:
+                stmt = stmt.where(ConversationMessage.org_id == org_id)
             result = await db.execute(stmt)
             await db.commit()
             count = result.rowcount
             logger.info("Deleted %d conversation messages for session %s", count, session_id)
             return count
 
-    async def count_conversation_messages(self, session_id: str) -> int:
+    async def count_conversation_messages(
+        self,
+        session_id: str,
+        org_id: str | None = None,
+    ) -> int:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
             from sqlalchemy import func
             query = (
@@ -126,6 +145,8 @@ class PersistentMemory:
                 .select_from(ConversationMessage)
                 .where(ConversationMessage.session_id == session_id)
             )
+            if org_id:
+                query = query.where(ConversationMessage.org_id == org_id)
             result = await db.execute(query)
             return result.scalar() or 0
 
@@ -142,16 +163,19 @@ class PersistentMemory:
         importance: float = 0.5,
         metadata: dict | None = None,
         ttl_seconds: int | None = None,
+        org_id: str | None = None,
     ) -> None:
+        org_id = _current_org_id(org_id) or "default"
         async with self.session_factory() as db:  # type: ignore[union-attr]
             expires_at = datetime.now(UTC) + timedelta(seconds=ttl_seconds) if ttl_seconds else None
 
-            existing = await db.execute(
-                select(LongTermMemory).where(
-                    LongTermMemory.session_id == session_id,
-                    LongTermMemory.key == key,
-                )
-            )
+            where_clause = [
+                LongTermMemory.session_id == session_id,
+                LongTermMemory.key == key,
+            ]
+            if org_id:
+                where_clause.append(LongTermMemory.org_id == org_id)
+            existing = await db.execute(select(LongTermMemory).where(*where_clause))
             record = existing.scalar_one_or_none()
 
             if record:
@@ -164,6 +188,7 @@ class PersistentMemory:
             else:
                 db.add(LongTermMemory(
                     session_id=session_id,
+                    org_id=org_id,
                     key=key,
                     value=value,
                     memory_type=memory_type,
@@ -174,14 +199,21 @@ class PersistentMemory:
             await db.commit()
             logger.debug("Remembered %s[%s] = %s (%.1f)", memory_type, key, value[:80], importance)
 
-    async def recall(self, session_id: str, key: str) -> str | None:
+    async def recall(
+        self,
+        session_id: str,
+        key: str,
+        org_id: str | None = None,
+    ) -> str | None:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            result = await db.execute(
-                select(LongTermMemory).where(
-                    LongTermMemory.session_id == session_id,
-                    LongTermMemory.key == key,
-                )
-            )
+            where_clause = [
+                LongTermMemory.session_id == session_id,
+                LongTermMemory.key == key,
+            ]
+            if org_id:
+                where_clause.append(LongTermMemory.org_id == org_id)
+            result = await db.execute(select(LongTermMemory).where(*where_clause))
             record = result.scalar_one_or_none()
             if record is None:
                 return None
@@ -197,15 +229,20 @@ class PersistentMemory:
         memory_type: str | None = None,
         min_importance: float = DEFAULT_LONG_TERM_MIN_IMPORTANCE,
         limit: int = MAX_LONG_TERM_LIMIT,
+        org_id: str | None = None,
     ) -> dict[str, str]:
+        org_id = _current_org_id(org_id)
         limit = max(1, min(limit, MAX_LONG_TERM_LIMIT))
         async with self.session_factory() as db:  # type: ignore[union-attr]
+            where_clause = [
+                LongTermMemory.session_id == session_id,
+                LongTermMemory.importance >= min_importance,
+            ]
+            if org_id:
+                where_clause.append(LongTermMemory.org_id == org_id)
             query = (
                 select(LongTermMemory)
-                .where(
-                    LongTermMemory.session_id == session_id,
-                    LongTermMemory.importance >= min_importance,
-                )
+                .where(*where_clause)
                 .order_by(LongTermMemory.importance.desc())
                 .limit(limit)
             )
@@ -231,15 +268,20 @@ class PersistentMemory:
         session_id: str,
         memory_type: str,
         limit: int = MAX_LONG_TERM_LIMIT,
+        org_id: str | None = None,
     ) -> list[dict[str, Any]]:
+        org_id = _current_org_id(org_id)
         limit = max(1, min(limit, MAX_LONG_TERM_LIMIT))
         async with self.session_factory() as db:  # type: ignore[union-attr]
+            where_clause = [
+                LongTermMemory.session_id == session_id,
+                LongTermMemory.memory_type == memory_type,
+            ]
+            if org_id:
+                where_clause.append(LongTermMemory.org_id == org_id)
             result = await db.execute(
                 select(LongTermMemory)
-                .where(
-                    LongTermMemory.session_id == session_id,
-                    LongTermMemory.memory_type == memory_type,
-                )
+                .where(*where_clause)
                 .order_by(LongTermMemory.importance.desc())
                 .limit(limit)
             )
@@ -248,22 +290,35 @@ class PersistentMemory:
                 for r in result.scalars().all()
             ]
 
-    async def forget(self, session_id: str, key: str) -> bool:
+    async def forget(
+        self,
+        session_id: str,
+        key: str,
+        org_id: str | None = None,
+    ) -> bool:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            result = await db.execute(
-                delete(LongTermMemory).where(
-                    LongTermMemory.session_id == session_id,
-                    LongTermMemory.key == key,
-                )
+            stmt = delete(LongTermMemory).where(
+                LongTermMemory.session_id == session_id,
+                LongTermMemory.key == key,
             )
+            if org_id:
+                stmt = stmt.where(LongTermMemory.org_id == org_id)
+            result = await db.execute(stmt)
             await db.commit()
             return result.rowcount > 0
 
-    async def clear_long_term(self, session_id: str) -> int:
+    async def clear_long_term(
+        self,
+        session_id: str,
+        org_id: str | None = None,
+    ) -> int:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            result = await db.execute(
-                delete(LongTermMemory).where(LongTermMemory.session_id == session_id)
-            )
+            stmt = delete(LongTermMemory).where(LongTermMemory.session_id == session_id)
+            if org_id:
+                stmt = stmt.where(LongTermMemory.org_id == org_id)
+            result = await db.execute(stmt)
             await db.commit()
             return result.rowcount
 
@@ -279,15 +334,18 @@ class PersistentMemory:
         value: str,
         memory_type: str = "output",
         metadata: dict | None = None,
+        org_id: str | None = None,
     ) -> None:
+        org_id = _current_org_id(org_id) or "default"
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            existing = await db.execute(
-                select(AgentMemoryRecord).where(
-                    AgentMemoryRecord.session_id == session_id,
-                    AgentMemoryRecord.agent_name == agent_name,
-                    AgentMemoryRecord.key == key,
-                )
-            )
+            where_clause = [
+                AgentMemoryRecord.session_id == session_id,
+                AgentMemoryRecord.agent_name == agent_name,
+                AgentMemoryRecord.key == key,
+            ]
+            if org_id:
+                where_clause.append(AgentMemoryRecord.org_id == org_id)
+            existing = await db.execute(select(AgentMemoryRecord).where(*where_clause))
             record = existing.scalar_one_or_none()
             if record:
                 record.value = value
@@ -297,6 +355,7 @@ class PersistentMemory:
             else:
                 db.add(AgentMemoryRecord(
                     session_id=session_id,
+                    org_id=org_id,
                     agent_name=agent_name,
                     key=key,
                     value=value,
@@ -305,15 +364,23 @@ class PersistentMemory:
                 ))
             await db.commit()
 
-    async def get_agent_memory(self, session_id: str, agent_name: str, key: str) -> str | None:
+    async def get_agent_memory(
+        self,
+        session_id: str,
+        agent_name: str,
+        key: str,
+        org_id: str | None = None,
+    ) -> str | None:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            result = await db.execute(
-                select(AgentMemoryRecord).where(
-                    AgentMemoryRecord.session_id == session_id,
-                    AgentMemoryRecord.agent_name == agent_name,
-                    AgentMemoryRecord.key == key,
-                )
-            )
+            where_clause = [
+                AgentMemoryRecord.session_id == session_id,
+                AgentMemoryRecord.agent_name == agent_name,
+                AgentMemoryRecord.key == key,
+            ]
+            if org_id:
+                where_clause.append(AgentMemoryRecord.org_id == org_id)
+            result = await db.execute(select(AgentMemoryRecord).where(*where_clause))
             record = result.scalar_one_or_none()
             return record.value if record else None
 
@@ -322,24 +389,35 @@ class PersistentMemory:
         session_id: str,
         agent_name: str,
         limit: int = 100,
+        org_id: str | None = None,
     ) -> dict[str, str]:
+        org_id = _current_org_id(org_id)
         limit = max(1, min(limit, 200))
         async with self.session_factory() as db:  # type: ignore[union-attr]
+            where_clause = [
+                AgentMemoryRecord.session_id == session_id,
+                AgentMemoryRecord.agent_name == agent_name,
+            ]
+            if org_id:
+                where_clause.append(AgentMemoryRecord.org_id == org_id)
             result = await db.execute(
-                select(AgentMemoryRecord)
-                .where(
-                    AgentMemoryRecord.session_id == session_id,
-                    AgentMemoryRecord.agent_name == agent_name,
-                )
-                .limit(limit)
+                select(AgentMemoryRecord).where(*where_clause).limit(limit)
             )
             return {r.key: r.value for r in result.scalars().all()}
 
-    async def clear_agent_memory(self, session_id: str, agent_name: str | None = None) -> int:
+    async def clear_agent_memory(
+        self,
+        session_id: str,
+        agent_name: str | None = None,
+        org_id: str | None = None,
+    ) -> int:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
             stmt = delete(AgentMemoryRecord).where(AgentMemoryRecord.session_id == session_id)
             if agent_name:
                 stmt = stmt.where(AgentMemoryRecord.agent_name == agent_name)
+            if org_id:
+                stmt = stmt.where(AgentMemoryRecord.org_id == org_id)
             result = await db.execute(stmt)
             await db.commit()
             return result.rowcount
@@ -349,15 +427,18 @@ class PersistentMemory:
         session_id: str,
         agent_name: str,
         memory_type: str,
+        org_id: str | None = None,
     ) -> dict[str, str]:
+        org_id = _current_org_id(org_id)
         async with self.session_factory() as db:  # type: ignore[union-attr]
-            result = await db.execute(
-                select(AgentMemoryRecord).where(
-                    AgentMemoryRecord.session_id == session_id,
-                    AgentMemoryRecord.agent_name == agent_name,
-                    AgentMemoryRecord.memory_type == memory_type,
-                )
-            )
+            where_clause = [
+                AgentMemoryRecord.session_id == session_id,
+                AgentMemoryRecord.agent_name == agent_name,
+                AgentMemoryRecord.memory_type == memory_type,
+            ]
+            if org_id:
+                where_clause.append(AgentMemoryRecord.org_id == org_id)
+            result = await db.execute(select(AgentMemoryRecord).where(*where_clause))
             return {r.key: r.value for r in result.scalars().all()}
 
     # ------------------------------------------------------------------ #
@@ -461,12 +542,20 @@ class PersistentMemory:
         assistant_message: str,
         agent_name: str | None = None,
         facts: list[tuple[str, str, float]] | None = None,
+        org_id: str | None = None,
     ) -> None:
-        await self.add_conversation_message(session_id, "user", user_message, agent_name=agent_name)
-        await self.add_conversation_message(session_id, "assistant", assistant_message, agent_name=agent_name)
+        org_id = _current_org_id(org_id)
+        await self.add_conversation_message(
+            session_id, "user", user_message, agent_name=agent_name, org_id=org_id
+        )
+        await self.add_conversation_message(
+            session_id, "assistant", assistant_message, agent_name=agent_name, org_id=org_id
+        )
         await self.set_short_term(session_id, "last_user_input", user_message[:500])
         await self.set_short_term(session_id, "last_assistant_output", assistant_message[:500])
 
         if facts:
             for key, value, importance in facts:
-                await self.remember(session_id, key, value, memory_type="fact", importance=importance)
+                await self.remember(
+                    session_id, key, value, memory_type="fact", importance=importance, org_id=org_id
+                )

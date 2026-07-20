@@ -20,6 +20,17 @@
 - **Files modified:** `.github/workflows/ci.yml`, `alembic/env.py`
 - **Result:** Backend tests now run against a migrated database in CI.
 
+### Security: Org/Workspace-Level Session Ownership
+
+- **Changed:** Added `get_current_org_id` dependency and `org_id_ctx` context variable for org-aware request scoping.
+- **Changed:** Scoped `/chat/*`, `/memory/*`, and `/intelligence/*` endpoints to the resolved organization.
+- **Changed:** Updated `PersistentMemory` read/write methods to filter and store by `org_id`.
+- **Changed:** Updated `AgentOrchestratorService` to propagate `org_id` into the agent graph.
+- **Changed:** WebSocket endpoint now resolves the user and sets org context.
+- **Files modified:** `app/dependencies.py`, `app/core/context.py`, `app/db/memory.py`, `app/services/agent_service.py`, `app/api/v1/chat.py`, `app/api/v1/memory.py`, `app/api/v1/intelligence.py`, plus tests.
+- **Tests:** 390 passed, 0 failed, 0 warnings
+- **Result:** Users can no longer access chat or memory sessions belonging to another organization.
+
 ### Performance: Offload CPU-Bound Pipeline Work to Thread Pool
 
 - **Changed:** `CognitiveDataPipeline` now supports an optional `ThreadPoolExecutor`.

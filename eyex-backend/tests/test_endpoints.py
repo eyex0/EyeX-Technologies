@@ -333,7 +333,7 @@ async def test_memory_store_long_term(client: AsyncClient, mock_memory):
     assert data["success"] is True
     mock_memory.remember.assert_awaited_once_with(
         session_id="session-1", key="preference", value="dark mode",
-        memory_type="preference", importance=0.8,
+        memory_type="preference", importance=0.8, org_id="default",
     )
 
 
@@ -344,7 +344,7 @@ async def test_memory_forget_long_term(client: AsyncClient, mock_memory):
     assert resp.status_code == 200
     data = resp.json()
     assert data["success"] is True
-    mock_memory.forget.assert_awaited_once_with("session-1", "user_name")
+    mock_memory.forget.assert_awaited_once_with("session-1", "user_name", org_id="default")
 
 
 @pytest.mark.asyncio

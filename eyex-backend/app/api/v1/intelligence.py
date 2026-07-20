@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
 from app.api.dependencies import get_memory_service
 from app.db.memory import PersistentMemory
-from app.dependencies import get_current_user
+from app.dependencies import get_current_org_id, get_current_user
 from app.models.user import User
 from app.models.workspace import TaskExecution
 from app.services.agent_service import AgentOrchestratorService
@@ -25,12 +25,13 @@ async def analyze_business(
     session_id: str | None = Form(None),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     enriched = query
     if context:
         enriched = f"{query}\n\n[Company Context]\n{context}"
 
-    service = AgentOrchestratorService(memory_service=memory)
+    service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
     result = await service.execute(
         type("AgentRequest", (), {"input": enriched, "thread_id": session_id})(),
     )
@@ -58,6 +59,7 @@ async def analyze_business_stream(
     session_id: str | None = Form(None),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     from starlette.responses import StreamingResponse
 
@@ -66,7 +68,7 @@ async def analyze_business_stream(
         enriched = f"{query}\n\n[Company Context]\n{context}"
 
     async def event_generator():
-        service = AgentOrchestratorService(memory_service=memory)
+        service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
         result = await service.execute(
             type("AgentRequest", (), {"input": enriched, "thread_id": session_id})(),
         )
@@ -96,6 +98,7 @@ async def store_knowledge(
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Form("default"),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     await memory.remember(
         session_id=session_id,
@@ -103,6 +106,7 @@ async def store_knowledge(
         value=value,
         memory_type=category,
         importance=0.8,
+        org_id=org_id,
     )
     return {"stored": True, "key": key, "category": category}
 
@@ -113,11 +117,12 @@ async def get_knowledge(
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     if category:
-        records = await memory.recall_by_type(session_id, category)
+        records = await memory.recall_by_type(session_id, category, org_id=org_id)
     else:
-        raw = await memory.recall_all(session_id, min_importance=0.0)
+        raw = await memory.recall_all(session_id, min_importance=0.0, org_id=org_id)
         records = [{"key": k, "value": v, "category": "fact"} for k, v in raw.items() if k.startswith("knowledge:")]
     return {"records": records, "count": len(records)}
 
@@ -128,6 +133,7 @@ async def upload_document(
     session_id: str = Form("default"),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     content = await file.read()
     text = content.decode("utf-8", errors="replace")
@@ -142,6 +148,7 @@ async def upload_document(
             value=chunk,
             memory_type="document",
             importance=0.7,
+            org_id=org_id,
         )
         stored.append({"chunk": i, "key": key, "size": len(chunk)})
 
@@ -151,6 +158,7 @@ async def upload_document(
         value=json.dumps({"filename": file.filename, "chunks": len(chunks), "total_size": len(text)}),
         memory_type="document_meta",
         importance=0.9,
+        org_id=org_id,
     )
 
     return {
@@ -166,8 +174,9 @@ async def list_documents(
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
-    raw = await memory.recall_all(session_id, min_importance=0.0)
+    raw = await memory.recall_all(session_id, min_importance=0.0, org_id=org_id)
     docs = {}
     for k, v in raw.items():
         if k.startswith("document:") and k.endswith(":meta"):
@@ -181,8 +190,9 @@ async def get_document(
     memory: PersistentMemory = Depends(get_memory_service),
     session_id: str = Query("default"),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
-    raw = await memory.recall_all(session_id, min_importance=0.0)
+    raw = await memory.recall_all(session_id, min_importance=0.0, org_id=org_id)
     chunks = []
     for k, v in raw.items():
         if k.startswith(f"document:{filename}:chunk:"):
@@ -196,10 +206,11 @@ async def get_report(
     session_id: str,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ):
     try:
-        conversation = await memory.get_conversation(session_id, limit=100)
-        knowledge = await memory.recall_all(session_id, min_importance=0.5)
+        conversation = await memory.get_conversation(session_id, limit=100, org_id=org_id)
+        knowledge = await memory.recall_all(session_id, min_importance=0.5, org_id=org_id)
         return {
             "session_id": session_id,
             "messages": conversation,

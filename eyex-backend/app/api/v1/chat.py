@@ -8,10 +8,12 @@ from fastapi import APIRouter, Depends, Query, Request, WebSocket, WebSocketDisc
 from starlette.responses import StreamingResponse
 
 from app.api.dependencies import get_memory_service
+from app.core.context import org_id_ctx
 from app.core.security import decode_token
 from app.core.supabase_auth import decode_supabase_token, extract_user_id, is_supabase_token
+from app.database import async_session_factory
 from app.db.memory import PersistentMemory
-from app.dependencies import get_current_user
+from app.dependencies import get_current_org_id, get_current_user
 from app.models.user import User
 from app.schemas.agent import AgentRequest, WorkflowResult
 from app.schemas.chat import ChatRequest, ChatResponse, ConversationHistory
@@ -28,8 +30,9 @@ async def send_message(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> ChatResponse:
-    service = AgentOrchestratorService(memory_service=memory)
+    service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
     result: WorkflowResult = await service.execute(
         AgentRequest(input=body.message, thread_id=body.session_id)
     )
@@ -50,8 +53,9 @@ async def get_conversation(
     offset: int = Query(0, ge=0),
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> ConversationHistory:
-    messages = await memory.get_conversation(session_id, limit=limit, offset=offset)
+    messages = await memory.get_conversation(session_id, limit=limit, offset=offset, org_id=org_id)
     return ConversationHistory(
         session_id=session_id,
         messages=[
@@ -73,8 +77,9 @@ async def delete_conversation(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> dict:
-    count = await memory.delete_conversation(session_id)
+    count = await memory.delete_conversation(session_id, org_id=org_id)
     return {"deleted": count, "session_id": session_id}
 
 
@@ -84,8 +89,9 @@ async def stream_chat(
     request: Request,
     memory: PersistentMemory = Depends(get_memory_service),
     user: User = Depends(get_current_user),
+    org_id: str = Depends(get_current_org_id),
 ) -> StreamingResponse:
-    service = AgentOrchestratorService(memory_service=memory)
+    service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
 
     async def event_generator():
         try:
@@ -119,15 +125,34 @@ async def stream_chat(
     )
 
 
+async def _resolve_org_id_for_user(user: User | None) -> str | None:
+    if user is None:
+        return None
+    user_org_ids = {str(m.organization_id) for m in user.organizations}
+    return next(iter(user_org_ids), None) or "default"
+
+
 @chat_router.websocket("/ws")
 async def websocket_chat(websocket: WebSocket, token: str = Query(...)) -> None:
     if is_supabase_token(token):
         payload = decode_supabase_token(token)
     else:
         payload = decode_token(token)
-    if not extract_user_id(payload):
+    user_id = extract_user_id(payload)
+    if not user_id:
         await websocket.close(code=4001, reason="Unauthorized")
         return
+
+    user: User | None = None
+    try:
+        async with async_session_factory() as session:
+            from uuid import UUID
+            user = await session.get(User, UUID(user_id))
+    except Exception:
+        logger.warning("Failed to resolve websocket user %s", user_id)
+
+    org_id = await _resolve_org_id_for_user(user)
+    org_token = org_id_ctx.set(org_id)
     await websocket.accept()
     try:
         while True:
@@ -140,7 +165,7 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)) -> None:
                 if memory is None:
                     memory = PersistentMemory()
 
-                service = AgentOrchestratorService(memory_service=memory)
+                service = AgentOrchestratorService(memory_service=memory, org_id=org_id)
                 result: WorkflowResult = await service.execute(
                     AgentRequest(input=content, thread_id=session_id)
                 )
@@ -168,3 +193,5 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)) -> None:
             await websocket.send_json({"type": "error", "error": str(exc)})
         except Exception:
             pass
+    finally:
+        org_id_ctx.reset(org_token)

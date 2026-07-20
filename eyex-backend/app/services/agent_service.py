@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 from app.agents.graph import AgentGraph
+from app.core.context import org_id_ctx
 from app.db.memory import PersistentMemory
 from app.schemas.agent import AgentRequest, AgentStep, WorkflowResult
 
@@ -12,8 +13,9 @@ _GRAPH_CACHE: dict[int, AgentGraph] = {}
 
 
 class AgentOrchestratorService:
-    def __init__(self, memory_service: PersistentMemory | None = None) -> None:
+    def __init__(self, memory_service: PersistentMemory | None = None, org_id: str | None = None) -> None:
         self.memory_service = memory_service
+        self.org_id = org_id
         self.graph = self._get_cached_graph(memory_service)
 
     @staticmethod
@@ -26,6 +28,9 @@ class AgentOrchestratorService:
         return _GRAPH_CACHE[mem_id]
 
     async def execute(self, request: AgentRequest) -> WorkflowResult:
+        token = None
+        if self.org_id is not None:
+            token = org_id_ctx.set(self.org_id)
         try:
             result = await self.graph.run(
                 request=request.input,
@@ -71,6 +76,9 @@ class AgentOrchestratorService:
                 error=str(exc),
                 thread_id=request.thread_id,
             )
+        finally:
+            if token is not None:
+                org_id_ctx.reset(token)
 
     @staticmethod
     def _build_summary(result: dict) -> str | None:
