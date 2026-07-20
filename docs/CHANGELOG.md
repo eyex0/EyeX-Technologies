@@ -12,6 +12,14 @@
 - **Tests:** Backend 390 passed, 0 failed, 0 warnings; frontend build succeeds; frontend lint passes with warnings only.
 - **Result:** Every push/PR now runs automated checks for both backend and frontend.
 
+### CI/CD: Database Services & Migrations
+
+- **Changed:** Added PostgreSQL service container to `.github/workflows/ci.yml`.
+- **Changed:** Added `alembic upgrade head` step and CI environment variables.
+- **Changed:** Updated `alembic/env.py` to read `DATABASE_URL` from the environment when available.
+- **Files modified:** `.github/workflows/ci.yml`, `alembic/env.py`
+- **Result:** Backend tests now run against a migrated database in CI.
+
 ### Performance: Offload CPU-Bound Pipeline Work to Thread Pool
 
 - **Changed:** `CognitiveDataPipeline` now supports an optional `ThreadPoolExecutor`.

@@ -44,6 +44,13 @@
 - [x] Exported `Document` type from `documents.service.ts` for type-safe consumers.
 - [x] Backend: 390 passed, 0 failed, 0 warnings; frontend: build succeeds, lint warnings only.
 
+### CI/CD: Database services & migrations
+
+- [x] Updated `.github/workflows/ci.yml` to include a PostgreSQL service container.
+- [x] Added `DATABASE_URL`, `OPENAI_API_KEY`, `RATE_LIMIT_ENABLED`, and `APP_SECRET_KEY` env vars for CI.
+- [x] Added `alembic upgrade head` step before tests.
+- [x] Updated `alembic/env.py` to read `DATABASE_URL` from the environment when available.
+
 ### Critical fixes applied (RC1 baseline)
 
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
