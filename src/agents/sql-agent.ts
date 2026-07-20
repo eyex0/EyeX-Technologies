@@ -32,8 +32,10 @@ export class SQLAgent extends BaseAgent {
 Generate a SQL query for the user's question. Include explanation and risk assessment.`;
       const result = await this.generateStructured<Record<string, unknown>>(prompt, SQL_SCHEMA);
       return this.success(result.explanation as string, result);
-    } catch (err: any) {
-      return this.error(`SQL generation failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `SQL generation failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

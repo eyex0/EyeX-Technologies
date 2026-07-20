@@ -115,9 +115,9 @@ const result = await orchestrator.execute({
 ## Service Packages (`@eyex/services`)
 
 ```typescript
-import { SQLValidator } from '@eyex/services';
+import { SQLValidator } from "@eyex/services";
 
 const validator = new SQLValidator();
-const result = await validator.validate('SELECT * FROM users');
+const result = await validator.validate("SELECT * FROM users");
 // { valid: boolean; errors?: string[]; warnings?: string[] }
 ```

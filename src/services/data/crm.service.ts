@@ -41,22 +41,14 @@ export const CrmService = {
   },
 
   async getCustomer(id: string): Promise<Customer | null> {
-    const { data, error } = await supabase
-      .from("crm_customers")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const { data, error } = await supabase.from("crm_customers").select("*").eq("id", id).single();
 
     if (error) throw error;
     return data;
   },
 
   async createCustomer(customer: CustomerInsert): Promise<Customer> {
-    const { data, error } = await supabase
-      .from("crm_customers")
-      .insert(customer)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("crm_customers").insert(customer).select().single();
 
     if (error) throw error;
     return data;
@@ -75,19 +67,13 @@ export const CrmService = {
   },
 
   async deleteCustomer(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("crm_customers")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("crm_customers").delete().eq("id", id);
 
     if (error) throw error;
   },
 
   async getLeads(organizationId?: string): Promise<Lead[]> {
-    let query = supabase
-      .from("crm_leads")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("crm_leads").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -99,11 +85,7 @@ export const CrmService = {
   },
 
   async createLead(lead: LeadInsert): Promise<Lead> {
-    const { data, error } = await supabase
-      .from("crm_leads")
-      .insert(lead)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("crm_leads").insert(lead).select().single();
 
     if (error) throw error;
     return data;
@@ -122,10 +104,7 @@ export const CrmService = {
   },
 
   async getDeals(organizationId?: string): Promise<Deal[]> {
-    let query = supabase
-      .from("crm_deals")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("crm_deals").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -137,11 +116,7 @@ export const CrmService = {
   },
 
   async createDeal(deal: DealInsert): Promise<Deal> {
-    const { data, error } = await supabase
-      .from("crm_deals")
-      .insert(deal)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("crm_deals").insert(deal).select().single();
 
     if (error) throw error;
     return data;
@@ -190,12 +165,12 @@ export const CrmService = {
     const leads = await this.getLeads(organizationId);
     const deals = await this.getDeals(organizationId);
 
-    const activeCustomers = customers.filter((c) => c.status === "active" || c.status === "vip").length;
+    const activeCustomers = customers.filter(
+      (c) => c.status === "active" || c.status === "vip",
+    ).length;
     const newLeads = leads.filter((l) => l.status === "new").length;
 
-    const openDeals = deals.filter(
-      (d) => d.stage !== "closed_won" && d.stage !== "closed_lost"
-    );
+    const openDeals = deals.filter((d) => d.stage !== "closed_won" && d.stage !== "closed_lost");
     const pipelineValue = openDeals.reduce((sum, d) => sum + Number(d.value), 0);
 
     const closedWon = deals.filter((d) => d.stage === "closed_won");

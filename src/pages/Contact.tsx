@@ -89,8 +89,8 @@ export function ContactPage() {
             Let's Build Together
           </h1>
           <p className="text-[20px] leading-[1.6] text-eye-text max-w-2xl mx-auto">
-            Whether you have a question about our platform, need technical
-            support, or want to explore a partnership — we're here to help.
+            Whether you have a question about our platform, need technical support, or want to
+            explore a partnership — we're here to help.
           </p>
         </section>
 
@@ -218,8 +218,10 @@ export function ContactPage() {
                 </div>
                 <h3 className="text-eye-white font-medium mb-1">Headquarters</h3>
                 <p className="text-eye-text text-sm leading-relaxed">
-                  Dubai Internet City<br />
-                  Building 1, Office 402<br />
+                  Dubai Internet City
+                  <br />
+                  Building 1, Office 402
+                  <br />
                   Dubai, UAE
                 </p>
               </div>
@@ -246,10 +248,7 @@ export function ContactPage() {
 
         {/* Back to Home */}
         <section className="max-w-[1200px] mx-auto px-6 mb-[6rem] text-center" data-fade-up>
-          <Link
-            to="/"
-            className="text-sm text-eye-text hover:text-primary-brand transition-colors"
-          >
+          <Link to="/" className="text-sm text-eye-text hover:text-primary-brand transition-colors">
             &larr; Back to Home
           </Link>
         </section>

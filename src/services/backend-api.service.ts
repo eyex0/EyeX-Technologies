@@ -280,7 +280,11 @@ export const BackendApi = {
     return apiFetch("/workspaces");
   },
 
-  async createWorkspace(data: { name: string; slug: string; description?: string }): Promise<WorkspaceRead> {
+  async createWorkspace(data: {
+    name: string;
+    slug: string;
+    description?: string;
+  }): Promise<WorkspaceRead> {
     return apiFetch("/workspaces", {
       method: "POST",
       body: JSON.stringify(data),
@@ -306,14 +310,21 @@ export const BackendApi = {
     return apiFetch(`/workspaces/${workspaceId}/members`);
   },
 
-  async addMember(workspaceId: string, data: { user_id: string; role: string }): Promise<WorkspaceMemberRead> {
+  async addMember(
+    workspaceId: string,
+    data: { user_id: string; role: string },
+  ): Promise<WorkspaceMemberRead> {
     return apiFetch(`/workspaces/${workspaceId}/members`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
-  async updateMember(workspaceId: string, memberId: string, data: { role: string }): Promise<WorkspaceMemberRead> {
+  async updateMember(
+    workspaceId: string,
+    memberId: string,
+    data: { role: string },
+  ): Promise<WorkspaceMemberRead> {
     return apiFetch(`/workspaces/${workspaceId}/members/${memberId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -329,7 +340,11 @@ export const BackendApi = {
     return apiFetch(`/workspaces/${workspaceId}/agents`);
   },
 
-  async updateAgentConfig(workspaceId: string, configId: string, data: Record<string, unknown>): Promise<AgentConfigRead> {
+  async updateAgentConfig(
+    workspaceId: string,
+    configId: string,
+    data: Record<string, unknown>,
+  ): Promise<AgentConfigRead> {
     return apiFetch(`/workspaces/${workspaceId}/agents/${configId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -337,7 +352,12 @@ export const BackendApi = {
   },
 
   /* Tasks */
-  async listTasks(workspaceId: string, page = 1, perPage = 20, status?: string): Promise<TaskExecutionList> {
+  async listTasks(
+    workspaceId: string,
+    page = 1,
+    perPage = 20,
+    status?: string,
+  ): Promise<TaskExecutionList> {
     let path = `/workspaces/${workspaceId}/tasks?page=${page}&per_page=${perPage}`;
     if (status) path += `&status=${status}`;
     return apiFetch(path);
@@ -372,7 +392,10 @@ export const BackendApi = {
     return apiFetch("/billing/subscription");
   },
 
-  async createSubscription(data: { plan_id: string; billing_interval: string }): Promise<SubscriptionRead> {
+  async createSubscription(data: {
+    plan_id: string;
+    billing_interval: string;
+  }): Promise<SubscriptionRead> {
     return apiFetch("/billing/subscription", {
       method: "POST",
       body: JSON.stringify(data),
@@ -431,14 +454,19 @@ export const BackendApi = {
 };
 
 /* Activity WebSocket */
-export async function createActivitySocket(workspaceId: string, onEvent: (event: Record<string, unknown>) => void): Promise<WebSocket> {
+export async function createActivitySocket(
+  workspaceId: string,
+  onEvent: (event: Record<string, unknown>) => void,
+): Promise<WebSocket> {
   const token = await getAuthToken();
   const wsBase = BASE_URL.replace(/^http/, "ws");
   const ws = new WebSocket(`${wsBase}/ws/activity/${workspaceId}?token=${token}`);
   ws.onmessage = (msg) => {
     try {
       onEvent(JSON.parse(msg.data));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   };
   return ws;
 }

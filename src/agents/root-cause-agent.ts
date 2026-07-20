@@ -22,7 +22,14 @@ const RCA_SCHEMA = {
     },
     summary: { type: "string" },
   },
-  required: ["rootCause", "confidence", "contributingFactors", "impact", "recommendations", "summary"],
+  required: [
+    "rootCause",
+    "confidence",
+    "contributingFactors",
+    "impact",
+    "recommendations",
+    "summary",
+  ],
 };
 
 export class RootCauseAgent extends BaseAgent {
@@ -40,8 +47,10 @@ export class RootCauseAgent extends BaseAgent {
 Perform a root cause analysis on the reported anomaly or issue. Be specific and actionable.`;
       const result = await this.generateStructured<Record<string, unknown>>(prompt, RCA_SCHEMA);
       return this.success(result.summary as string, result);
-    } catch (err: any) {
-      return this.error(`Root cause analysis failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `Root cause analysis failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

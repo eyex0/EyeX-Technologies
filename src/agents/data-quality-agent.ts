@@ -45,8 +45,10 @@ Assess the quality of the provided data. Score 0-100 and list all issues found.`
         `Data quality score: ${result.score}/100 — ${(result.issues as unknown[]).length} issues found`,
         result,
       );
-    } catch (err: any) {
-      return this.error(`Data quality check failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `Data quality check failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

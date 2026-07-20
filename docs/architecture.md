@@ -67,10 +67,12 @@ AgentOrchestrator
 ```
 
 All agents extend `BaseAgent` from `packages/agents/src/base.ts` and implement:
+
 - `run(context: AgentContext): Promise<AgentOutput>`
 - `getName(): string`
 
 The orchestrator manages:
+
 - Execution plans via the Planner
 - Result evaluation via the Evaluator
 - Session state via Memory

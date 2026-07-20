@@ -1,27 +1,81 @@
 import { useState, type ReactNode } from "react";
 import {
-  DollarSign, TrendingUp, Users, Rocket, LineChart,
-  Sparkles, Clock, Zap, Pin, FileText, MessageSquare,
-  Folder, Tag, Search, Table, Eye, User, TrendingDown,
-  Activity, BarChart3, AlertTriangle, CheckCircle, Package,
-  Calendar, ShoppingBag, Receipt, Award, UserPlus, MousePointerClick,
-  GitBranch, Briefcase, Smile, Gem, Ban,
+  DollarSign,
+  TrendingUp,
+  Users,
+  Rocket,
+  LineChart,
+  Sparkles,
+  Clock,
+  Zap,
+  Pin,
+  FileText,
+  MessageSquare,
+  Folder,
+  Tag,
+  Search,
+  Table,
+  Eye,
+  User,
+  TrendingDown,
+  Activity,
+  BarChart3,
+  AlertTriangle,
+  CheckCircle,
+  Package,
+  Calendar,
+  ShoppingBag,
+  Receipt,
+  Award,
+  UserPlus,
+  MousePointerClick,
+  GitBranch,
+  Briefcase,
+  Smile,
+  Gem,
+  Ban,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
-  payments: DollarSign, trending_up: TrendingUp, groups: Users,
-  rocket_launch: Rocket, show_chart: LineChart, auto_awesome: Sparkles,
-  history: Clock, bolt: Zap, push_pin: Pin, description: FileText,
-  chat: MessageSquare, folder: Folder, sell: Tag, search: Search,
-  table_rows: Table, visibility: Eye, person: User,
-  schedule: Clock, call_missed: TrendingDown,
-  activity: Activity, bar_chart: BarChart3, warning: AlertTriangle,
-  check_circle: CheckCircle, package: Package, inventory_2: Package,
-  event: Calendar, shopping_bag: ShoppingBag, receipt: Receipt,
-  emoji_events: Award, person_add: UserPlus, ads_click: MousePointerClick,
-  conversion_path: GitBranch, workspace_premium: Award, work: Briefcase,
-  sentiment_satisfied: Smile, diamond: Gem, block: Ban, savings: DollarSign,
+  payments: DollarSign,
+  trending_up: TrendingUp,
+  groups: Users,
+  rocket_launch: Rocket,
+  show_chart: LineChart,
+  auto_awesome: Sparkles,
+  history: Clock,
+  bolt: Zap,
+  push_pin: Pin,
+  description: FileText,
+  chat: MessageSquare,
+  folder: Folder,
+  sell: Tag,
+  search: Search,
+  table_rows: Table,
+  visibility: Eye,
+  person: User,
+  schedule: Clock,
+  call_missed: TrendingDown,
+  activity: Activity,
+  bar_chart: BarChart3,
+  warning: AlertTriangle,
+  check_circle: CheckCircle,
+  package: Package,
+  inventory_2: Package,
+  event: Calendar,
+  shopping_bag: ShoppingBag,
+  receipt: Receipt,
+  emoji_events: Award,
+  person_add: UserPlus,
+  ads_click: MousePointerClick,
+  conversion_path: GitBranch,
+  workspace_premium: Award,
+  work: Briefcase,
+  sentiment_satisfied: Smile,
+  diamond: Gem,
+  block: Ban,
+  savings: DollarSign,
 };
 
 export function Kpi({
@@ -92,18 +146,26 @@ export function Card({
   );
 }
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
   columns,
   rows,
   onRowClick,
 }: {
-  columns: { key: keyof T; label: string; align?: "left" | "right"; render?: (row: T) => ReactNode }[];
+  columns: {
+    key: keyof T;
+    label: string;
+    align?: "left" | "right";
+    render?: (row: T) => ReactNode;
+  }[];
   rows: T[];
   onRowClick?: (row: T) => void;
 }) {
   return (
     <div className="w-full">
-      <div className="grid gap-4 px-5 py-3 border-b border-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider bg-background" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}>
+      <div
+        className="grid gap-4 px-5 py-3 border-b border-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider bg-background"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+      >
         {columns.map((c) => (
           <div key={String(c.key)} className={c.align === "right" ? "text-right" : ""}>
             {c.label}
@@ -121,7 +183,10 @@ export function DataTable<T extends Record<string, any>>({
             style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
           >
             {columns.map((c) => (
-              <div key={String(c.key)} className={`${c.align === "right" ? "text-right font-mono text-muted-foreground" : "text-white truncate"}`}>
+              <div
+                key={String(c.key)}
+                className={`${c.align === "right" ? "text-right font-mono text-muted-foreground" : "text-white truncate"}`}
+              >
                 {c.render ? c.render(row) : String(row[c.key] ?? "")}
               </div>
             ))}
@@ -160,7 +225,13 @@ export function Tabs({
   );
 }
 
-export function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "success" | "warn" | "danger" | "info" }) {
+export function Badge({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "neutral" | "success" | "warn" | "danger" | "info";
+}) {
   const map: Record<string, string> = {
     neutral: "bg-white/5 text-white border-border",
     success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -169,7 +240,9 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
     info: "bg-sky-500/10 text-sky-400 border-sky-500/20",
   };
   return (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-mono border ${map[tone]}`}>
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-mono border ${map[tone]}`}
+    >
       {children}
     </span>
   );

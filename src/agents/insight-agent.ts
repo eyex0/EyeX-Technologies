@@ -42,9 +42,11 @@ export class InsightAgent extends BaseAgent {
       const prompt = `${this.formatContext(context)}
 Generate business insights from the data. Highlight what matters most.`;
       const result = await this.generateStructured<Record<string, unknown>>(prompt, INSIGHT_SCHEMA);
-      return this.success(result.summary as string || "Insights generated", result);
-    } catch (err: any) {
-      return this.error(`Insight generation failed: ${err.message}`);
+      return this.success((result.summary as string) || "Insights generated", result);
+    } catch (err) {
+      return this.error(
+        `Insight generation failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

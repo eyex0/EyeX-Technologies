@@ -55,41 +55,61 @@ export function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
           <div className="flex justify-between items-start">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Agent Tasks</span>
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              Agent Tasks
+            </span>
             <Activity size={18} className="text-muted-foreground" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : taskTotal.toLocaleString()}</span>
+            <span className="text-2xl font-semibold tracking-tight text-white">
+              {statsLoading ? "—" : taskTotal.toLocaleString()}
+            </span>
             <span className="text-[10px] font-mono text-emerald-400">+{taskToday} today</span>
           </div>
         </div>
         <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
           <div className="flex justify-between items-start">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Success Rate</span>
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              Success Rate
+            </span>
             <CheckCircle size={18} className="text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : `${successRate}%`}</span>
-            {statsLoading ? null : successRate >= 80 ? <span className="text-[10px] font-mono text-emerald-400">Healthy</span> : <span className="text-[10px] font-mono text-amber-400">Needs attention</span>}
+            <span className="text-2xl font-semibold tracking-tight text-white">
+              {statsLoading ? "—" : `${successRate}%`}
+            </span>
+            {statsLoading ? null : successRate >= 80 ? (
+              <span className="text-[10px] font-mono text-emerald-400">Healthy</span>
+            ) : (
+              <span className="text-[10px] font-mono text-amber-400">Needs attention</span>
+            )}
           </div>
         </div>
         <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
           <div className="flex justify-between items-start">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Active Agents</span>
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              Active Agents
+            </span>
             <Cpu size={18} className="text-sky-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : agentCount}</span>
+            <span className="text-2xl font-semibold tracking-tight text-white">
+              {statsLoading ? "—" : agentCount}
+            </span>
             <span className="text-[10px] font-mono text-muted-foreground">online</span>
           </div>
         </div>
         <div className="bento-card rounded-lg p-5 flex flex-col justify-between h-[120px]">
           <div className="flex justify-between items-start">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Tokens Used</span>
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              Tokens Used
+            </span>
             <Clock size={18} className="text-muted-foreground" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold tracking-tight text-white">{statsLoading ? "—" : tokensUsed.toLocaleString()}</span>
+            <span className="text-2xl font-semibold tracking-tight text-white">
+              {statsLoading ? "—" : tokensUsed.toLocaleString()}
+            </span>
           </div>
         </div>
       </div>
@@ -103,38 +123,63 @@ export function DashboardPage() {
               <Activity size={16} className="text-muted-foreground" />
               Recent Agent Activity
             </h2>
-            <span className="text-[10px] font-mono text-muted-foreground">{recentTasks.length} events</span>
+            <span className="text-[10px] font-mono text-muted-foreground">
+              {recentTasks.length} events
+            </span>
           </div>
           <div className="bg-background">
             {statsLoading ? (
               <div className="p-6 space-y-4">
-                {[...Array(5)].map((_, i) => <SkeletonLine key={i} />)}
+                {[...Array(5)].map((_, i) => (
+                  <SkeletonLine key={i} />
+                ))}
               </div>
             ) : recentTasks.length > 0 ? (
               <div className="divide-y divide-border">
                 {recentTasks.map((task) => (
-                  <div key={task.id} className="px-5 py-3 flex items-center justify-between hover:bg-secondary/40 transition-colors">
+                  <div
+                    key={task.id}
+                    className="px-5 py-3 flex items-center justify-between hover:bg-secondary/40 transition-colors"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-sm ${
-                        task.status === "completed" ? "bg-emerald-400" :
-                        task.status === "failed" ? "bg-rose-400" :
-                        task.status === "running" ? "bg-sky-400" : "bg-amber-400"
-                      }`} />
+                      <div
+                        className={`w-2 h-2 rounded-sm ${
+                          task.status === "completed"
+                            ? "bg-emerald-400"
+                            : task.status === "failed"
+                              ? "bg-rose-400"
+                              : task.status === "running"
+                                ? "bg-sky-400"
+                                : "bg-amber-400"
+                        }`}
+                      />
                       <div>
-                        <span className="text-xs text-white font-medium">{task.agent_role ?? "Agent"}</span>
+                        <span className="text-xs text-white font-medium">
+                          {task.agent_role ?? "Agent"}
+                        </span>
                         <span className="text-[10px] text-muted-foreground ml-2 font-mono">
                           {task.created_at ? new Date(task.created_at).toLocaleTimeString() : ""}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge tone={
-                        task.status === "completed" ? "success" :
-                        task.status === "failed" ? "danger" :
-                        task.status === "running" ? "info" : "warn"
-                      }>{task.status}</Badge>
+                      <Badge
+                        tone={
+                          task.status === "completed"
+                            ? "success"
+                            : task.status === "failed"
+                              ? "danger"
+                              : task.status === "running"
+                                ? "info"
+                                : "warn"
+                        }
+                      >
+                        {task.status}
+                      </Badge>
                       {task.duration_ms != null && (
-                        <span className="text-[10px] font-mono text-muted-foreground">{task.duration_ms}ms</span>
+                        <span className="text-[10px] font-mono text-muted-foreground">
+                          {task.duration_ms}ms
+                        </span>
                       )}
                     </div>
                   </div>
@@ -163,19 +208,28 @@ export function DashboardPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">Uptime</span>
-                  <span className="text-xs font-mono text-white">{Math.floor(systemStatus.uptime_seconds / 3600)}h {Math.floor((systemStatus.uptime_seconds % 3600) / 60)}m</span>
+                  <span className="text-xs font-mono text-white">
+                    {Math.floor(systemStatus.uptime_seconds / 3600)}h{" "}
+                    {Math.floor((systemStatus.uptime_seconds % 3600) / 60)}m
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">Active Sessions</span>
-                  <span className="text-xs font-mono text-white">{systemStatus.sessions_active}</span>
+                  <span className="text-xs font-mono text-white">
+                    {systemStatus.sessions_active}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">Workflows Completed</span>
-                  <span className="text-xs font-mono text-white">{systemStatus.workflows_completed}</span>
+                  <span className="text-xs font-mono text-white">
+                    {systemStatus.workflows_completed}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">Workflows Failed</span>
-                  <span className="text-xs font-mono text-rose-400">{systemStatus.workflows_failed}</span>
+                  <span className="text-xs font-mono text-rose-400">
+                    {systemStatus.workflows_failed}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">Tools Available</span>
@@ -183,7 +237,9 @@ export function DashboardPage() {
                 </div>
               </>
             ) : (
-              <div className="flex justify-center py-4"><Loader2 className="animate-spin text-muted-foreground" size={16} /></div>
+              <div className="flex justify-center py-4">
+                <Loader2 className="animate-spin text-muted-foreground" size={16} />
+              </div>
             )}
           </div>
         </div>
@@ -208,7 +264,9 @@ export function DashboardPage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs text-muted-foreground">Monthly Tasks</span>
-              <span className="text-sm font-semibold text-white">{usage?.tasks_this_month.toLocaleString() ?? "—"}</span>
+              <span className="text-sm font-semibold text-white">
+                {usage?.tasks_this_month.toLocaleString() ?? "—"}
+              </span>
             </div>
           </div>
         </Card>
@@ -218,15 +276,21 @@ export function DashboardPage() {
           <div className="p-5 space-y-3">
             <div className="flex justify-between items-center border-b border-border pb-3">
               <span className="text-xs text-muted-foreground">Total Tasks</span>
-              <span className="text-sm font-semibold text-white">{usage?.total_tasks.toLocaleString() ?? "—"}</span>
+              <span className="text-sm font-semibold text-white">
+                {usage?.total_tasks.toLocaleString() ?? "—"}
+              </span>
             </div>
             <div className="flex justify-between items-center border-b border-border pb-3">
               <span className="text-xs text-muted-foreground">Total Tokens</span>
-              <span className="text-sm font-semibold text-white">{usage?.total_tokens.toLocaleString() ?? "—"}</span>
+              <span className="text-sm font-semibold text-white">
+                {usage?.total_tokens.toLocaleString() ?? "—"}
+              </span>
             </div>
             <div className="flex justify-between items-center border-b border-border pb-3">
               <span className="text-xs text-muted-foreground">Total Cost</span>
-              <span className="text-sm font-semibold text-white">${usage?.total_cost.toFixed(2) ?? "0.00"}</span>
+              <span className="text-sm font-semibold text-white">
+                ${usage?.total_cost.toFixed(2) ?? "0.00"}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs text-muted-foreground">Active Members</span>
@@ -239,25 +303,39 @@ export function DashboardPage() {
         <Card title="Agent Performance">
           <div className="p-5">
             {statsLoading ? (
-              <div className="space-y-3"><SkeletonLine /><SkeletonLine /><SkeletonLine /></div>
+              <div className="space-y-3">
+                <SkeletonLine />
+                <SkeletonLine />
+                <SkeletonLine />
+              </div>
             ) : (
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-muted-foreground">Avg Duration</span>
-                    <span className="text-white font-mono">{Math.round(stats?.avg_duration_ms ?? 0)}ms</span>
+                    <span className="text-white font-mono">
+                      {Math.round(stats?.avg_duration_ms ?? 0)}ms
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
-                    <div className="h-full bg-white/60 rounded-full" style={{ width: `${Math.min((stats?.avg_duration_ms ?? 0) / 20, 100)}%` }} />
+                    <div
+                      className="h-full bg-white/60 rounded-full"
+                      style={{ width: `${Math.min((stats?.avg_duration_ms ?? 0) / 20, 100)}%` }}
+                    />
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-muted-foreground">Tasks This Month</span>
-                    <span className="text-white font-mono">{stats?.tasks_this_month.toLocaleString() ?? 0}</span>
+                    <span className="text-white font-mono">
+                      {stats?.tasks_this_month.toLocaleString() ?? 0}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400/60 rounded-full" style={{ width: `${Math.min((stats?.tasks_this_month ?? 0) / 5, 100)}%` }} />
+                    <div
+                      className="h-full bg-emerald-400/60 rounded-full"
+                      style={{ width: `${Math.min((stats?.tasks_this_month ?? 0) / 5, 100)}%` }}
+                    />
                   </div>
                 </div>
                 <div>
@@ -266,7 +344,10 @@ export function DashboardPage() {
                     <span className="text-white font-mono">{successRate}%</span>
                   </div>
                   <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${successRate}%` }} />
+                    <div
+                      className="h-full bg-emerald-400 rounded-full"
+                      style={{ width: `${successRate}%` }}
+                    />
                   </div>
                 </div>
               </div>

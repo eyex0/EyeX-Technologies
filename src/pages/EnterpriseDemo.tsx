@@ -2,17 +2,49 @@ import { useState, useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Card, Badge } from "@/components/common/primitives";
 import { toast } from "sonner";
-import { Loader2, Play, Building2, TrendingUp, Shield, Lightbulb, Activity, ChevronRight, CheckCircle2, AlertTriangle, BarChart3 } from "lucide-react";
+import {
+  Loader2,
+  Play,
+  Building2,
+  TrendingUp,
+  Shield,
+  Lightbulb,
+  Activity,
+  ChevronRight,
+  CheckCircle2,
+  AlertTriangle,
+  BarChart3,
+} from "lucide-react";
 
 const DEMO_STEPS = [
-  { key: "problem", label: "1. Problem", icon: AlertTriangle, description: "Detect business problems" },
-  { key: "analysis", label: "2. Analysis", icon: BarChart3, description: "AI analyzes company data" },
-  { key: "executive", label: "3. Exec Team", icon: Building2, description: "CEO → CFO → COO → Risk" },
-  { key: "recommendations", label: "4. Recommendations", icon: Lightbulb, description: "Actionable insights" },
+  {
+    key: "problem",
+    label: "1. Problem",
+    icon: AlertTriangle,
+    description: "Detect business problems",
+  },
+  {
+    key: "analysis",
+    label: "2. Analysis",
+    icon: BarChart3,
+    description: "AI analyzes company data",
+  },
+  {
+    key: "executive",
+    label: "3. Exec Team",
+    icon: Building2,
+    description: "CEO → CFO → COO → Risk",
+  },
+  {
+    key: "recommendations",
+    label: "4. Recommendations",
+    icon: Lightbulb,
+    description: "Actionable insights",
+  },
   { key: "impact", label: "5. Impact", icon: TrendingUp, description: "Business value delivered" },
 ];
 
-type StepData = Record<string, any>;
+type StepData = Record<string, unknown>;
 
 export function EnterpriseDemoPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -28,7 +60,9 @@ export function EnterpriseDemoPage() {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `org_id=${orgId}`,
-    }).then(r => r.ok ? setSeeded(true) : null).catch(() => {});
+    })
+      .then((r) => (r.ok ? setSeeded(true) : null))
+      .catch(() => {});
   }, [orgId, seeded]);
 
   const runStep = async (step: string) => {
@@ -41,8 +75,8 @@ export function EnterpriseDemoPage() {
       });
       if (!resp.ok) throw new Error(`Step ${step} failed`);
       const data = await resp.json();
-      setStepData(prev => ({ ...prev, [step]: data }));
-      toast.success(`Step ${DEMO_STEPS.find(s => s.key === step)?.label} completed`);
+      setStepData((prev) => ({ ...prev, [step]: data }));
+      toast.success(`Step ${DEMO_STEPS.find((s) => s.key === step)?.label} completed`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Demo step failed");
     } finally {
@@ -55,7 +89,7 @@ export function EnterpriseDemoPage() {
     for (let i = 0; i < DEMO_STEPS.length; i++) {
       setCurrentStep(i);
       await runStep(DEMO_STEPS[i].key);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500));
     }
   };
 
@@ -63,46 +97,61 @@ export function EnterpriseDemoPage() {
     if (!demoStarted) return null;
     const step = DEMO_STEPS[currentStep];
     const data = stepData[step?.key || ""];
-    if (!data) return <div className="p-8 text-center text-muted-foreground text-sm">Waiting for step...</div>;
+    if (!data)
+      return (
+        <div className="p-8 text-center text-muted-foreground text-sm">Waiting for step...</div>
+      );
 
     switch (step?.key) {
       case "problem":
         return (
           <div className="space-y-4">
-            {data.problems?.map((p: any, i: number) => (
-              <div key={i} className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge tone="danger">{p.area}</Badge>
-                  <span className="text-xs font-medium text-white">{p.problem}</span>
+            {data.problems?.map(
+              (p: { area?: string; problem?: string; impact?: string }, i: number) => (
+                <div key={i} className="border border-border rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge tone="danger">{p.area}</Badge>
+                    <span className="text-xs font-medium text-white">{p.problem}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">{p.impact}</p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">{p.impact}</p>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         );
       case "analysis":
         return (
           <div className="space-y-2">
-            {data.metrics && Object.entries(data.metrics).slice(0, 12).map(([k, v]: [string, any]) => (
-              <div key={k} className="flex justify-between border-b border-border/50 py-1.5 text-xs">
-                <span className="text-muted-foreground">{k.replace(/_/g, " ")}</span>
-                <span className="text-white font-mono">{v}</span>
-              </div>
-            ))}
+            {data.metrics &&
+              Object.entries(data.metrics)
+                .slice(0, 12)
+                .map(([k, v]: [string, unknown]) => (
+                  <div
+                    key={k}
+                    className="flex justify-between border-b border-border/50 py-1.5 text-xs"
+                  >
+                    <span className="text-muted-foreground">{k.replace(/_/g, " ")}</span>
+                    <span className="text-white font-mono">{v}</span>
+                  </div>
+                ))}
           </div>
         );
       case "executive":
         return (
           <div className="space-y-4">
-            {["ceo", "cfo", "coo", "risk"].map(agent => {
+            {["ceo", "cfo", "coo", "risk"].map((agent) => {
               const result = data[agent];
               if (!result) return null;
               return (
                 <div key={agent} className="border border-border rounded-lg p-4">
-                  <div className="text-xs font-bold uppercase tracking-wider text-primary-brand mb-2">{agent.toUpperCase()}</div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-primary-brand mb-2">
+                    {agent.toUpperCase()}
+                  </div>
                   <div className="text-xs text-muted-foreground">
-                    {result.strategic_vision || result.financial_health_assessment ||
-                     result.operational_efficiency || `Risk Score: ${(result.overall_risk_score * 100).toFixed(0)}%`}
+                    {result.strategic_vision ||
+                      result.financial_health_assessment ||
+                      result.operational_efficiency ||
+                      `Risk Score: ${(result.overall_risk_score * 100).toFixed(0)}%`}
                   </div>
                 </div>
               );
@@ -112,47 +161,72 @@ export function EnterpriseDemoPage() {
       case "recommendations":
         return (
           <div className="space-y-3">
-            {data.insights?.map((ins: any, i: number) => (
-              <div key={i} className="flex items-start gap-3 border border-border rounded-lg p-4">
-                <div className={`w-2 h-2 rounded-full mt-1.5 ${
-                  ins.severity === "critical" || ins.severity === "high" ? "bg-red-400" :
-                  ins.severity === "medium" ? "bg-amber-400" : "bg-emerald-400"
-                }`} />
-                <div>
-                  <div className="text-xs font-medium text-white">{ins.title}</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{ins.description}</div>
+            {data.insights?.map(
+              (ins: { title?: string; severity?: string; description?: string }, i: number) => (
+                <div key={i} className="flex items-start gap-3 border border-border rounded-lg p-4">
+                  <div
+                    className={`w-2 h-2 rounded-full mt-1.5 ${
+                      ins.severity === "critical" || ins.severity === "high"
+                        ? "bg-red-400"
+                        : ins.severity === "medium"
+                          ? "bg-amber-400"
+                          : "bg-emerald-400"
+                    }`}
+                  />
+                  <div>
+                    <div className="text-xs font-medium text-white">{ins.title}</div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                      {ins.description}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         );
-      case "impact":
-        const a = data.analytics || {};
+      case "impact": {
+        const a = (data.analytics as Record<string, number | undefined>) || {};
         return (
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-border rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-white">{a.problems_detected?.total || 0}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Problems Detected</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                Problems Detected
+              </div>
             </div>
             <div className="border border-border rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white">{a.recommendations_generated?.total || 0}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Recommendations</div>
+              <div className="text-2xl font-bold text-white">
+                {a.recommendations_generated?.total || 0}
+              </div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                Recommendations
+              </div>
             </div>
             <div className="border border-border rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white">{a.estimated_time_saved_hours || 0}h</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Time Saved</div>
+              <div className="text-2xl font-bold text-white">
+                {a.estimated_time_saved_hours || 0}h
+              </div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                Time Saved
+              </div>
             </div>
             <div className="border border-border rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-white">{a.business_impact_score || 0}%</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Impact Score</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                Impact Score
+              </div>
             </div>
           </div>
         );
+      }
     }
   };
 
   return (
-    <AppShell title="Enterprise Demo" subtitle="See EyeX in action with a realistic company scenario">
+    <AppShell
+      title="Enterprise Demo"
+      subtitle="See EyeX in action with a realistic company scenario"
+    >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Demo Steps */}
         <div className="lg:col-span-1">
@@ -188,7 +262,9 @@ export function EnterpriseDemoPage() {
                         )}
                         <div>
                           <div className="text-white font-medium">{step.label}</div>
-                          <div className="text-[10px] text-muted-foreground">{step.description}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {step.description}
+                          </div>
                         </div>
                       </div>
                     );
@@ -197,9 +273,13 @@ export function EnterpriseDemoPage() {
               )}
 
               <div className="mt-4 pt-4 border-t border-border">
-                <div className="text-[10px] text-muted-foreground font-mono">Company: NovaPay Technologies</div>
+                <div className="text-[10px] text-muted-foreground font-mono">
+                  Company: NovaPay Technologies
+                </div>
                 <div className="text-[10px] text-muted-foreground font-mono">Industry: Fintech</div>
-                <div className="text-[10px] text-muted-foreground font-mono">Stage: Series A ($8.5M raised)</div>
+                <div className="text-[10px] text-muted-foreground font-mono">
+                  Stage: Series A ($8.5M raised)
+                </div>
               </div>
             </div>
           </Card>
@@ -215,10 +295,12 @@ export function EnterpriseDemoPage() {
                 <div className="text-center py-12">
                   <Play size={48} className="mx-auto mb-4 text-muted-foreground/30" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    Experience the full EyeX platform with NovaPay — a realistic fintech company scenario
+                    Experience the full EyeX platform with NovaPay — a realistic fintech company
+                    scenario
                   </p>
                   <p className="text-xs text-muted-foreground/60">
-                    Watch as EyeX detects problems, analyzes data, runs the AI executive team, generates recommendations, and measures business impact
+                    Watch as EyeX detects problems, analyzes data, runs the AI executive team,
+                    generates recommendations, and measures business impact
                   </p>
                 </div>
               )}

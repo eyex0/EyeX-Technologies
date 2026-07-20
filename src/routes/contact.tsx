@@ -5,9 +5,17 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact EyeX Technologies" },
-      { name: "description", content: "Get in touch with EyeX Technologies. Reach out for partnerships, support, or general inquiries." },
+      {
+        name: "description",
+        content:
+          "Get in touch with EyeX Technologies. Reach out for partnerships, support, or general inquiries.",
+      },
       { property: "og:title", content: "Contact EyeX Technologies" },
-      { property: "og:description", content: "Get in touch with EyeX Technologies. Reach out for partnerships, support, or general inquiries." },
+      {
+        property: "og:description",
+        content:
+          "Get in touch with EyeX Technologies. Reach out for partnerships, support, or general inquiries.",
+      },
     ],
   }),
   component: ContactPage,

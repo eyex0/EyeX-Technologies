@@ -81,57 +81,159 @@ export function FinancePage() {
     transaction_date: t.transaction_date ? formatDate(t.transaction_date) : "—",
   }));
 
-  return <ModulePage title="Finance" subtitle="Revenue · Expenses · Forecast" tabs={[
-    { key: "over", label: "Overview", render: () => (
-      <>
-        <KpiRow items={[
-          { label: "Revenue", value: summary.isLoading ? "—" : formatCurrency(s?.totalRevenue ?? 0), delta: `${formatCurrency(s?.netIncome ?? 0)} net`, icon: "payments" },
-          { label: "Expenses", value: summary.isLoading ? "—" : formatCurrency(s?.totalExpenses ?? 0), icon: "trending_down" },
-          { label: "Profit", value: summary.isLoading ? "—" : formatCurrency(s?.netIncome ?? 0), icon: "savings" },
-          { label: "Invoices", value: summary.isLoading ? "—" : `${s?.pendingInvoices ?? 0} pending`, delta: `${s?.overdueInvoices ?? 0} overdue`, icon: "schedule" },
-        ]}/>
-        <Card title="Cash flow — recent transactions">
-          {transactions.isLoading ? (
-            <div className="space-y-3 p-5">{Array.from({ length: 5 }).map((_, i) => <div key={i}>{SKELETON}</div>)}</div>
-          ) : txRows.length === 0 ? <EmptyState /> : (
-            <BarChart data={txRows.slice(0, 12).map((t, i) => ({ label: t.category || `TX${i + 1}`, value: Math.abs(parseFloat(t.amount.replace(/[$K,M]/g, "")) * (t.amount.includes("M") ? 1000000 : t.amount.includes("K") ? 1000 : 1)) }))} />
-          )}
-        </Card>
-      </>
-    )},
-    { key: "inv", label: "Invoices", render: () => (
-      invoices.isLoading ? (
-        <div className="space-y-3 p-5">{Array.from({ length: 5 }).map((_, i) => <div key={i}>{SKELETON}</div>)}</div>
-      ) : invoiceRows.length === 0 ? <EmptyState /> : (
-        <TableCard title="Invoices" columns={[
-          { key: "invoice_number", label: "Invoice" },{ key: "customer_name", label: "Customer" },{ key: "amount", label: "Amount" },
-          { key: "status", label: "Status", render: (r: typeof invoiceRows[number]) => <Badge tone={statusTone(r.status)}>{r.status}</Badge> },
-          { key: "due_date", label: "Due", align: "right" },
-        ]} rows={invoiceRows} />
-      )
-    )},
-    { key: "bud", label: "Budgets", render: () => (
-      budgets.isLoading ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="bento-card rounded-lg p-5 space-y-3">{Array.from({ length: 3 }).map((_, j) => <div key={j}>{SKELETON}</div>)}</div>)}</div>
-      ) : budgetRows.length === 0 ? <EmptyState /> : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {budgetRows.map((b) => (
-            <div key={b.department + b.category} className="bento-card rounded-lg p-5">
-              <div className="flex justify-between mb-3"><span className="text-white text-sm">{b.department}</span><span className="text-muted-foreground text-xs font-mono">{b.allocated}</span></div>
-              <div className="h-1 bg-border rounded"><div className="h-full bg-white" style={{width:`${Math.min(b.pct, 100)}%`}}/></div>
-              <div className="text-[10px] font-mono text-muted-foreground uppercase mt-2">{b.pct}% used</div>
-            </div>
-          ))}
-        </div>
-      )
-    )},
-    { key: "rep", label: "Reports", render: () => (
-      <Card title="Financial reports">
-        <p className="text-sm text-[#A1A1AA] p-5">Connect a reporting tool to generate financial reports.</p>
-      </Card>
-    )},
-    { key: "fcst", label: "Forecast", render: () => (
-      <Card title="Revenue forecast"><BarChart data={["Q1","Q2","Q3","Q4"].map((l,i)=>({label:l,value:20+i*15}))}/></Card>
-    )},
-  ]}/>;
+  return (
+    <ModulePage
+      title="Finance"
+      subtitle="Revenue · Expenses · Forecast"
+      tabs={[
+        {
+          key: "over",
+          label: "Overview",
+          render: () => (
+            <>
+              <KpiRow
+                items={[
+                  {
+                    label: "Revenue",
+                    value: summary.isLoading ? "—" : formatCurrency(s?.totalRevenue ?? 0),
+                    delta: `${formatCurrency(s?.netIncome ?? 0)} net`,
+                    icon: "payments",
+                  },
+                  {
+                    label: "Expenses",
+                    value: summary.isLoading ? "—" : formatCurrency(s?.totalExpenses ?? 0),
+                    icon: "trending_down",
+                  },
+                  {
+                    label: "Profit",
+                    value: summary.isLoading ? "—" : formatCurrency(s?.netIncome ?? 0),
+                    icon: "savings",
+                  },
+                  {
+                    label: "Invoices",
+                    value: summary.isLoading ? "—" : `${s?.pendingInvoices ?? 0} pending`,
+                    delta: `${s?.overdueInvoices ?? 0} overdue`,
+                    icon: "schedule",
+                  },
+                ]}
+              />
+              <Card title="Cash flow — recent transactions">
+                {transactions.isLoading ? (
+                  <div className="space-y-3 p-5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i}>{SKELETON}</div>
+                    ))}
+                  </div>
+                ) : txRows.length === 0 ? (
+                  <EmptyState />
+                ) : (
+                  <BarChart
+                    data={txRows.slice(0, 12).map((t, i) => ({
+                      label: t.category || `TX${i + 1}`,
+                      value: Math.abs(
+                        parseFloat(t.amount.replace(/[$K,M]/g, "")) *
+                          (t.amount.includes("M") ? 1000000 : t.amount.includes("K") ? 1000 : 1),
+                      ),
+                    }))}
+                  />
+                )}
+              </Card>
+            </>
+          ),
+        },
+        {
+          key: "inv",
+          label: "Invoices",
+          render: () =>
+            invoices.isLoading ? (
+              <div className="space-y-3 p-5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i}>{SKELETON}</div>
+                ))}
+              </div>
+            ) : invoiceRows.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <TableCard
+                title="Invoices"
+                columns={[
+                  { key: "invoice_number", label: "Invoice" },
+                  { key: "customer_name", label: "Customer" },
+                  { key: "amount", label: "Amount" },
+                  {
+                    key: "status",
+                    label: "Status",
+                    render: (r: (typeof invoiceRows)[number]) => (
+                      <Badge tone={statusTone(r.status)}>{r.status}</Badge>
+                    ),
+                  },
+                  { key: "due_date", label: "Due", align: "right" },
+                ]}
+                rows={invoiceRows}
+              />
+            ),
+        },
+        {
+          key: "bud",
+          label: "Budgets",
+          render: () =>
+            budgets.isLoading ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bento-card rounded-lg p-5 space-y-3">
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j}>{SKELETON}</div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : budgetRows.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {budgetRows.map((b) => (
+                  <div key={b.department + b.category} className="bento-card rounded-lg p-5">
+                    <div className="flex justify-between mb-3">
+                      <span className="text-white text-sm">{b.department}</span>
+                      <span className="text-muted-foreground text-xs font-mono">{b.allocated}</span>
+                    </div>
+                    <div className="h-1 bg-border rounded">
+                      <div
+                        className="h-full bg-white"
+                        style={{ width: `${Math.min(b.pct, 100)}%` }}
+                      />
+                    </div>
+                    <div className="text-[10px] font-mono text-muted-foreground uppercase mt-2">
+                      {b.pct}% used
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ),
+        },
+        {
+          key: "rep",
+          label: "Reports",
+          render: () => (
+            <Card title="Financial reports">
+              <p className="text-sm text-[#A1A1AA] p-5">
+                Connect a reporting tool to generate financial reports.
+              </p>
+            </Card>
+          ),
+        },
+        {
+          key: "fcst",
+          label: "Forecast",
+          render: () => (
+            <Card title="Revenue forecast">
+              <BarChart
+                data={["Q1", "Q2", "Q3", "Q4"].map((l, i) => ({ label: l, value: 20 + i * 15 }))}
+              />
+            </Card>
+          ),
+        },
+      ]}
+    />
+  );
 }

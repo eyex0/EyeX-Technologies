@@ -38,18 +38,19 @@ export abstract class BaseAgent {
     const parts: string[] = [];
     if (context.data && Object.keys(context.data).length > 0) {
       const serialized = JSON.stringify(context.data, null, 2);
-      const truncated = serialized.length > MAX_CONTEXT_DATA_CHARS
-        ? serialized.slice(0, MAX_CONTEXT_DATA_CHARS) + "\n... [truncated]"
-        : serialized;
+      const truncated =
+        serialized.length > MAX_CONTEXT_DATA_CHARS
+          ? serialized.slice(0, MAX_CONTEXT_DATA_CHARS) + "\n... [truncated]"
+          : serialized;
       parts.push(`Context data:\n${truncated}`);
     }
     if (context.messages.length > 0) {
       const recent = context.messages.slice(-MAX_HISTORY_MESSAGES);
-      const history = recent
-        .map((m) => `[${m.role.toUpperCase()}]: ${m.text}`)
-        .join("\n");
+      const history = recent.map((m) => `[${m.role.toUpperCase()}]: ${m.text}`).join("\n");
       if (context.messages.length > MAX_HISTORY_MESSAGES) {
-        parts.push(`Conversation history (last ${MAX_HISTORY_MESSAGES} of ${context.messages.length}):\n${history}`);
+        parts.push(
+          `Conversation history (last ${MAX_HISTORY_MESSAGES} of ${context.messages.length}):\n${history}`,
+        );
       } else {
         parts.push(`Conversation history:\n${history}`);
       }

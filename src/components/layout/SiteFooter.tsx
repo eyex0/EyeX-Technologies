@@ -29,7 +29,8 @@ export function SiteFooter() {
           <div className="col-span-2 md:col-span-1">
             <BrandMark />
             <p className="mt-4 text-xs text-eye-text font-light leading-relaxed max-w-xs">
-              The foundational intelligence infrastructure for the next generation of global enterprise.
+              The foundational intelligence infrastructure for the next generation of global
+              enterprise.
             </p>
           </div>
           {FOOTER_LINKS.map((group) => (

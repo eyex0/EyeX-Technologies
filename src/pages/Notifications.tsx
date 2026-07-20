@@ -78,9 +78,7 @@ export function NotificationsPage() {
                 className={`flex items-start gap-3 px-3 py-3 border-b border-border last:border-0 hover:bg-secondary/40 rounded ${!n.read ? "bg-secondary/20" : ""}`}
               >
                 <div className="mt-0.5">
-                  <Badge tone={TYPE_TONE[n.type] ?? "neutral"}>
-                    {n.read ? "·" : "●"}
-                  </Badge>
+                  <Badge tone={TYPE_TONE[n.type] ?? "neutral"}>{n.read ? "·" : "●"}</Badge>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-white">{n.title}</div>

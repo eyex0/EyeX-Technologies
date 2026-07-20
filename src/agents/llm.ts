@@ -11,9 +11,7 @@ function getClient(): GoogleGenAI {
   if (!client) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error(
-        "GEMINI_API_KEY is not set. Configure it in .env or environment variables."
-      );
+      throw new Error("GEMINI_API_KEY is not set. Configure it in .env or environment variables.");
     }
     client = new GoogleGenAI({
       apiKey,
@@ -43,10 +41,7 @@ export interface LLMConfig {
   responseSchema?: Record<string, unknown>;
 }
 
-export async function generateText(
-  prompt: string,
-  config: LLMConfig = {},
-): Promise<string> {
+export async function generateText(prompt: string, config: LLMConfig = {}): Promise<string> {
   const model = config.model || DEFAULT_MODEL;
   validateModel(model);
 

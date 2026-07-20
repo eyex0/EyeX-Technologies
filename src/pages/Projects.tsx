@@ -90,7 +90,15 @@ export function ProjectsPage() {
                     key: "priority",
                     label: "Priority",
                     render: (r: (typeof tasks)[number]) => (
-                      <Badge tone={r.priority === "high" ? "warn" : r.priority === "medium" ? "info" : "neutral"}>
+                      <Badge
+                        tone={
+                          r.priority === "high"
+                            ? "warn"
+                            : r.priority === "medium"
+                              ? "info"
+                              : "neutral"
+                        }
+                      >
                         {r.priority}
                       </Badge>
                     ),
@@ -171,12 +179,17 @@ export function ProjectsPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {kanbanCols.map((col) => (
                   <div key={col} className="bento-card rounded-lg p-4">
-                    <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">{col}</div>
+                    <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">
+                      {col}
+                    </div>
                     <div className="space-y-2">
                       {projects
                         .filter((p) => p.status === col)
                         .map((p) => (
-                          <div key={p.id} className="border border-border rounded p-3 text-xs text-white hover:bg-secondary/40">
+                          <div
+                            key={p.id}
+                            className="border border-border rounded p-3 text-xs text-white hover:bg-secondary/40"
+                          >
                             {p.name}
                           </div>
                         ))}

@@ -76,33 +76,33 @@
 
 ## Deployment Status
 
-| Environment | URL | Status |
-|-------------|-----|--------|
-| **Production** | `https://eyex-technologies.eyextech.workers.dev` | **LIVE** |
-| Development | Local (`npx vite dev`) | Available |
-| Staging | — | Not configured |
+| Environment    | URL                                              | Status         |
+| -------------- | ------------------------------------------------ | -------------- |
+| **Production** | `https://eyex-technologies.eyextech.workers.dev` | **LIVE**       |
+| Development    | Local (`npx vite dev`)                           | Available      |
+| Staging        | —                                                | Not configured |
 
 **Cloudflare Account:** eyex@outlook.it (Account ID: 651d3213a1bc39f22afc83a1e86d633)
 **Worker Name:** eyex-technologies
 
 ## Testing Status
 
-| Type | Status | Coverage |
-|------|--------|----------|
-| Unit tests | **None** | 0% |
-| Integration tests | **None** | 0% |
-| E2E tests | **None** | 0% |
+| Type                | Status   | Coverage                     |
+| ------------------- | -------- | ---------------------------- |
+| Unit tests          | **None** | 0%                           |
+| Integration tests   | **None** | 0%                           |
+| E2E tests           | **None** | 0%                           |
 | Manual verification | **Done** | All 24 pages return HTTP 200 |
 
 ## Environment Variables
 
-| Variable | Required | Where | Purpose |
-|----------|----------|-------|---------|
-| `VITE_SUPABASE_URL` | Yes | client.ts, server.ts | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Yes | client.ts, server.ts | Supabase anonymous key |
-| `GEMINI_API_KEY` | Yes | agents/llm.ts | Google Gemini API key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Optional | server.ts | Server-side admin key |
-| `SUPABASE_URL` | Optional | server.ts | Server-side Supabase URL |
+| Variable                    | Required | Where                | Purpose                  |
+| --------------------------- | -------- | -------------------- | ------------------------ |
+| `VITE_SUPABASE_URL`         | Yes      | client.ts, server.ts | Supabase project URL     |
+| `VITE_SUPABASE_ANON_KEY`    | Yes      | client.ts, server.ts | Supabase anonymous key   |
+| `GEMINI_API_KEY`            | Yes      | agents/llm.ts        | Google Gemini API key    |
+| `SUPABASE_SERVICE_ROLE_KEY` | Optional | server.ts            | Server-side admin key    |
+| `SUPABASE_URL`              | Optional | server.ts            | Server-side Supabase URL |
 
 ## Architecture
 
@@ -116,16 +116,16 @@ Database:  26 tables, 12 indexes, 26 RLS policies, 1 trigger, ~90 seed rows
 
 ## File Statistics
 
-| Category | Count |
-|----------|-------|
-| Source files (`src/`) | 153 |
-| Pages | 25 |
-| Routes | 25 (+ root) |
-| Components | 55 (46 UI + 9 custom) |
-| Services | 12 |
-| Agents | 10 |
-| Server functions | 13 |
-| Data services | 8 |
-| Hooks | 1 |
-| Build output | 166 files |
-| Total dependencies | 56 (44 runtime + 12 dev) |
+| Category              | Count                    |
+| --------------------- | ------------------------ |
+| Source files (`src/`) | 153                      |
+| Pages                 | 25                       |
+| Routes                | 25 (+ root)              |
+| Components            | 55 (46 UI + 9 custom)    |
+| Services              | 12                       |
+| Agents                | 10                       |
+| Server functions      | 13                       |
+| Data services         | 8                        |
+| Hooks                 | 1                        |
+| Build output          | 166 files                |
+| Total dependencies    | 56 (44 runtime + 12 dev) |

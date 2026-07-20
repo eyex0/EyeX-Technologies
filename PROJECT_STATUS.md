@@ -8,6 +8,7 @@
 - **Backend lint:** All runtime-critical rules pass.
 
 ### Security hygiene
+
 - [x] Removed real secrets from `.env.example` and created `SECURITY.md` with rotation instructions.
 - [x] Verified `.env` files are not tracked by git.
 - [x] Added Supabase JWT validation support in backend (`app/core/supabase_auth.py`).
@@ -16,11 +17,13 @@
 - [x] Updated frontend `backend-api.service.ts` to use `import.meta.env.VITE_PYTHON_BACKEND_URL` and send Supabase access tokens.
 
 ### LangGraph reliability
+
 - [x] Fixed quality gate logging bug (`approved` was always `True` due to default fallback).
 - [x] Materialized quality gate decision (`approved`, `score`) into workflow state.
 - [x] Added `graph_timeout_seconds` config and `asyncio.wait_for` guard around `graph.ainvoke`.
 
 ### Scalability: Memory pagination & limits
+
 - [x] Reduced default conversation limit from 200 to 50; capped at 100.
 - [x] Added `offset`/`limit` pagination to `get_conversation` and API endpoints.
 - [x] Added default `min_importance=0.3` and `limit=200` to `recall_all`.
@@ -28,12 +31,21 @@
 - [x] Updated `/chat/{session_id}` and `/memory/{session_id}/conversation` to accept `limit`/`offset` query params.
 
 ### Performance: Offload CPU-bound pipeline work to thread pool
+
 - [x] Added `ThreadPoolExecutor` support to `CognitiveDataPipeline`.
 - [x] Offloaded `canonical_builder.build`, `quality_engine.analyze`, `knowledge_graph.build_graph`, and `confidence_engine.batch_assess` to executor.
 - [x] Used `asyncio.gather` for parallel quality and confidence assessments.
 - [x] Tests: 390 passed, 0 failed, 0 warnings.
 
+### Developer Experience: Full-stack CI/CD
+
+- [x] Created `.github/workflows/ci.yml` with backend tests/lint and frontend lint/build jobs.
+- [x] Fixed all frontend `@typescript-eslint/no-explicit-any` errors and Prettier formatting issues.
+- [x] Exported `Document` type from `documents.service.ts` for type-safe consumers.
+- [x] Backend: 390 passed, 0 failed, 0 warnings; frontend: build succeeds, lint warnings only.
+
 ### Critical fixes applied (RC1 baseline)
+
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
 - [x] Added missing `CustomerOnboarding` import in `app/services/gtm_sales.py`.
 - [x] Fixed `desc` variable shadowing in `app/services/gtm_sales.py`.
@@ -64,6 +76,7 @@
   - Fixed all 7 agent fallback tests to use synchronous `MagicMock` for `with_structured_output` and `bind_tools`, eliminating all pytest ResourceWarnings.
 
 ### Performance & Monitoring (RC1)
+
 - [x] `app/cache.py` — Redis-backed cache utility for read-heavy endpoints.
 - [x] `app/api/v1/billing.py` — cached `/billing/plans` with 10-minute TTL.
 - [x] `app/api/v1/gtm.py` — cached `/gtm/pricing/plans` with 10-minute TTL.
@@ -73,6 +86,7 @@
 - [x] `app/main.py` — initializes structured logging at startup.
 
 ### Production Infrastructure (RC1)
+
 - [x] `Dockerfile.prod` — multi-stage production image with non-root `app` user and healthcheck.
 - [x] `docker-compose.prod.yml` — production compose with resource limits, logging limits, backup service.
 - [x] `.env.production.example` — production configuration template.
@@ -82,6 +96,7 @@
 - [x] `.github/workflows/deploy.yml` — build-push-deploy workflow for staging/production.
 
 ### Security Hardening (RC1)
+
 - [x] `app/config.py` — production secret validation, `APP_ENVIRONMENT`, `REQUIRE_HTTPS`, `TRUSTED_HOSTS`, CORS from env.
 - [x] `app/core/enterprise_security.py` — removed weak default `APP_SECRET_KEY` fallback; raise if missing.
 - [x] `app/core/middleware.py` — added `SecurityHeadersMiddleware` (CSP, HSTS, X-Frame, etc.).
@@ -97,6 +112,7 @@
 ## EyeX Cognitive Data Layer (v5.0.0)
 
 ### ✅ CDL: Universal Data Parser
+
 - [x] `app/cognitive_data_layer/parser/` — plugin-based parser architecture
 - [x] CSV, Excel (.xlsx/.xls), JSON, XML, SQL, REST API, PDF tables, Word (.docx) support
 - [x] Automatic encoding detection via `charset-normalizer`
@@ -104,6 +120,7 @@
 - [x] Malformed file resilience and parse warnings
 
 ### ✅ CDL: AI Semantic Understanding Engine
+
 - [x] `app/cognitive_data_layer/semantic/engine.py` — canonical entity vocabulary
 - [x] Deterministic alias matching for 15+ business entities (Customer, Revenue, Business Date, etc.)
 - [x] Exact-match precedence + partial-match fallback
@@ -111,6 +128,7 @@
 - [x] LLM inference hook for future expansion
 
 ### ✅ CDL: Automatic Schema Discovery
+
 - [x] `app/cognitive_data_layer/schema/discoverer.py` — schema discovery engine
 - [x] Primary key detection
 - [x] Foreign key / relationship detection across tables
@@ -118,40 +136,48 @@
 - [x] Category detection
 
 ### ✅ CDL: Internal Canonical Business Model
+
 - [x] `app/cognitive_data_layer/canonical/model.py` — `CanonicalDataset`, `CanonicalTable`, `CanonicalColumn`, `CanonicalRow`, `CanonicalRelationship`
 - [x] `CanonicalBuilder` converts any parsed source into normalized representation
 - [x] All future AI agents consume the canonical representation
 
 ### ✅ CDL: Company Learning System
+
 - [x] `app/cognitive_data_layer/learning/company_learning.py` — persists company-specific mappings
 - [x] Records preferred terminology, historical corrections, and occurrence counts
 - [x] JSON-based storage with automatic load/save
 
 ### ✅ CDL: Multi-Agent Data Understanding
+
 - [x] `app/cognitive_data_layer/agents/understanding.py` — LangGraph-style agent system
 - [x] Data Discovery Agent, Schema Analysis Agent, Business Context Agent, Data Quality Agent, Mapping Validation Agent
 - [x] `DataUnderstandingSupervisor` orchestrates agent pipeline
 
 ### ✅ CDL: Knowledge Graph Integration
+
 - [x] `app/cognitive_data_layer/knowledge/graph_integration.py` — auto-builds graph nodes/edges
 - [x] Extracts Customers, Employees, Products, Orders, Departments, Projects, Assets, Revenue, Costs, Suppliers
 - [x] Relationship edges from discovered foreign keys
 
 ### ✅ CDL: Confidence Engine
+
 - [x] `app/cognitive_data_layer/confidence/engine.py` — confidence scoring per column
 - [x] Confidence explanation and clarification threshold
 - [x] Low-confidence mapping flags
 
 ### ✅ CDL: Data Quality Engine
+
 - [x] `app/cognitive_data_layer/quality/engine.py` — comprehensive data quality checks
 - [x] Missing values, duplicate rows, outliers, invalid dates, currency inconsistencies
 - [x] Structured data quality report
 
 ### ✅ CDL: Plugin Architecture
+
 - [x] `ParserRegistry` + `BaseParser` allow future parsers/connectors without core changes
 - [x] `register_default_parsers()` and `register_parser()` hooks
 
 ### ✅ CDL: Validation & Benchmark
+
 - [x] `app/cognitive_data_layer/benchmark/` — dataset generator, runner, report generator
 - [x] 20 realistic industry datasets generated (Hospital, Manufacturing, Construction, Restaurant, Logistics, Banking, Insurance, SaaS, Retail, Pharmacy, University, Hotel, Real Estate, HR, Accounting, Marketing, E-commerce, Telecom, Energy, Government)
 - [x] Benchmark executed across all 20 datasets — 100% success rate
@@ -170,6 +196,7 @@
 ## EyeX Enterprise Trust & Intelligence Infrastructure (v4.0.0)
 
 ### ✅ M1: Enterprise AI Governance Platform
+
 - [x] `app/models/enterprise_trust.py` — AIGovernancePolicy, AIActionRequest, AIApprovalWorkflow, AIApprovalDecision, HumanReviewTask, ExplainableAIReport
 - [x] `app/services/governance.py` — RiskAssessmentEngine + AIGovernanceService
 - [x] Policy-driven action risk assessment (low/medium/high/critical)
@@ -182,6 +209,7 @@
 - [x] `tests/test_governance.py` — 22 governance tests
 
 ### 🔄 M2: Enterprise Security Layer
+
 - [ ] `IdentityProvider`, `SecurityAlert`, `DataIsolationRule`, `EncryptionKey` models
 - [ ] Identity provider federation service
 - [ ] Security alert detection and response
@@ -189,32 +217,38 @@
 - [ ] Encryption key lifecycle management
 
 ### 🔄 M3: AI Reliability Engineering
+
 - [ ] `AgentHealthCheck`, `AgentRecoveryAction`, `AgentPerformanceScore`, `WorkflowReliabilityMetric` models
 - [ ] Agent health monitoring and self-healing
 - [ ] Performance scoring and reliability dashboards
 - [ ] Workflow availability and SLA tracking
 
 ### 🔄 M4: Enterprise Intelligence Analytics
+
 - [ ] Business impact, time saved, decision improvement, risk prevention, AI performance metrics
 - [ ] ROI and value realization dashboards
 - [ ] Executive trust and intelligence reporting
 
 ### 🔄 M5: AI Agent Lifecycle Management
+
 - [ ] `AgentVersion`, `AgentTestRun`, `AgentDeployment`, `AgentRetirement` models
 - [ ] Version control, testing, staged deployment, and rollback
 - [ ] Agent retirement and migration workflows
 
 ### 🔄 M6: Enterprise Integration Platform
+
 - [ ] `EnterpriseConnector`, `IntegrationSync`, `ConnectorCredential` models
 - [ ] Connector registry and credential vault
 - [ ] Sync orchestration and error handling
 
 ### 🔄 M7: EyeX Intelligence Marketplace
+
 - [ ] `CertifiedAgent`, `AgentTemplate`, `DeveloperApplication` models
 - [ ] Agent certification and template publishing
 - [ ] Developer onboarding and marketplace governance
 
 ### 🔄 M8: Enterprise Documentation & Trust Center
+
 - [ ] Trust center documentation generation
 - [ ] Compliance and security artifact library
 - [ ] Customer-facing governance reports
@@ -224,6 +258,7 @@
 ## Go-To-Market & Growth System (v3.0.0)
 
 ### ✅ GTM1: Enterprise Sales Platform
+
 - [x] `app/models/gtm.py` — Lead, PipelineDeal, DealActivity, EnterpriseDemo, CustomerOnboarding models
 - [x] `app/services/gtm_sales.py` — Lead scoring engine, deal pipeline, demo workflow, onboarding workflow
 - [x] `POST /api/v1/gtm/leads` — create and score leads
@@ -237,6 +272,7 @@
 - [x] `PATCH /api/v1/gtm/onboarding/{org_id}/stage` — advance onboarding stage
 
 ### ✅ GTM2: Customer Success System
+
 - [x] `app/services/gtm_success.py` — health scoring, usage metrics, feedback, retention, success reports
 - [x] `POST /api/v1/gtm/success/health/{org_id}/calculate` — weighted health score
 - [x] `GET /api/v1/gtm/success/health/at-risk` — at-risk customer list
@@ -247,6 +283,7 @@
 - [x] `POST /api/v1/gtm/success/impact/{org_id}` — business impact measurements
 
 ### ✅ GTM3: Pricing & Monetization Architecture
+
 - [x] `app/services/gtm_pricing.py` — plans, enterprise pricing, usage billing, marketplace revenue
 - [x] `POST /api/v1/gtm/pricing/initialize` — seed Starter/Professional/Enterprise plans
 - [x] `GET /api/v1/gtm/pricing/plans` — list subscription plans
@@ -257,6 +294,7 @@
 - [x] Enhanced `SubscriptionPlan` model with `tier`, `max_api_calls_per_month`, `max_storage_gb`, `ai_model_access`, `support_level`
 
 ### ✅ GTM4: Industry Expansion Strategy
+
 - [x] `app/services/gtm_industry.py` — GTM playbooks for 5 verticals
 - [x] `POST /api/v1/gtm/industry/initialize` — seed Manufacturing/Healthcare/Logistics/Finance/Retail packages
 - [x] `GET /api/v1/gtm/industry/{industry}` — full playbook (problems, use cases, ROI, compliance)
@@ -265,6 +303,7 @@
 - [x] `GET /api/v1/gtm/industry/{industry}/pricing-recommendation` — size-based pricing
 
 ### ✅ GTM5: Partnership Framework
+
 - [x] `app/services/gtm_partnerships.py` — partner registry, integrations, revenue metrics
 - [x] `POST /api/v1/gtm/partnerships/initialize` — seed 10 strategic partners (AWS, Azure, GCP, Salesforce, SAP, Workday, McKinsey, OpenAI, Anthropic, Deloitte)
 - [x] `GET /api/v1/gtm/partnerships` — list partners by type/tier
@@ -272,6 +311,7 @@
 - [x] `POST /api/v1/gtm/partnerships/{id}/integrations` — register integration projects
 
 ### ✅ GTM6: Growth Intelligence System
+
 - [x] `app/services/gtm_growth.py` — market opportunities, lead/deal predictions, sales forecast, recommendations
 - [x] `POST /api/v1/gtm/growth/opportunities` — identify market opportunities
 - [x] `GET /api/v1/gtm/growth/opportunities` — list scored opportunities
@@ -282,6 +322,7 @@
 - [x] `GET /api/v1/gtm/growth/dashboard` — unified growth dashboard
 
 ### ✅ GTM7: Customer Proof System
+
 - [x] `app/services/gtm_proof.py` — case studies, ROI calculators, success reports, impact measurement
 - [x] `POST /api/v1/gtm/proof/case-studies` — create case studies
 - [x] `GET /api/v1/gtm/proof/case-studies` — list/publish case studies
@@ -291,6 +332,7 @@
 - [x] `GET /api/v1/gtm/proof/package/{org_id}` — generate proof package
 
 ### ✅ GTM8: Infrastructure & Testing
+
 - [x] `app/api/v1/gtm.py` — 60+ new GTM endpoints
 - [x] `app/api/v1/router.py` — GTM router registered under `/api/v1/gtm`
 - [x] `alembic/versions/0004_gtm_growth_system.py` — migration for 23 GTM tables + SubscriptionPlan enhancements
@@ -302,6 +344,7 @@
 ## Competitive Moat (v2.0.0)
 
 ### ✅ M1: Intelligence Engine
+
 - [x] `app/engine/__init__.py` — proprietary IntelligenceEngine with reasoning patterns
 - [x] SWOTAnalysis pattern for structured business context evaluation
 - [x] RootCauseAnalysis pattern for problem detection
@@ -314,6 +357,7 @@
 - [x] `GET /enterprise/moat/engine/frameworks` — list available frameworks
 
 ### ✅ M2: Enterprise Knowledge Graph
+
 - [x] Knowledge graph enrichment API: auto-extract entities from text
 - [x] Entity extraction from key-value pairs and natural text
 - [x] Automatic relation creation between extracted entities
@@ -322,6 +366,7 @@
 - [x] Existing node types: company, person, product, competitor, risk, metric, opportunity, document, fact, item
 
 ### ✅ M3: Learning System
+
 - [x] `app/services/learning.py` — LearningSystem with feedback tracking
 - [x] FeedbackEntry (1-5 rating, agent, session, recommendation tracking)
 - [x] RecommendationOutcome (action taken, success/failure, business impact)
@@ -334,6 +379,7 @@
 - [x] `GET /enterprise/moat/learning/agent/{agent_name}` — per-agent learning
 
 ### ✅ M4: Agent Marketplace
+
 - [x] `app/marketplace/__init__.py` — MarketplaceRegistry
 - [x] AgentManifest specification (name, version, author, category, industry, tags)
 - [x] 22 official EyeX agents pre-registered (CEO, CFO, COO, Risk, Analyst, Strategist, Decision + 16 industry editions)
@@ -347,6 +393,7 @@
 - [x] `GET /enterprise/moat/marketplace/categories` — browse by category
 
 ### ✅ M5: Industry Solutions
+
 - [x] `app/industry/__init__.py` — IndustrySolutionManager
 - [x] 5 industry configs: Manufacturing, Healthcare, Logistics, Finance, Retail
 - [x] Per-industry KPI categories (8 categories each)
@@ -359,6 +406,7 @@
 - [x] `GET /enterprise/moat/industries/{industry}/executive-prompts` — industry prompts
 
 ### ✅ M6: Proprietary Benchmarks
+
 - [x] `app/benchmarks/__init__.py` — EyexBenchmarkSuite
 - [x] Decision accuracy benchmark (structured scenarios with expected outcomes)
 - [x] Risk detection benchmark (sensitivity/specificity measurement)
@@ -371,6 +419,7 @@
 - [x] `GET /enterprise/moat/benchmarks/latest` — get latest results
 
 ### ✅ M7: Platform Architecture
+
 - [x] `app/core/platform.py` — PlatformHealthMonitor
 - [x] CircuitBreaker with closed/open/half-open states
 - [x] Automatic recovery after timeout
@@ -383,6 +432,7 @@
 - [x] `GET /enterprise/moat/platform/circuit-breakers` — circuit breaker status
 
 ### ✅ Testing
+
 - [x] 201 backend tests passing
 - [x] Frontend build passes
 - [x] All new modules import correctly

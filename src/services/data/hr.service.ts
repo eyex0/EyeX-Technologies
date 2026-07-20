@@ -19,10 +19,7 @@ export interface HrSummary {
 
 export const HrService = {
   async getEmployees(organizationId?: string): Promise<Employee[]> {
-    let query = supabase
-      .from("hr_employees")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("hr_employees").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -34,22 +31,14 @@ export const HrService = {
   },
 
   async getEmployee(id: string): Promise<Employee | null> {
-    const { data, error } = await supabase
-      .from("hr_employees")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const { data, error } = await supabase.from("hr_employees").select("*").eq("id", id).single();
 
     if (error) throw error;
     return data;
   },
 
   async createEmployee(employee: EmployeeInsert): Promise<Employee> {
-    const { data, error } = await supabase
-      .from("hr_employees")
-      .insert(employee)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("hr_employees").insert(employee).select().single();
 
     if (error) throw error;
     return data;
@@ -68,10 +57,7 @@ export const HrService = {
   },
 
   async deleteEmployee(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("hr_employees")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("hr_employees").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -103,10 +89,7 @@ export const HrService = {
   },
 
   async getPayroll(organizationId?: string): Promise<Payroll[]> {
-    let query = supabase
-      .from("hr_payroll")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("hr_payroll").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -118,11 +101,7 @@ export const HrService = {
   },
 
   async createPayroll(payroll: PayrollInsert): Promise<Payroll> {
-    const { data, error } = await supabase
-      .from("hr_payroll")
-      .insert(payroll)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("hr_payroll").insert(payroll).select().single();
 
     if (error) throw error;
     return data;
@@ -139,7 +118,7 @@ export const HrService = {
 
     const totalPayrollCost = payroll.reduce(
       (sum, p) => sum + Number(p.salary) + Number(p.bonuses) - Number(p.deductions),
-      0
+      0,
     );
 
     const deptMap = new Map<string, number>();
@@ -155,9 +134,10 @@ export const HrService = {
       }
     }
 
-    const departmentDistribution = Array.from(deptMap.entries()).map(
-      ([department, count]) => ({ department, count })
-    );
+    const departmentDistribution = Array.from(deptMap.entries()).map(([department, count]) => ({
+      department,
+      count,
+    }));
 
     return {
       totalEmployees: employees.length,

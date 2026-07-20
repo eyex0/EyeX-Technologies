@@ -18,12 +18,12 @@
 
 ### Total Addressable Market
 
-| Segment | Market Size | Growth Rate |
-|---------|------------|-------------|
-| Global AI in Decision Intelligence | $12.8B (2024) | 26.3% CAGR |
-| AI Business Analytics Software | $35.2B (2024) | 22.1% CAGR |
-| MENA AI Software Market | $4.1B (2024) | 29.8% CAGR |
-| GCC Startup Ecosystem (Hub71) | $3.5B funding (2024) | 35% YoY |
+| Segment                            | Market Size          | Growth Rate |
+| ---------------------------------- | -------------------- | ----------- |
+| Global AI in Decision Intelligence | $12.8B (2024)        | 26.3% CAGR  |
+| AI Business Analytics Software     | $35.2B (2024)        | 22.1% CAGR  |
+| MENA AI Software Market            | $4.1B (2024)         | 29.8% CAGR  |
+| GCC Startup Ecosystem (Hub71)      | $3.5B funding (2024) | 35% YoY     |
 
 ### Target Market: Startup & Scale-up Decision Intelligence
 
@@ -33,27 +33,28 @@
 
 ### Problem Validation
 
-| Pain Point | Frequency | Current Solution | Cost |
-|-----------|-----------|-----------------|------|
-| Strategic planning without executives | Weekly | Expensive consultants ($500-2K/hr) | $50K-200K/year |
-| Risk assessment | Monthly | Manual spreadsheets | 40 hrs/month |
-| Financial analysis | Weekly | Part-time CFO ($10-15K/month) | $120-180K/year |
-| Operational optimization | Monthly | External auditors | $30-50K/engagement |
+| Pain Point                            | Frequency | Current Solution                   | Cost               |
+| ------------------------------------- | --------- | ---------------------------------- | ------------------ |
+| Strategic planning without executives | Weekly    | Expensive consultants ($500-2K/hr) | $50K-200K/year     |
+| Risk assessment                       | Monthly   | Manual spreadsheets                | 40 hrs/month       |
+| Financial analysis                    | Weekly    | Part-time CFO ($10-15K/month)      | $120-180K/year     |
+| Operational optimization              | Monthly   | External auditors                  | $30-50K/engagement |
 
 **EyeX replaces $200K-400K/year in executive consulting with a $500-2K/month subscription.**
 
 ### Competitive Landscape
 
-| Competitor | Focus | AI Agents | Strengths | Weakness |
-|------------|-------|-----------|-----------|----------|
-| **EyeX** | Full executive team | 17 agents | Multi-agent collaboration, KG memory, proactive intelligence | Early stage |
-| **AlphaSense** | Market intelligence | 0 | Large data set | No strategic recommendations |
-| **Crayon** | Competitive intelligence | 0 | Data aggregation | No executive analysis |
-| **Jasper AI** | Content generation | 1 | Brand recognition | Not decision intelligence |
-| **Gong** | Revenue intelligence | 1 | Revenue focus | Narrow scope |
-| **Hebbia** | Document analysis | 2 | Enterprise contracts | No executive team |
+| Competitor     | Focus                    | AI Agents | Strengths                                                    | Weakness                     |
+| -------------- | ------------------------ | --------- | ------------------------------------------------------------ | ---------------------------- |
+| **EyeX**       | Full executive team      | 17 agents | Multi-agent collaboration, KG memory, proactive intelligence | Early stage                  |
+| **AlphaSense** | Market intelligence      | 0         | Large data set                                               | No strategic recommendations |
+| **Crayon**     | Competitive intelligence | 0         | Data aggregation                                             | No executive analysis        |
+| **Jasper AI**  | Content generation       | 1         | Brand recognition                                            | Not decision intelligence    |
+| **Gong**       | Revenue intelligence     | 1         | Revenue focus                                                | Narrow scope                 |
+| **Hebbia**     | Document analysis        | 2         | Enterprise contracts                                         | No executive team            |
 
 **EyeX's Moat:**
+
 1. Multi-agent collaboration (CEO → CFO → COO → Risk pipeline)
 2. Knowledge graph with semantic vector memory
 3. Proactive intelligence (detects before being asked)
@@ -65,6 +66,7 @@
 ## 3. Product Roadmap
 
 ### Q3 2026 — Enterprise Validation ✅ (Current)
+
 - [x] Multi-agent executive team (CEO, CFO, COO, Risk)
 - [x] Proactive intelligence (risk/opportunity detection)
 - [x] Enterprise API with data connectors
@@ -74,6 +76,7 @@
 - [x] Scaling architecture (caching, pooling, pagination)
 
 ### Q4 2026 — Pilot Scale
+
 - [ ] 25 enterprise pilot customers
 - [ ] Custom agent training per company
 - [ ] Industry-specific templates (fintech, healthtech, SaaS)
@@ -82,6 +85,7 @@
 - [ ] SOC 2 Type I certification
 
 ### Q1 2027 — Commercial Launch
+
 - [ ] 100+ paid customers
 - [ ] Self-serve onboarding
 - [ ] API marketplace for custom agents
@@ -91,6 +95,7 @@
 - [ ] ISO 27001 certification
 
 ### Q2 2027 — Scale
+
 - [ ] 500+ customers
 - [ ] Multi-region deployment
 - [ ] Enterprise SLA (99.99%)
@@ -112,6 +117,7 @@ Five memory layers (conversation, long-term, agent, short-term, working state) b
 
 **3. Proactive Intelligence**
 EyeX doesn't wait for queries — it automatically analyzes company metrics and knowledge graph for:
+
 - Revenue decline signals
 - Cash flow risks
 - Churn rate anomalies
@@ -120,6 +126,7 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 - Knowledge gaps
 
 **4. Enterprise Security**
+
 - Data encryption (Fernet) for sensitive fields
 - Tamper-evident audit logging with hash chain
 - Organization-scoped data isolation
@@ -127,6 +134,7 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 - JWT authentication with refresh tokens
 
 **5. Scaling Foundation**
+
 - LRU caching with TTL
 - Agent pool for concurrent execution
 - Standardized pagination
@@ -139,21 +147,21 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 
 ### Pricing Tiers
 
-| Tier | Price | Users | Agents | Features |
-|------|-------|-------|--------|----------|
-| **Starter** | $500/month | 5 | 17 | 1 company, 1K queries/mo |
-| **Growth** | $2,000/month | 25 | 17 | 3 companies, 10K queries/mo, API access |
-| **Enterprise** | Custom | Unlimited | 17+ | Unlimited companies, dedicated instance, SLA |
+| Tier           | Price        | Users     | Agents | Features                                     |
+| -------------- | ------------ | --------- | ------ | -------------------------------------------- |
+| **Starter**    | $500/month   | 5         | 17     | 1 company, 1K queries/mo                     |
+| **Growth**     | $2,000/month | 25        | 17     | 3 companies, 10K queries/mo, API access      |
+| **Enterprise** | Custom       | Unlimited | 17+    | Unlimited companies, dedicated instance, SLA |
 
 ### Unit Economics
 
-| Metric | Current | Target (Q4 2026) |
-|--------|---------|-------------------|
-| CAC | $0 (inbound) | $2,000 |
-| Monthly ACV | — | $2,000 |
-| Gross Margin | 85% | 90% |
-| Net Revenue Retention | — | 120% |
-| Payback Period | — | 1 month |
+| Metric                | Current      | Target (Q4 2026) |
+| --------------------- | ------------ | ---------------- |
+| CAC                   | $0 (inbound) | $2,000           |
+| Monthly ACV           | —            | $2,000           |
+| Gross Margin          | 85%          | 90%              |
+| Net Revenue Retention | —            | 120%             |
+| Payback Period        | —            | 1 month          |
 
 ### Go-to-Market
 
@@ -169,14 +177,15 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 
 ### Seed Round: $1.5M
 
-| Use of Funds | Amount | Purpose |
-|-------------|--------|---------|
-| Engineering | $700K | 3 senior engineers, 1 ML engineer |
-| Go-to-Market | $400K | Sales, marketing, Hub71 partnerships |
-| Infrastructure | $200K | Cloud scaling, SOC 2 certification |
-| Operations | $200K | Legal, compliance, admin |
+| Use of Funds   | Amount | Purpose                              |
+| -------------- | ------ | ------------------------------------ |
+| Engineering    | $700K  | 3 senior engineers, 1 ML engineer    |
+| Go-to-Market   | $400K  | Sales, marketing, Hub71 partnerships |
+| Infrastructure | $200K  | Cloud scaling, SOC 2 certification   |
+| Operations     | $200K  | Legal, compliance, admin             |
 
 ### Milestones to Series A
+
 - 100 enterprise pilots
 - $200K ARR
 - SOC 2 certification
@@ -188,11 +197,13 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 ## 7. Team
 
 **Founders:**
+
 - **CEO** — Ex-Mastercard, Harvard MBA, fintech operator
 - **CTO** — Ex-Stripe, IIT Delhi, AI infrastructure
 - **Head of AI** — DeepMind alumni, multi-agent systems
 
 **Advisors:**
+
 - Hub71 leadership
 - GCC venture partners
 - Enterprise AI practitioners
@@ -202,6 +213,7 @@ EyeX doesn't wait for queries — it automatically analyzes company metrics and 
 ## 8. Contact
 
 **EyeX Technologies**
+
 - Hub71, Abu Dhabi
 - hello@eyex.tech
 - eyex.tech

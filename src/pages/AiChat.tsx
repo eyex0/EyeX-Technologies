@@ -36,7 +36,13 @@ export function AiChatPage() {
   }, [messages]);
 
   const chatMutation = useMutation({
-    mutationFn: async ({ message, history }: { message: string; history: { role: string; text: string }[] }) => {
+    mutationFn: async ({
+      message,
+      history,
+    }: {
+      message: string;
+      history: { role: string; text: string }[];
+    }) => {
       return AgentService.chat(message, history);
     },
     onSuccess: (result) => {
@@ -52,7 +58,9 @@ export function AiChatPage() {
         ]);
         if (result.steps.length > 0) {
           const agents = [...new Set(result.steps.map((s) => s.agent))].join(", ");
-          console.debug(`[${result.source}] Agents used: ${agents} in ${result.steps.length} steps`);
+          console.debug(
+            `[${result.source}] Agents used: ${agents} in ${result.steps.length} steps`,
+          );
         }
       } else {
         toast.error("Failed to get response");
@@ -118,7 +126,10 @@ export function AiChatPage() {
         </div>
         <div className="px-4 mb-6">
           <button
-            onClick={() => { setMessages([]); setMessage(""); }}
+            onClick={() => {
+              setMessages([]);
+              setMessage("");
+            }}
             className="w-full py-3 px-4 bg-white hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300 rounded flex items-center justify-center gap-2 text-background font-bold text-sm"
           >
             <Plus className="text-lg w-5 h-5" />
@@ -191,7 +202,10 @@ export function AiChatPage() {
               <span className="text-[9px] text-eye-text font-mono">L7-CLEARANCE</span>
             </div>
           </div>
-          <button aria-label="Settings" className="text-eye-text hover:text-white transition-colors">
+          <button
+            aria-label="Settings"
+            className="text-eye-text hover:text-white transition-colors"
+          >
             <Settings className="text-lg w-5 h-5" />
           </button>
         </div>
@@ -219,7 +233,10 @@ export function AiChatPage() {
               <Share className="text-lg w-5 h-5" />
               <span className="text-xs font-mono">EXPORT</span>
             </button>
-            <button aria-label="User profile" className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-eye-border-hover transition-colors">
+            <button
+              aria-label="User profile"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-eye-border-hover transition-colors"
+            >
               <User className="text-xl w-6 h-6" />
             </button>
           </div>
@@ -234,8 +251,8 @@ export function AiChatPage() {
               </div>
               <h3 className="text-lg font-bold text-white mb-2">QORX Analytic Core</h3>
               <p className="text-sm text-eye-text max-w-md">
-                Issue a command to begin analysis. The orchestrator will route your request
-                to the appropriate specialist agent.
+                Issue a command to begin analysis. The orchestrator will route your request to the
+                appropriate specialist agent.
               </p>
             </div>
           )}
@@ -262,7 +279,10 @@ export function AiChatPage() {
               {msg.role === "assistant" ? (
                 <div
                   className="pl-6 border-l-2 border-primary-brand py-2 relative"
-                  style={{ background: "linear-gradient(90deg, rgba(56,189,248,0.05) 0%, transparent 100%)" }}
+                  style={{
+                    background:
+                      "linear-gradient(90deg, rgba(56,189,248,0.05) 0%, transparent 100%)",
+                  }}
                 >
                   <p className="text-eye-white leading-relaxed text-[16px] whitespace-pre-wrap">
                     {msg.text}
@@ -336,7 +356,11 @@ export function AiChatPage() {
                   <textarea
                     ref={textareaRef}
                     className="w-full bg-transparent border-none focus:ring-0 text-[15px] leading-relaxed resize-none py-1 max-h-48 min-h-[44px]"
-                    placeholder={chatMutation.isPending ? "Analytic Core processing..." : "Issue command to Analytic Core..."}
+                    placeholder={
+                      chatMutation.isPending
+                        ? "Analytic Core processing..."
+                        : "Issue command to Analytic Core..."
+                    }
                     rows={1}
                     value={message}
                     disabled={chatMutation.isPending}
@@ -445,7 +469,11 @@ export function AiChatPage() {
             FULL CONTEXT LOGS
           </button>
           <button
-            onClick={() => { setMessages([]); setMessage(""); toast.success("Session purged"); }}
+            onClick={() => {
+              setMessages([]);
+              setMessage("");
+              toast.success("Session purged");
+            }}
             className="w-full py-2.5 border border-eye-border hover:border-red-500/50 text-eye-text hover:text-red-400 text-xs font-mono rounded transition-all flex items-center justify-center gap-2"
           >
             <Trash2 className="text-sm w-4 h-4" />

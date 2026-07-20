@@ -8,19 +8,19 @@
 2. Connect repository in Cloudflare Pages dashboard
 3. Configure build settings:
 
-| Setting | Value |
-|---|---|
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Deploy command | `npx wrangler pages deploy dist` |
-| Root directory | `/` |
+| Setting                | Value                            |
+| ---------------------- | -------------------------------- |
+| Build command          | `npm run build`                  |
+| Build output directory | `dist`                           |
+| Deploy command         | `npx wrangler pages deploy dist` |
+| Root directory         | `/`                              |
 
 4. Add environment variables in **Settings → Environment variables → Production**:
 
-| Variable | Value |
-|---|---|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| Variable                 | Value                     |
+| ------------------------ | ------------------------- |
+| `VITE_SUPABASE_URL`      | Your Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key    |
 
 ### Custom Domain
 
@@ -50,11 +50,11 @@ docker compose logs -f
 
 ### Services
 
-| Service | Port | Description |
-|---|---|---|
-| Frontend | 80 | Nginx-served static SPA |
-| API | 3001 | API service |
-| Redis | 6379 | Cache (optional) |
+| Service  | Port | Description             |
+| -------- | ---- | ----------------------- |
+| Frontend | 80   | Nginx-served static SPA |
+| API      | 3001 | API service             |
+| Redis    | 6379 | Cache (optional)        |
 
 ### Production
 
@@ -70,6 +70,7 @@ The repository includes two workflows:
 ### CI (`.github/workflows/ci.yml`)
 
 Triggers on push/PR to `master`:
+
 1. Checkout + setup Node 22
 2. `npm ci`
 3. `npm run build --workspaces` (all packages)
@@ -80,15 +81,16 @@ Triggers on push/PR to `master`:
 ### Deploy (`.github/workflows/deploy.yml`)
 
 Triggers after CI succeeds on `master`:
+
 1. Builds frontend
 2. Deploys to Cloudflare Pages via wrangler-action
 
 ### Required Secrets
 
-| Secret | Description |
-|---|---|
-| `CF_API_TOKEN` | Cloudflare API token with Pages write access |
-| `GHCR_PAT` | GitHub PAT with packages:write (for Docker push) |
+| Secret         | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `CF_API_TOKEN` | Cloudflare API token with Pages write access     |
+| `GHCR_PAT`     | GitHub PAT with packages:write (for Docker push) |
 
 ## Environment Variables
 

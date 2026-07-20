@@ -9,15 +9,15 @@
 
 ## Executive Summary
 
-| Area | Result | Notes |
-|------|--------|-------|
-| Backend tests | 390 passed, 0 failed, 8 warnings | All green |
-| Frontend build | Success | Vite + Nitro build completed |
-| Frontend lint | 3,170 issues (mostly Prettier formatting) | Build unaffected; code is functional |
-| Backend lint | 805 issues (mostly E501/I001 existing debt) | No runtime errors introduced |
-| Critical runtime bugs found | 4 | All fixed |
-| Database migrations | 5 migrations importable; env.py fixed for async driver | Could not connect to live PG (not running) |
-| Security scan | Manual review | No SQL injection, eval/exec, or hardcoded production secrets; weak default secrets noted |
+| Area                        | Result                                                 | Notes                                                                                    |
+| --------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Backend tests               | 390 passed, 0 failed, 8 warnings                       | All green                                                                                |
+| Frontend build              | Success                                                | Vite + Nitro build completed                                                             |
+| Frontend lint               | 3,170 issues (mostly Prettier formatting)              | Build unaffected; code is functional                                                     |
+| Backend lint                | 805 issues (mostly E501/I001 existing debt)            | No runtime errors introduced                                                             |
+| Critical runtime bugs found | 4                                                      | All fixed                                                                                |
+| Database migrations         | 5 migrations importable; env.py fixed for async driver | Could not connect to live PG (not running)                                               |
+| Security scan               | Manual review                                          | No SQL injection, eval/exec, or hardcoded production secrets; weak default secrets noted |
 
 **Overall verdict:** System is functionally healthy. Test suite passes, frontend builds, migrations are syntactically valid, and four real runtime bugs were corrected. The largest remaining risk is long-standing lint/formatting debt and weak default secrets in local config.
 
@@ -25,34 +25,39 @@
 
 ## Codebase Metrics
 
-| Layer | Files | Lines |
-|-------|-------|-------|
-| Python backend (`app/`) | 134 | ~21,680 |
-| TypeScript frontend (`src/`) | 174 | ~18,740 |
-| Tests (`tests/`) | 50+ | ~7,000+ |
+| Layer                        | Files | Lines   |
+| ---------------------------- | ----- | ------- |
+| Python backend (`app/`)      | 134   | ~21,680 |
+| TypeScript frontend (`src/`) | 174   | ~18,740 |
+| Tests (`tests/`)             | 50+   | ~7,000+ |
 
 ---
 
 ## Critical Issues Fixed
 
 ### 1. `app/services/gtm_pricing.py` — Missing `defaultdict` import (F821)
+
 - **Impact:** `get_revenue_analytics()` would raise `NameError` at runtime.
 - **Fix:** Added `from collections import defaultdict`.
 
 ### 2. `app/services/gtm_sales.py` — Missing `CustomerOnboarding` import (F821)
+
 - **Impact:** All onboarding methods (`start_onboarding`, `get_onboarding`, etc.) would raise `NameError`.
 - **Fix:** Added `CustomerOnboarding` to the `app.models.gtm` import.
 
 ### 3. `app/services/gtm_sales.py` — Loop variable shadowed `desc` import (F402)
+
 - **Impact:** Local variable `desc` in `start_onboarding()` shadowed the SQLAlchemy `desc` import; could cause confusion/errors if reused later.
 - **Fix:** Renamed loop variable to `description`.
 
 ### 4. SQLAlchemy boolean comparison anti-patterns (E712)
+
 - **Files:** `app/api/v1/billing.py`, `app/services/gtm_proof.py`
 - **Impact:** `== True` works in some SQLAlchemy contexts but is flagged and can behave unexpectedly with SQLAlchemy 2.0.
 - **Fix:** Replaced with `.is_(True)`.
 
 ### 5. `alembic/env.py` — Sync engine used with asyncpg driver
+
 - **Impact:** `alembic current` / `alembic upgrade head` failed with `MissingGreenlet` because `engine_from_config` created a synchronous engine for an asyncpg URL.
 - **Fix:** Rewrote `run_migrations_online()` to use `async_engine_from_config` and `asyncio.run()`.
 
@@ -68,20 +73,20 @@ Warnings are pre-existing `RuntimeWarning: coroutine 'AsyncMockMixin._execute_mo
 
 ### Test Distribution (approximate)
 
-| Module | Tests |
-|--------|-------|
-| Agent schema/fallback/integration | ~40 |
-| Graph routing/execution | ~20 |
-| Memory integration | ~20 |
-| Tool tests | ~60 |
-| Endpoint tests | ~40 |
-| Security tests | ~20 |
-| Cognitive Data Layer | ~32 |
-| GTM | ~18 |
-| Governance | ~22 |
-| Benchmarks | ~35 |
-| Competitive Moat / Industry / Marketplace | ~40 |
-| Platform / other | ~43 |
+| Module                                    | Tests |
+| ----------------------------------------- | ----- |
+| Agent schema/fallback/integration         | ~40   |
+| Graph routing/execution                   | ~20   |
+| Memory integration                        | ~20   |
+| Tool tests                                | ~60   |
+| Endpoint tests                            | ~40   |
+| Security tests                            | ~20   |
+| Cognitive Data Layer                      | ~32   |
+| GTM                                       | ~18   |
+| Governance                                | ~22   |
+| Benchmarks                                | ~35   |
+| Competitive Moat / Industry / Marketplace | ~40   |
+| Platform / other                          | ~43   |
 
 ---
 
@@ -181,16 +186,19 @@ npm run build → success
 ## Recommendations
 
 ### Immediate (pre-deploy)
+
 1. Run full migration against a real PostgreSQL instance.
 2. Replace default/placeholder secrets with production values.
 3. Verify `APP_SECRET_KEY` is at least 32 bytes for Fernet encryption.
 
 ### Short-term
+
 4. Run `ruff check app --fix` and `npm run lint -- --fix` to clear formatting debt.
 5. Remove unused imports flagged by F401.
 6. Address `@typescript-eslint/no-explicit-any` violations in frontend services.
 
 ### Medium-term
+
 7. Add `pip-audit` / `safety` dependency scanning to CI.
 8. Add frontend unit tests beyond the build step.
 9. Sandbox `run_python_code` with a restricted environment and resource limits.

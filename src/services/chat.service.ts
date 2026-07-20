@@ -11,7 +11,10 @@ export const chatWithCopilotFn = createServerFn({ method: "POST" })
 
       const result = await orchestrator.orchestrate({
         messages: [
-          ...history.map((h) => ({ role: h.role as "user" | "assistant" | "system", text: h.text })),
+          ...history.map((h) => ({
+            role: h.role as "user" | "assistant" | "system",
+            text: h.text,
+          })),
           { role: "user" as const, text: message },
         ],
       });
@@ -26,9 +29,12 @@ export const chatWithCopilotFn = createServerFn({ method: "POST" })
         })),
         structured: result.structured,
       };
-    } catch (error: any) {
+    } catch (error) {
       console.error("Chat Error:", error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   });
 

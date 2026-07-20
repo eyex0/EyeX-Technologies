@@ -5,7 +5,7 @@ export interface WidgetConfig {
   title: string;
   value?: string;
   chartType?: "line" | "bar" | "pie";
-  data?: any[];
+  data?: unknown[];
   text?: string;
   delta?: string;
   icon?: string;

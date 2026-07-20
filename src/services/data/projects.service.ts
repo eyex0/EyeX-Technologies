@@ -69,10 +69,7 @@ export const ProjectsService = {
   },
 
   async deleteProject(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("projects_projects")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("projects_projects").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -96,11 +93,7 @@ export const ProjectsService = {
   },
 
   async createTask(task: TaskInsert): Promise<Task> {
-    const { data, error } = await supabase
-      .from("projects_tasks")
-      .insert(task)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("projects_tasks").insert(task).select().single();
 
     if (error) throw error;
     return data;
@@ -119,10 +112,7 @@ export const ProjectsService = {
   },
 
   async deleteTask(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("projects_tasks")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("projects_tasks").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -132,7 +122,7 @@ export const ProjectsService = {
     const tasks = await this.getTasks(organizationId);
 
     const activeProjects = projects.filter(
-      (p) => p.status === "in_progress" || p.status === "planning"
+      (p) => p.status === "in_progress" || p.status === "planning",
     ).length;
     const completedProjects = projects.filter((p) => p.status === "completed").length;
     const completedTasks = tasks.filter((t) => t.status === "done").length;
@@ -141,7 +131,7 @@ export const ProjectsService = {
 
     const today = new Date().toISOString().split("T")[0];
     const overdueTasks = tasks.filter(
-      (t) => t.due_date && t.due_date < today && t.status !== "done"
+      (t) => t.due_date && t.due_date < today && t.status !== "done",
     ).length;
 
     return {

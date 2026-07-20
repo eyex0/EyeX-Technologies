@@ -131,38 +131,44 @@ EyeX Technologies is an **AI-powered enterprise decision intelligence platform**
 ## Core Features
 
 ### 1. Company Intelligence Core
+
 - **vector_memory.py** — Sentence-transformer based semantic search across company data
 - **knowledge_graph.py** — Typed, relation-weighted graph with 12 relationship types
 - **Enhanced PersistentMemory** — 5-layer architecture with org-scoped access
 
 ### 2. Enterprise Workspace
+
 - Organization-scoped data isolation (org_id on every record)
 - Organization knowledge store (`OrganizationKnowledge` model)
 - Proactive alerts (`ProactiveAlert` model)
 - Per-organization AI memory separation
 
 ### 3. AI Executive Team
-| Agent | Role | Key Outputs |
-|-------|------|-------------|
-| **CEO Agent** | Strategic vision | Vision, priorities, resource allocation, growth initiatives |
-| **CFO Agent** | Financial analysis | Revenue analysis, cost optimization, cash flow insights, investment priorities |
-| **COO Agent** | Operational excellence | Process improvements, scalability, resource optimization, team structure |
-| **Risk Agent** | Risk management | Risk scoring, compliance gaps, mitigation strategies, early warnings |
+
+| Agent          | Role                   | Key Outputs                                                                    |
+| -------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| **CEO Agent**  | Strategic vision       | Vision, priorities, resource allocation, growth initiatives                    |
+| **CFO Agent**  | Financial analysis     | Revenue analysis, cost optimization, cash flow insights, investment priorities |
+| **COO Agent**  | Operational excellence | Process improvements, scalability, resource optimization, team structure       |
+| **Risk Agent** | Risk management        | Risk scoring, compliance gaps, mitigation strategies, early warnings           |
 
 ### 4. Proactive Intelligence
+
 - Automatic metric monitoring (revenue, cash, churn, growth)
 - Risk detection with severity scoring
 - Opportunity detection with confidence scoring
 - Knowledge gap analysis
 
 ### 5. Data Connectors
-| Connector | Type | Description |
-|-----------|------|-------------|
-| File Upload | file | CSV, JSON, TXT, MD with chunking |
-| REST API | api | Generic HTTP connector with auth headers |
-| Database | database | SQLAlchemy-based (PostgreSQL, MySQL, SQLite) |
+
+| Connector   | Type     | Description                                  |
+| ----------- | -------- | -------------------------------------------- |
+| File Upload | file     | CSV, JSON, TXT, MD with chunking             |
+| REST API    | api      | Generic HTTP connector with auth headers     |
+| Database    | database | SQLAlchemy-based (PostgreSQL, MySQL, SQLite) |
 
 ### 6. Reliability System
+
 - Exponential backoff retry (up to 3 attempts)
 - Daily rotating log files
 - Execution record tracking (success/fail/retry)
@@ -184,6 +190,7 @@ org_id=company_abc
 ```
 
 **Response:**
+
 ```json
 {
   "status": "completed",
@@ -219,6 +226,7 @@ GET /api/v1/enterprise/proactive-insights/{org_id}
 ```
 
 **Response:**
+
 ```json
 {
   "total": 5,
@@ -261,14 +269,18 @@ GET /api/v1/enterprise/vector-memory/search/{org_id}?query=revenue+growth+2024&t
 ## Data Connectors Guide
 
 ### File Upload
+
 Upload CSV, JSON, TXT, or Markdown files. The system automatically:
+
 1. Parses structured formats (CSV → rows, JSON → formatted)
 2. Chunks text into 500-word segments
 3. Stores chunks in vector memory for semantic search
 4. Creates knowledge graph nodes for each document
 
 ### API Connector
+
 Connect to any REST API:
+
 ```python
 POST /api/v1/enterprise/connectors/api/fetch
 source=https://api.example.com/v1/metrics
@@ -277,7 +289,9 @@ org_id=company_abc
 ```
 
 ### Database Connector
+
 Connect to business databases using SQLAlchemy connection strings:
+
 ```python
 POST /api/v1/enterprise/connectors/database/fetch
 source=postgresql://user:pass@host:5432/dbname
@@ -290,12 +304,14 @@ org_id=company_abc
 ## Deployment Guide
 
 ### Prerequisites
+
 - Python 3.12+
 - PostgreSQL 16+
 - Redis 7+
 - Node.js 20+ (for frontend)
 
 ### Backend Setup
+
 ```bash
 cd eyex-backend
 pip install -r requirements.txt
@@ -306,6 +322,7 @@ python -m app.main
 ```
 
 ### Environment Variables
+
 ```
 DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/eyex
 REDIS_URL=redis://localhost:6379/0
@@ -315,6 +332,7 @@ SECRET_KEY=your-secret-key
 ```
 
 ### Frontend Setup
+
 ```bash
 npm install
 npm run dev
@@ -322,6 +340,7 @@ npm run dev
 ```
 
 ### Testing
+
 ```bash
 cd eyex-backend
 python -m pytest tests/ -q
@@ -338,26 +357,31 @@ python -m pytest tests/ -q
 "EyeX is an AI executive team that analyzes your company data and provides C-suite level recommendations — without hiring a full executive team."
 
 **2. Company Knowledge Upload (3 min)**
+
 - Upload a CSV with company metrics
 - Add knowledge facts: "Annual revenue: $5M", "Team size: 25", "Churn rate: 8%"
 - Show knowledge graph building
 
 **3. Executive Team Analysis (5 min)**
+
 - Query: "Analyze our company and provide executive recommendations"
 - Watch the LangGraph pipeline sequentially execute CEO → CFO → COO → Risk
 - Show each agent's structured output
 - Highlight the risk score and early warnings
 
 **4. Proactive Intelligence (2 min)**
+
 - Navigate to proactive insights dashboard
 - Show automatically detected risks (e.g., "Elevated Churn Rate")
 - Demonstrate opportunity detection
 
 **5. Semantic Memory Search (2 min)**
+
 - Query: "What are our financial risks?"
 - Show vector search returning relevant knowledge
 
 **6. Data Connectors (1 min)**
+
 - Brief mention of API and database connectors
 - Show connector registry
 
@@ -380,7 +404,7 @@ python -m pytest tests/ -q
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | July 2026 | Initial MVP — Hub71 launch |
-| 1.1.0 | July 2026 | Enterprise upgrade — Executive team, proactive intelligence, data connectors, reliability system |
+| Version | Date      | Changes                                                                                          |
+| ------- | --------- | ------------------------------------------------------------------------------------------------ |
+| 1.0.0   | July 2026 | Initial MVP — Hub71 launch                                                                       |
+| 1.1.0   | July 2026 | Enterprise upgrade — Executive team, proactive intelligence, data connectors, reliability system |

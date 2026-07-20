@@ -8,6 +8,17 @@ import { Loader2, Upload, Brain, FileText, Lightbulb, Activity, ChevronRight } f
 
 type Step = { node: string; output?: string; status?: string; duration_ms?: number };
 
+interface KnowledgeRecord {
+  key?: string;
+  value?: string;
+}
+
+interface IntelligenceDocument {
+  name?: string;
+  file_type?: string;
+  created_at?: string;
+}
+
 export function IntelligenceHubPage() {
   const [query, setQuery] = useState("");
   const [context, setContext] = useState("");
@@ -16,7 +27,9 @@ export function IntelligenceHubPage() {
   const [steps, setSteps] = useState<Step[]>([]);
   const [knowledgeKey, setKnowledgeKey] = useState("");
   const [knowledgeValue, setKnowledgeValue] = useState("");
-  const [activeTab, setActiveTab] = useState<"analyze" | "knowledge" | "documents" | "reports">("analyze");
+  const [activeTab, setActiveTab] = useState<"analyze" | "knowledge" | "documents" | "reports">(
+    "analyze",
+  );
 
   const analyzeMutation = useMutation({
     mutationFn: async (data: { query: string; context?: string; session_id: string }) => {
@@ -47,10 +60,15 @@ export function IntelligenceHubPage() {
       formData.append("value", data.value);
       formData.append("session_id", sessionId);
       return fetch("http://eyex-api:8000/api/v1/intelligence/knowledge", {
-        method: "POST", body: formData,
+        method: "POST",
+        body: formData,
       });
     },
-    onSuccess: () => { toast.success("Knowledge stored"); setKnowledgeKey(""); setKnowledgeValue(""); },
+    onSuccess: () => {
+      toast.success("Knowledge stored");
+      setKnowledgeKey("");
+      setKnowledgeValue("");
+    },
     onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to store"),
   });
 
@@ -79,7 +97,8 @@ export function IntelligenceHubPage() {
     formData.append("session_id", sessionId);
     try {
       const resp = await fetch("http://eyex-api:8000/api/v1/intelligence/documents/upload", {
-        method: "POST", body: formData,
+        method: "POST",
+        body: formData,
       });
       if (resp.ok) toast.success(`Uploaded ${file.name}`);
       else toast.error("Upload failed");
@@ -94,17 +113,21 @@ export function IntelligenceHubPage() {
     <AppShell title="Intelligence Hub" subtitle="AI-powered business decision intelligence">
       {/* Tab Navigation */}
       <div className="flex gap-1 border-b border-border mb-6">
-        {([
-          { key: "analyze", label: "Analyze", icon: Brain },
-          { key: "knowledge", label: "Knowledge", icon: Lightbulb },
-          { key: "documents", label: "Documents", icon: FileText },
-          { key: "reports", label: "Reports", icon: Activity },
-        ] as const).map(({ key, label, icon: Icon }) => (
+        {(
+          [
+            { key: "analyze", label: "Analyze", icon: Brain },
+            { key: "knowledge", label: "Knowledge", icon: Lightbulb },
+            { key: "documents", label: "Documents", icon: FileText },
+            { key: "reports", label: "Reports", icon: Activity },
+          ] as const
+        ).map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${
-              activeTab === key ? "text-white border-white" : "text-muted-foreground border-transparent hover:text-white"
+              activeTab === key
+                ? "text-white border-white"
+                : "text-muted-foreground border-transparent hover:text-white"
             }`}
           >
             <Icon size={14} /> {label}
@@ -135,7 +158,11 @@ export function IntelligenceHubPage() {
                   disabled={isAnalyzing || !query.trim()}
                   className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest py-3 rounded-md flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {isAnalyzing ? <Loader2 className="animate-spin" size={14} /> : <Brain size={14} />}
+                  {isAnalyzing ? (
+                    <Loader2 className="animate-spin" size={14} />
+                  ) : (
+                    <Brain size={14} />
+                  )}
                   {isAnalyzing ? "Analyzing..." : "Run Intelligence Analysis"}
                 </button>
               </div>
@@ -148,10 +175,14 @@ export function IntelligenceHubPage() {
                   {steps.map((step, i) => (
                     <div key={i} className="px-5 py-3 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-sm ${step.status === "completed" ? "bg-emerald-400" : "bg-amber-400"}`} />
+                        <div
+                          className={`w-2 h-2 rounded-sm ${step.status === "completed" ? "bg-emerald-400" : "bg-amber-400"}`}
+                        />
                         <span className="text-white font-medium capitalize">{step.node}</span>
                       </div>
-                      <span className="text-muted-foreground font-mono">{step.duration_ms ? `${Math.round(step.duration_ms)}ms` : ""}</span>
+                      <span className="text-muted-foreground font-mono">
+                        {step.duration_ms ? `${Math.round(step.duration_ms)}ms` : ""}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -165,7 +196,9 @@ export function IntelligenceHubPage() {
               {isAnalyzing ? (
                 <div className="p-12 flex flex-col items-center justify-center gap-3">
                   <Loader2 className="animate-spin text-white" size={32} />
-                  <p className="text-sm text-muted-foreground">Running Analyst → Strategist → Decision pipeline...</p>
+                  <p className="text-sm text-muted-foreground">
+                    Running Analyst → Strategist → Decision pipeline...
+                  </p>
                 </div>
               ) : result ? (
                 <div className="p-6">
@@ -203,7 +236,9 @@ export function IntelligenceHubPage() {
                 className="w-full h-24 bg-background border border-border rounded-md px-4 py-3 text-sm text-white font-mono resize-none outline-none focus:border-white/40"
               />
               <button
-                onClick={() => knowledgeMutation.mutate({ key: knowledgeKey, value: knowledgeValue })}
+                onClick={() =>
+                  knowledgeMutation.mutate({ key: knowledgeKey, value: knowledgeValue })
+                }
                 disabled={!knowledgeKey || !knowledgeValue}
                 className="bg-white text-black text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-md disabled:opacity-50"
               >
@@ -214,15 +249,21 @@ export function IntelligenceHubPage() {
           <Card title="Stored Knowledge">
             {knowledge?.records && knowledge.records.length > 0 ? (
               <div className="divide-y divide-border">
-                {knowledge.records.map((r: any, i: number) => (
+                {knowledge.records.map((r: KnowledgeRecord, i: number) => (
                   <div key={i} className="px-5 py-3">
-                    <div className="text-xs font-mono text-primary-brand">{r.key?.replace("knowledge:", "")}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{r.value?.slice(0, 200)}</div>
+                    <div className="text-xs font-mono text-primary-brand">
+                      {r.key?.replace("knowledge:", "")}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {r.value?.slice(0, 200)}
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="p-8 text-center text-muted-foreground text-sm">No knowledge stored yet</div>
+              <div className="p-8 text-center text-muted-foreground text-sm">
+                No knowledge stored yet
+              </div>
             )}
           </Card>
         </div>
@@ -235,16 +276,25 @@ export function IntelligenceHubPage() {
             <div className="p-5">
               <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-8 cursor-pointer hover:border-white/30 transition-colors">
                 <Upload size={32} className="text-muted-foreground mb-2" />
-                <span className="text-sm text-muted-foreground">Upload company data (CSV, TXT, JSON)</span>
-                <span className="text-[10px] font-mono text-muted-foreground mt-1">Documents are chunked and stored in company memory</span>
-                <input type="file" className="hidden" accept=".csv,.txt,.json,.md" onChange={handleFileUpload} />
+                <span className="text-sm text-muted-foreground">
+                  Upload company data (CSV, TXT, JSON)
+                </span>
+                <span className="text-[10px] font-mono text-muted-foreground mt-1">
+                  Documents are chunked and stored in company memory
+                </span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".csv,.txt,.json,.md"
+                  onChange={handleFileUpload}
+                />
               </label>
             </div>
           </Card>
           <Card title="Uploaded Documents">
             {documents?.documents && documents.documents.length > 0 ? (
               <div className="divide-y divide-border">
-                {documents.documents.map((d: any, i: number) => (
+                {documents.documents.map((d: IntelligenceDocument, i: number) => (
                   <div key={i} className="px-5 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <FileText size={14} className="text-muted-foreground" />
@@ -255,7 +305,9 @@ export function IntelligenceHubPage() {
                 ))}
               </div>
             ) : (
-              <div className="p-8 text-center text-muted-foreground text-sm">No documents uploaded</div>
+              <div className="p-8 text-center text-muted-foreground text-sm">
+                No documents uploaded
+              </div>
             )}
           </Card>
         </div>
@@ -270,7 +322,9 @@ export function IntelligenceHubPage() {
                 <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
                   <div className="flex items-center gap-2">
                     <Activity size={14} className="text-emerald-400" />
-                    <span className="text-xs text-white font-medium">Session: {sessionId.slice(0, 16)}...</span>
+                    <span className="text-xs text-white font-medium">
+                      Session: {sessionId.slice(0, 16)}...
+                    </span>
                   </div>
                   <Badge tone="success">Completed</Badge>
                 </div>
@@ -279,7 +333,9 @@ export function IntelligenceHubPage() {
                 </div>
               </div>
             ) : (
-              <div className="p-8 text-center text-muted-foreground text-sm">Run an analysis to see reports here</div>
+              <div className="p-8 text-center text-muted-foreground text-sm">
+                Run an analysis to see reports here
+              </div>
             )}
           </Card>
           <Card title="Pipeline Summary">
@@ -294,7 +350,9 @@ export function IntelligenceHubPage() {
               </div>
               <div className="flex justify-between border-b border-border pb-2">
                 <span className="text-muted-foreground">Memory Layers</span>
-                <span className="text-white">5 (conversation, long-term, agent, short-term, vector)</span>
+                <span className="text-white">
+                  5 (conversation, long-term, agent, short-term, vector)
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Knowledge Entries</span>

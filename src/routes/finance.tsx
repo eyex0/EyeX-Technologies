@@ -5,10 +5,16 @@ import { ProtectedRoute } from "@/components/auth/protected-route";
 export const Route = createFileRoute("/finance")({
   head: () => ({
     meta: [
-      { title: 'Finance | EyeX Technologies' },
-      { name: "description", content: 'Financial tracking, reporting, and AI-powered fiscal insights.' },
-      { property: "og:title", content: 'Finance | EyeX Technologies' },
-      { property: "og:description", content: 'Financial tracking, reporting, and AI-powered fiscal insights.' },
+      { title: "Finance | EyeX Technologies" },
+      {
+        name: "description",
+        content: "Financial tracking, reporting, and AI-powered fiscal insights.",
+      },
+      { property: "og:title", content: "Finance | EyeX Technologies" },
+      {
+        property: "og:description",
+        content: "Financial tracking, reporting, and AI-powered fiscal insights.",
+      },
       { property: "og:type", content: "website" },
     ],
   }),

@@ -63,7 +63,12 @@ Provide thorough research findings.`,
     },
   );
 
-  let parsed: { findings: string; sources: string[]; recommendations: string[]; confidence: number };
+  let parsed: {
+    findings: string;
+    sources: string[];
+    recommendations: string[];
+    confidence: number;
+  };
   try {
     parsed = JSON.parse(result);
   } catch {

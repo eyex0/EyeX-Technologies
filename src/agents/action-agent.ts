@@ -43,8 +43,10 @@ export class ActionAgent extends BaseAgent {
 Based on the analysis findings, recommend concrete business actions with priorities.`;
       const result = await this.generateStructured<Record<string, unknown>>(prompt, ACTION_SCHEMA);
       return this.success(result.summary as string, result);
-    } catch (err: any) {
-      return this.error(`Action recommendation failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `Action recommendation failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

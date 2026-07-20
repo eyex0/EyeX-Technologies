@@ -10,17 +10,17 @@
 
 EyeX Technologies is **RC1-ready** for production deployment. All critical runtime bugs are resolved, the full test suite passes with zero warnings, and production infrastructure (Docker, CI/CD, monitoring, backups, security hardening) is in place.
 
-| Gate | Status | Details |
-|------|--------|---------|
-| Tests | ✅ Pass | 390 passed, 0 failed, 0 warnings |
-| Frontend build | ✅ Pass | Vite + Nitro production build succeeds |
-| Critical lint | ✅ Pass | F821/F401/F841/F402/E711/E712/E741/N818/UP042 all clean |
-| Security | ✅ Hardened | Default-secret enforcement, security headers, input sanitization, encryption key enforcement |
-| Performance | ✅ Optimized | Redis caching, health metrics, agent timeouts, input truncation |
-| Monitoring | ✅ Enabled | `/metrics`, `/health`, structured JSON logging |
-| Backups | ✅ Automated | Daily PostgreSQL backups with retention |
-| Containers | ✅ Ready | Multi-stage `Dockerfile.prod` + `docker-compose.prod.yml` |
-| CI/CD | ✅ Ready | GitHub Actions lint/test/build/deploy workflows |
+| Gate           | Status       | Details                                                                                      |
+| -------------- | ------------ | -------------------------------------------------------------------------------------------- |
+| Tests          | ✅ Pass      | 390 passed, 0 failed, 0 warnings                                                             |
+| Frontend build | ✅ Pass      | Vite + Nitro production build succeeds                                                       |
+| Critical lint  | ✅ Pass      | F821/F401/F841/F402/E711/E712/E741/N818/UP042 all clean                                      |
+| Security       | ✅ Hardened  | Default-secret enforcement, security headers, input sanitization, encryption key enforcement |
+| Performance    | ✅ Optimized | Redis caching, health metrics, agent timeouts, input truncation                              |
+| Monitoring     | ✅ Enabled   | `/metrics`, `/health`, structured JSON logging                                               |
+| Backups        | ✅ Automated | Daily PostgreSQL backups with retention                                                      |
+| Containers     | ✅ Ready     | Multi-stage `Dockerfile.prod` + `docker-compose.prod.yml`                                    |
+| CI/CD          | ✅ Ready     | GitHub Actions lint/test/build/deploy workflows                                              |
 
 ---
 
@@ -63,15 +63,15 @@ EyeX Technologies is **RC1-ready** for production deployment. All critical runti
 
 ## Security Hardening
 
-| Change | File | Impact |
-|--------|------|--------|
-| Production secret validation | `app/config.py` | Refuses to start if default `APP_SECRET_KEY` is used in production/staging |
-| Database password warning | `app/config.py` | Warns if default password is in `DATABASE_URL` |
-| Encryption key enforcement | `app/core/enterprise_security.py` | Raises if `APP_SECRET_KEY` is missing instead of using weak default |
-| Security headers | `app/core/middleware.py` | CSP, HSTS, X-Frame, X-Content-Type, Referrer, Permissions policies |
-| CORS restriction | `app/core/middleware.py` | Specific methods/headers, exposed response headers |
-| Production startup checks | `app/main.py` | Fails on default secret, warns missing OpenAI key |
-| Exception renaming | `app/core/exceptions.py` | N818 compliance with backward-compatible aliases |
+| Change                       | File                              | Impact                                                                     |
+| ---------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
+| Production secret validation | `app/config.py`                   | Refuses to start if default `APP_SECRET_KEY` is used in production/staging |
+| Database password warning    | `app/config.py`                   | Warns if default password is in `DATABASE_URL`                             |
+| Encryption key enforcement   | `app/core/enterprise_security.py` | Raises if `APP_SECRET_KEY` is missing instead of using weak default        |
+| Security headers             | `app/core/middleware.py`          | CSP, HSTS, X-Frame, X-Content-Type, Referrer, Permissions policies         |
+| CORS restriction             | `app/core/middleware.py`          | Specific methods/headers, exposed response headers                         |
+| Production startup checks    | `app/main.py`                     | Fails on default secret, warns missing OpenAI key                          |
+| Exception renaming           | `app/core/exceptions.py`          | N818 compliance with backward-compatible aliases                           |
 
 ### Remaining security notes
 
@@ -83,31 +83,31 @@ EyeX Technologies is **RC1-ready** for production deployment. All critical runti
 
 ## Performance & Cost Optimizations
 
-| Change | File | Impact |
-|--------|------|--------|
-| Redis cache utility | `app/cache.py` | Centralized async cache for read-heavy endpoints |
-| Cached billing plans | `app/api/v1/billing.py` | 10-minute TTL reduces DB load |
-| Cached GTM pricing | `app/api/v1/gtm.py` | 10-minute TTL reduces DB load |
-| Cached health check | `app/api/v1/health.py` | 30-second TTL reduces dependency health overhead |
-| Agent timeout | `app/agents/base.py`, `app/config.py` | 60-second `asyncio.wait_for` prevents hung LLM calls |
-| Input truncation | `app/agents/base.py` | Caps input at 12,000 chars to reduce token cost |
-| Metrics middleware | `app/core/metrics.py` | Tracks request counts, errors, durations, slow endpoints |
-| JSON logging | `app/logging_config.py` | Structured, lower-noise logs for observability |
+| Change               | File                                  | Impact                                                   |
+| -------------------- | ------------------------------------- | -------------------------------------------------------- |
+| Redis cache utility  | `app/cache.py`                        | Centralized async cache for read-heavy endpoints         |
+| Cached billing plans | `app/api/v1/billing.py`               | 10-minute TTL reduces DB load                            |
+| Cached GTM pricing   | `app/api/v1/gtm.py`                   | 10-minute TTL reduces DB load                            |
+| Cached health check  | `app/api/v1/health.py`                | 30-second TTL reduces dependency health overhead         |
+| Agent timeout        | `app/agents/base.py`, `app/config.py` | 60-second `asyncio.wait_for` prevents hung LLM calls     |
+| Input truncation     | `app/agents/base.py`                  | Caps input at 12,000 chars to reduce token cost          |
+| Metrics middleware   | `app/core/metrics.py`                 | Tracks request counts, errors, durations, slow endpoints |
+| JSON logging         | `app/logging_config.py`               | Structured, lower-noise logs for observability           |
 
 ---
 
 ## Production Infrastructure
 
-| Asset | Path | Purpose |
-|-------|------|---------|
-| Production Dockerfile | `Dockerfile.prod` | Multi-stage, non-root `app` user, healthcheck |
-| Production Compose | `docker-compose.prod.yml` | Resource limits, logging limits, backup service |
-| Environment template | `.env.production.example` | Production configuration template |
-| Backup script | `scripts/backup.sh` | Daily `pg_dump` with retention |
-| Entrypoint | `scripts/entrypoint.sh` | Migrations + `uvloop`/`h11` Uvicorn startup |
-| Docker ignore | `.dockerignore` | Keeps production image small |
-| CI pipeline | `.github/workflows/ci.yml` | Lint, test-with-services, build |
-| Deploy pipeline | `.github/workflows/deploy.yml` | Build-push-deploy to staging/production |
+| Asset                 | Path                           | Purpose                                         |
+| --------------------- | ------------------------------ | ----------------------------------------------- |
+| Production Dockerfile | `Dockerfile.prod`              | Multi-stage, non-root `app` user, healthcheck   |
+| Production Compose    | `docker-compose.prod.yml`      | Resource limits, logging limits, backup service |
+| Environment template  | `.env.production.example`      | Production configuration template               |
+| Backup script         | `scripts/backup.sh`            | Daily `pg_dump` with retention                  |
+| Entrypoint            | `scripts/entrypoint.sh`        | Migrations + `uvloop`/`h11` Uvicorn startup     |
+| Docker ignore         | `.dockerignore`                | Keeps production image small                    |
+| CI pipeline           | `.github/workflows/ci.yml`     | Lint, test-with-services, build                 |
+| Deploy pipeline       | `.github/workflows/deploy.yml` | Build-push-deploy to staging/production         |
 
 ---
 

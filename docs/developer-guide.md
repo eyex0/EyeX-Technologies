@@ -50,16 +50,16 @@ eyex-technologies/
 
 ## Key Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start frontend dev server |
-| `npm run build` | Build frontend for production |
-| `npm run build:all` | Build all workspace packages |
-| `npm test` | Run all tests |
-| `npm run typecheck` | TypeScript type checking |
-| `npm run lint` | Lint with oxlint |
-| `npm run db:generate` | Regenerate Supabase types |
-| `npm run deploy` | Build + deploy to Cloudflare Pages |
+| Command               | Description                        |
+| --------------------- | ---------------------------------- |
+| `npm run dev`         | Start frontend dev server          |
+| `npm run build`       | Build frontend for production      |
+| `npm run build:all`   | Build all workspace packages       |
+| `npm test`            | Run all tests                      |
+| `npm run typecheck`   | TypeScript type checking           |
+| `npm run lint`        | Lint with oxlint                   |
+| `npm run db:generate` | Regenerate Supabase types          |
+| `npm run deploy`      | Build + deploy to Cloudflare Pages |
 
 ## Adding a Page
 
@@ -76,13 +76,15 @@ eyex-technologies/
 
 ```typescript
 // Create a new agent
-import { BaseAgent } from './base';
+import { BaseAgent } from "./base";
 
 export class MyAgent extends BaseAgent {
-  getName(): string { return 'my-agent'; }
+  getName(): string {
+    return "my-agent";
+  }
   async run(context: AgentContext): Promise<AgentOutput> {
     // Implementation
-    return { type: 'my-type', data: {} };
+    return { type: "my-type", data: {} };
   }
 }
 ```

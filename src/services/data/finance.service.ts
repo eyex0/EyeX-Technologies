@@ -69,10 +69,7 @@ export const FinanceService = {
   },
 
   async deleteInvoice(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("finance_invoices")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("finance_invoices").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -93,11 +90,7 @@ export const FinanceService = {
   },
 
   async createBudget(budget: BudgetInsert): Promise<Budget> {
-    const { data, error } = await supabase
-      .from("finance_budgets")
-      .insert(budget)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("finance_budgets").insert(budget).select().single();
 
     if (error) throw error;
     return data;
@@ -142,7 +135,7 @@ export const FinanceService = {
       .reduce((sum, t) => sum + Number(t.amount), 0);
 
     const pendingInvoices = invoices.filter(
-      (i) => i.status === "sent" || i.status === "draft"
+      (i) => i.status === "sent" || i.status === "draft",
     ).length;
 
     const overdueInvoices = invoices.filter((i) => i.status === "overdue").length;

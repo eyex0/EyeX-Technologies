@@ -5,13 +5,13 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
-    "directory": ".output/public"
+    "directory": ".output/public",
   },
   "no_bundle": true,
   "rules": [
     {
       "type": "ESModule",
-      "globs": ["**/*.mjs", "**/*.js"]
-    }
-  ]
+      "globs": ["**/*.mjs", "**/*.js"],
+    },
+  ],
 }

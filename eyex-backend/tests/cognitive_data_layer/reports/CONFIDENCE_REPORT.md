@@ -1,5 +1,7 @@
 # Confidence Report
+
 ## Low Confidence Mappings
+
 Average low-confidence flags per dataset: 2.20
 
 - **hospital**: 6 low-confidence flags

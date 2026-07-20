@@ -73,8 +73,10 @@ export class OrchestratorAgent extends BaseAgent {
     try {
       const result = await this.orchestrate(context);
       return this.success(result.final, result.structured);
-    } catch (err: any) {
-      return this.error(`Orchestration failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `Orchestration failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 
@@ -139,7 +141,14 @@ Respond helpfully as the EyeX AI Copilot. Be concise and professional.`,
 
     return {
       final: generalResponse,
-      steps: [{ agent: "General", input: lastMessage, result: { success: true, output: generalResponse, agentName: "General" }, duration: 0 }],
+      steps: [
+        {
+          agent: "General",
+          input: lastMessage,
+          result: { success: true, output: generalResponse, agentName: "General" },
+          duration: 0,
+        },
+      ],
     };
   }
 }

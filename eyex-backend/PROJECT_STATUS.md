@@ -5,33 +5,36 @@
 # EyeX Technologies MVP — Product Requirements Document
 
 ## Vision
+
 EyeX Technologies is an Enterprise AI Operating System that integrates multi-agent intelligence across all business domains (CRM, Sales, Finance, HR, Inventory, Projects) with a unified AI copilot interface.
 
 ## MVP Scope (v1.0)
 
 ### Core Differentiators
+
 1. **Unified AI Agent System** — Two-tier intelligence: Node.js business agents (Analytics, Forecast, SQL, Root Cause, etc.) + Python LangGraph engineering agents (Planner, Coder, Reviewer, Tester, Documenter, DevOps)
 2. **Business Intelligence Dashboard** — Real-time KPIs across all domains with configurable widgets
 3. **Enterprise Auth** — Supabase auth with organization-based multi-tenancy
 
 ### MVP Features by Priority
 
-| Priority | Feature | Status |
-|----------|---------|--------|
-| P0 | Auth flow (login/signup/forgot-password) with Supabase | ✅ Working |
-| P0 | Multi-agent AI Chat (frontend ↔ Node.js orchestrator → 8 specialists) | ✅ Working |
-| P0 | Business modules: CRM, Sales, Finance, HR, Inventory, Projects | ✅ Built |
-| P0 | Docker Compose deployment (frontend + API + Python backend + PG + Redis) | ✅ Ready |
-| P1 | Admin dashboard with agent/system stats | ✅ Built |
-| P1 | Python LangGraph agent workflow (Supervisor → Agents → Quality Gate) | ✅ Built |
-| P1 | API key management, notifications, settings | ✅ Built |
-| P2 | Content upload pipeline | Partial |
-| P2 | Real-time subscriptions | ❌ Not in MVP |
-| P2 | Data export / batch operations | ❌ Not in MVP |
-| P3 | Internationalization (i18n) | ❌ Post-MVP |
-| P3 | Dark/light theme toggle | ❌ Post-MVP |
+| Priority | Feature                                                                  | Status        |
+| -------- | ------------------------------------------------------------------------ | ------------- |
+| P0       | Auth flow (login/signup/forgot-password) with Supabase                   | ✅ Working    |
+| P0       | Multi-agent AI Chat (frontend ↔ Node.js orchestrator → 8 specialists)    | ✅ Working    |
+| P0       | Business modules: CRM, Sales, Finance, HR, Inventory, Projects           | ✅ Built      |
+| P0       | Docker Compose deployment (frontend + API + Python backend + PG + Redis) | ✅ Ready      |
+| P1       | Admin dashboard with agent/system stats                                  | ✅ Built      |
+| P1       | Python LangGraph agent workflow (Supervisor → Agents → Quality Gate)     | ✅ Built      |
+| P1       | API key management, notifications, settings                              | ✅ Built      |
+| P2       | Content upload pipeline                                                  | Partial       |
+| P2       | Real-time subscriptions                                                  | ❌ Not in MVP |
+| P2       | Data export / batch operations                                           | ❌ Not in MVP |
+| P3       | Internationalization (i18n)                                              | ❌ Post-MVP   |
+| P3       | Dark/light theme toggle                                                  | ❌ Post-MVP   |
 
 ### Sprint 1 — Architecture & Bug Fixes (✅ Completed)
+
 - ✅ **Contact form**: Now stores submissions in `contact_submissions` Supabase table via `useMutation`
 - ✅ **Finance page**: Removed stale `reportsList` import from mock data
 - ✅ **Supabase RLS**: Replaced all `USING (true)` policies with proper organization-scoped policies using `auth.is_org_member()` helper
@@ -39,23 +42,27 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ **New RLS functions**: `auth.user_org_id()` and `auth.is_org_member(org_id)` helpers
 
 ### Sprint 2 — Frontend + Backend AI Integration (✅ Completed)
+
 - ✅ **Created `src/services/agent-unified.service.ts`**: Unified agent service that tries Python LangGraph backend first, falls back to Node.js orchestrator
 - ✅ **Updated `AiChatPage`**: Now uses `AgentService.chat()` instead of direct `chatWithCopilotFn`
 - ✅ **Automatic failover**: 3s health check timeout, graceful fallback to Node.js business agents
 - ✅ **Source tracking**: Each response tagged with `source: "python-backend" | "node-orchestrator"`
 
 ### Sprint 3 — Business Modules Polish (✅ Completed)
+
 - ✅ **Finance page**: Removed stale mock data dependency, reports tab now shows connect-to-tool placeholder
 - ✅ **Dashboard**: Verified all 6 queries use live Supabase data with proper skeleton loading states
 - ✅ **All business pages**: CRM, Sales, HR, Inventory, Projects all query real data from Supabase services
 - ✅ **Upload service**: Verified Supabase storage integration (no broken method calls)
 
 ### Sprint 4 — Testing & Quality (✅ Completed)
+
 - ✅ **Python backend**: 177/177 tests passing (15s runtime)
 - ✅ **No deprecation warnings**: 8 pre-existing coroutine warnings (non-blocking)
 - ✅ **TypeScript compilation**: No syntax errors in modified files
 
 ### Sprint 5 — Documentation & Deployment (✅ Completed)
+
 - ✅ **Demo script**: `scripts/demo_mvp.sh` — automated demo of all MVP features
 - ✅ **PROJECT_STATUS.md**: Updated with MVP scope, sprint tracking, changelog
 - ✅ **Deployment guide**: Docker Compose + Cloudflare Workers documented
@@ -69,12 +76,14 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 ## Completed
 
 ### Product Vision
+
 - ✅ Product vision defined: "Enterprise AI Operating System" with unified multi-agent intelligence
 - ✅ MVP scope documented with P0/P1/P2/P3 feature prioritization
 - ✅ Product roadmap with 5 sprints tracked in PROJECT_STATUS.md
 - ✅ 7 phases of productization completed: Planning, Engineering, Security, AI Optimization, Testing, DevOps, Documentation
 
 ### System Architecture
+
 - ✅ FastAPI backend with async support (Python 3.12)
 - ✅ LangGraph multi-agent `StateGraph` workflow with 9 nodes
 - ✅ PostgreSQL 16 + Redis 7 infrastructure (Docker Compose)
@@ -85,6 +94,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ Request body size limits (10MB max)
 
 ### Multi-Agent System (7 Agents)
+
 - ✅ **SupervisorAgent** — Request classification (planning/research/coding/general)
 - ✅ **PlannerAgent** — Task decomposition, step generation with 4 tools
 - ✅ **ResearchAgent** — Information gathering with 6 tools (web search, GitHub, files)
@@ -98,6 +108,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `AgentGraph` cached per memory service (no rebuild per request)
 
 ### Tool System (25 Tools, 5 Categories)
+
 - ✅ **File Tools** (8): `read_file`, `write_file`, `list_directory`, `search_files`, `grep_files`, `edit_file`, `delete_file`, `move_file` — path traversal protection enforced
 - ✅ **GitHub Tools** (9): `search_repos`, `get_repo`, `list_issues`, `create_issue`, `list_pull_requests`, `get_pull_request`, `create_pull_request`, `get_file_contents`, `list_branches`
 - ✅ **Web Tools** (2): `web_search` (DuckDuckGo/Serper), `web_fetch` (HTML to markdown)
@@ -106,6 +117,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `ToolRegistry` singleton with per-role tool assignment and `bind_tools_to_llm()`
 
 ### Memory Layer (5-Layer Persistence)
+
 - ✅ **Conversation History** — PostgreSQL `conversation_messages` table
 - ✅ **Long-term Memory** — PostgreSQL `long_term_memory` table with TTL
 - ✅ **Agent-specific Memory** — PostgreSQL `agent_memory_records` table
@@ -117,6 +129,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ No module-level Redis client (lazy connection pool)
 
 ### API Endpoints (25 Routes)
+
 - ✅ `GET  /api/v1/health` — Full dependency health (PG, Redis, OpenAI, tools count)
 - ✅ `POST /api/v1/auth/register` — User registration
 - ✅ `POST /api/v1/auth/login` — User login (JWT)
@@ -143,6 +156,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `GET  /api/v1/admin/health/detailed` — Detailed component health with latency
 
 ### Database & Migrations
+
 - ✅ Alembic configured with `async` engine
 - ✅ Migration 0001: Initial schema (users, organizations, members)
 - ✅ Migration 0002: Memory tables (conversation_messages, long_term_memory, agent_memory_records)
@@ -150,6 +164,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `scripts/seed.py` — Seed data
 
 ### Customer Platform (Backend)
+
 - ✅ Workspace model with org-level multi-tenancy, member roles (admin/member/viewer)
 - ✅ Full workspace CRUD API with auto-provisioning of 8 agents per workspace
 - ✅ Member management API — invite, role change, remove, list with user info
@@ -164,6 +179,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ Seed script updated — creates default workspace, 8 agents, 4 subscription plans
 
 ### Customer Platform (Frontend)
+
 - ✅ API service layer refactored — 25+ typed methods, unified fetch with auth token
 - ✅ Dashboard — real KPIs (tasks, success rate, agents, tokens), activity feed, system status panel
 - ✅ Agent Management page — grid of agent cards with live enable/disable toggle
@@ -174,6 +190,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ Route tree updated — `/agents`, `/tasks`, `/billing` routes with auth protection
 
 ### Tests (195 Passing — 18 new)
+
 - ✅ 7 agent schema validation tests
 - ✅ 7 agent fallback/error handling tests
 - ✅ 7 agent node integration tests
@@ -190,6 +207,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ **3 input validation tests** — empty, oversized, min password length
 
 ### Security Hardening
+
 - ✅ SQL injection fixed — `db_query` uses parameterized `LIMIT` via `bindparam`
 - ✅ `db_execute` restricted to 3 memory tables only (no business table modification)
 - ✅ Admin endpoints authenticated (all 4 `/admin/*` routes require valid JWT)
@@ -209,6 +227,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ Request body size limit: 10MB max with 413 rejection
 
 ### DevOps & CI/CD
+
 - ✅ Multi-stage Dockerfile (builder + runtime)
 - ✅ Docker Compose (api, postgres:16-alpine, redis:7-alpine)
 - ✅ Nginx reverse proxy configuration
@@ -218,6 +237,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ Graceful telemetry setup — no crash if packages not installed
 
 ### AI Agent Optimization
+
 - ✅ Model name fixed: `gemini-3.5-flash` → `gemini-2.5-flash` in both `llm.ts` and `base.ts`
 - ✅ `GEMINI_API_KEY` validated at startup — clear error if missing
 - ✅ LLM timeout (30s) with AbortController prevents hung requests
@@ -228,6 +248,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `generateStructured()` has JSON parse error recovery with clear error message
 
 ### Code Quality
+
 - ✅ No placeholder code, TODOs, or stubs
 - ✅ Pydantic v2 compatibility (all mocks use `agent.llm = AsyncMock()` pattern)
 - ✅ Ruff linting configuration in `pyproject.toml`
@@ -237,6 +258,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ No LangGraph deprecation warnings — uses `from langgraph.types import Send`
 
 ### Production Configuration
+
 - ✅ `.env` created with all production defaults + local dev overrides
 - ✅ `.env.example` extended with rate limiting + OpenTelemetry settings
 - ✅ Docker `entrypoint.sh` — auto-runs `alembic upgrade head` before uvicorn start
@@ -247,25 +269,28 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ OpenTelemetry observability with OTLP + console fallback exporters
 
 ### Frontend Integration
+
 - ✅ `src/services/backend-api.service.ts` — 10-method TypeScript client for Python backend
 - ✅ `src/pages/Admin.tsx` + route — admin dashboard with stats, health, agent status
 - ✅ All API calls use `PYTHON_BACKEND_URL` env var, default `http://eyex-api:8000`
 
 ### Tool Documentation
+
 - ✅ `scripts/generate_tool_docs.py` — auto-generates Markdown from ToolRegistry
 - ✅ `docs/tools.md` — 28 tools across 5 categories, 8 agent roles with assignments
 
 ## In Progress
 
-- *No active tasks — all milestones complete*
+- _No active tasks — all milestones complete_
 
 ## Pending
 
-- *No pending items — production launch milestone complete*
+- _No pending items — production launch milestone complete_
 
 ## Bugs
 
 ### Fixed Bugs
+
 - ✅ `patch.object(agent.llm, "with_structured_output")` failed on Pydantic v2 `ChatOpenAI` — Fixed by replacing `agent.llm` with `AsyncMock` directly (7 test files)
 - ✅ `SupervisorAgent` test — LCEL `|` operator rejected bare `AsyncMock` — Fixed by patching `agent.prompt` instead
 - ✅ `ReviewOutput.score = 0` violated `ge=1` constraint — Fixed by setting `score = 1` in fallback
@@ -279,7 +304,8 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - ✅ `AgentGraph` created per request — Now cached per memory service
 
 ### Open Bugs
-- *No known open bugs*
+
+- _No known open bugs_
 
 ## Architecture
 
@@ -346,7 +372,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 
 ## Next Steps
 
-*EyeX Technologies MVP v1.0 is complete and ready for demonstration.*
+_EyeX Technologies MVP v1.0 is complete and ready for demonstration._
 
 1. **Production Deployment** — Deploy to Cloudflare Workers with production PG/Redis
 2. **End-to-End Testing** — Full integration test suite with Cypress/Playwright
@@ -356,6 +382,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 ## Changelog
 
 ### 2026-07-19 (MVP v1.0 — Product Launch)
+
 - **feat:** Created `src/services/agent-unified.service.ts` — Unified agent service (Python LangGraph backend + Node.js orchestrator fallback)
 - **feat:** Updated `AiChatPage` — Auto-discovery of Python backend with 3s health check timeout
 - **feat:** Added `contact_submissions` table to Supabase schema — public contact form with proper RLS
@@ -368,6 +395,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - **test:** 177/177 Python backend tests passing (no regressions)
 
 ### 2026-07-19 (Sprint 5 — Production Launch)
+
 - **feat:** Created `src/services/backend-api.service.ts` — TypeScript client (10 methods) for Python backend
 - **feat:** Added Admin dashboard page — `src/pages/Admin.tsx` with stats, health, agent status
 - **feat:** Updated root `docker-compose.yml` — added `eyex-api`, `postgres`, `redis` services
@@ -382,6 +410,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - **test:** 158 tests passing, 0 failures, 0 deprecation warnings
 
 ### 2026-07-19 (Sprint 4 — Production Hardening)
+
 - **sec:** Fixed `_assert_safe_path` no-op — now enforces path traversal protection relative to `_BASE_DIR`
 - **sec:** Removed `shell=True` from `execute_command` — uses `create_subprocess_exec` with `shlex.split()`
 - **sec:** Shell metacharacters (`&&`, `||`, `;`, `|`, `$()`, backtick) blocked at argument level
@@ -403,6 +432,7 @@ EyeX Technologies is an Enterprise AI Operating System that integrates multi-age
 - **test:** 158 tests passing (up from 121) — 37 new tests across benchmarks + admin endpoints
 
 ### 2026-07-19 (Customer Platform v1.0)
+
 - **feat:** Added 10 new database models — Workspace, WorkspaceMember, AgentConfig, TaskExecution, ApiKey, UsageRecord, SubscriptionPlan, Subscription, Invoice
 - **feat:** Created Alembic migration `0003_customer_platform.py` — 9 new tables with proper FKs, indexes, and cascading deletes
 - **feat:** Built workspace management API — CRUD, member management with admin/member/viewer roles, auto-create 8 agents per workspace

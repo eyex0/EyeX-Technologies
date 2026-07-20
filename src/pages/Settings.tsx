@@ -10,13 +10,15 @@ import { supabase } from "@/lib/supabase/client";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
-const passwordSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+const passwordSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 type PasswordForm = z.infer<typeof passwordSchema>;
 
@@ -41,7 +43,12 @@ function PasswordTab() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<PasswordForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<PasswordForm>({
     resolver: zodResolver(passwordSchema),
   });
 
@@ -63,24 +70,32 @@ function PasswordTab() {
     <Card title="Change Password">
       <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4 max-w-md">
         <div>
-          <label className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1 block">New Password</label>
+          <label className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1 block">
+            New Password
+          </label>
           <input
             type="password"
             {...register("password")}
             className="w-full border border-border rounded-md px-3 py-2 text-sm text-white bg-background outline-none focus:border-white/40"
             placeholder="Min 6 characters"
           />
-          {errors.password && <p className="text-rose-400 text-xs mt-1">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-rose-400 text-xs mt-1">{errors.password.message}</p>
+          )}
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1 block">Confirm Password</label>
+          <label className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1 block">
+            Confirm Password
+          </label>
           <input
             type="password"
             {...register("confirmPassword")}
             className="w-full border border-border rounded-md px-3 py-2 text-sm text-white bg-background outline-none focus:border-white/40"
             placeholder="Re-enter password"
           />
-          {errors.confirmPassword && <p className="text-rose-400 text-xs mt-1">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p className="text-rose-400 text-xs mt-1">{errors.confirmPassword.message}</p>
+          )}
         </div>
         <button
           type="submit"
@@ -103,7 +118,10 @@ function DangerZoneTab() {
     if (confirmText !== "DELETE") return;
     setLoading(true);
     try {
-      const { error } = await supabase.rpc("ensure_organization" as any, { p_slug: "temp", p_name: "temp" });
+      const { error } = await supabase.rpc("ensure_organization" as string, {
+        p_slug: "temp",
+        p_name: "temp",
+      });
       // Fallback: just sign out since account deletion requires server-side
       await signOut();
       toast.success("Account deletion requested. You have been signed out.");
@@ -184,34 +202,80 @@ function RolesTab() {
 }
 
 export function SettingsPage() {
-  return <ModulePage title="Settings" subtitle="Workspace & account" tabs={[
-    { key: "profile", label: "Profile", render: () => <ProfileTab /> },
-    { key: "password", label: "Password", render: () => <PasswordTab /> },
-    { key: "users", label: "Users", render: () => <UsersTab /> },
-    { key: "roles", label: "Roles", render: () => <RolesTab /> },
-    { key: "danger", label: "Danger Zone", render: () => <DangerZoneTab /> },
-    { key: "notif", label: "Notifications", render: () => (
-      <Card title="Preferences"><div className="p-5 space-y-3 text-sm">
-        {["Email digests","Slack alerts","Overdue invoices","Deal updates","System status"].map((s) => (
-          <div key={s} className="flex justify-between border-b border-border pb-3 last:border-0"><span className="text-white">{s}</span><span className="text-muted-foreground text-xs">On</span></div>
-        ))}
-      </div></Card>
-    )},
-    { key: "sec", label: "Security", render: () => (
-      <Card title="Security"><div className="p-5 space-y-3 text-sm">
-        {["Two-factor authentication","SSO (SAML)","Session timeout","IP allowlist","Audit log"].map((s) => (
-          <div key={s} className="flex justify-between border-b border-border pb-3 last:border-0"><span className="text-white">{s}</span><span className="text-muted-foreground text-xs">Configured</span></div>
-        ))}
-      </div></Card>
-    )},
-  ]}/>;
+  return (
+    <ModulePage
+      title="Settings"
+      subtitle="Workspace & account"
+      tabs={[
+        { key: "profile", label: "Profile", render: () => <ProfileTab /> },
+        { key: "password", label: "Password", render: () => <PasswordTab /> },
+        { key: "users", label: "Users", render: () => <UsersTab /> },
+        { key: "roles", label: "Roles", render: () => <RolesTab /> },
+        { key: "danger", label: "Danger Zone", render: () => <DangerZoneTab /> },
+        {
+          key: "notif",
+          label: "Notifications",
+          render: () => (
+            <Card title="Preferences">
+              <div className="p-5 space-y-3 text-sm">
+                {[
+                  "Email digests",
+                  "Slack alerts",
+                  "Overdue invoices",
+                  "Deal updates",
+                  "System status",
+                ].map((s) => (
+                  <div
+                    key={s}
+                    className="flex justify-between border-b border-border pb-3 last:border-0"
+                  >
+                    <span className="text-white">{s}</span>
+                    <span className="text-muted-foreground text-xs">On</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ),
+        },
+        {
+          key: "sec",
+          label: "Security",
+          render: () => (
+            <Card title="Security">
+              <div className="p-5 space-y-3 text-sm">
+                {[
+                  "Two-factor authentication",
+                  "SSO (SAML)",
+                  "Session timeout",
+                  "IP allowlist",
+                  "Audit log",
+                ].map((s) => (
+                  <div
+                    key={s}
+                    className="flex justify-between border-b border-border pb-3 last:border-0"
+                  >
+                    <span className="text-white">{s}</span>
+                    <span className="text-muted-foreground text-xs">Configured</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ),
+        },
+      ]}
+    />
+  );
 }
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">{label}</div>
-      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">{value}</div>
+      <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+        {label}
+      </div>
+      <div className="border border-border rounded-md px-3 py-2 text-sm text-white bg-background">
+        {value}
+      </div>
     </div>
   );
 }

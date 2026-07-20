@@ -2,10 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createDefaultWorkflow } from "@/agents/workflow/graph";
 
 export const executeWorkflowFn = createServerFn({ method: "POST" })
-  .validator((data: {
-    request: string;
-    messages?: { role: string; content: string }[];
-  }) => data)
+  .validator((data: { request: string; messages?: { role: string; content: string }[] }) => data)
   .handler(async ({ data }) => {
     try {
       const { request } = data;

@@ -92,7 +92,12 @@ export function InventoryPage() {
                       delta: `+${products.length - lowStock.length}`,
                       icon: "check_circle",
                     },
-                    { label: "Low stock", value: String(lowStock.length), delta: `+${lowStock.length}`, icon: "warning" },
+                    {
+                      label: "Low stock",
+                      value: String(lowStock.length),
+                      delta: `+${lowStock.length}`,
+                      icon: "warning",
+                    },
                     { label: "Out of stock", value: String(outOfStock.length), icon: "block" },
                   ]}
                 />
@@ -130,9 +135,14 @@ export function InventoryPage() {
                     {w.capacity != null && (
                       <>
                         <div className="mt-4 h-1 bg-border rounded">
-                          <div className="h-full bg-white" style={{ width: `${Math.min(100, (w.capacity / 1000) * 100)}%` }} />
+                          <div
+                            className="h-full bg-white"
+                            style={{ width: `${Math.min(100, (w.capacity / 1000) * 100)}%` }}
+                          />
                         </div>
-                        <div className="text-xs text-muted-foreground mt-2">Capacity {w.capacity}</div>
+                        <div className="text-xs text-muted-foreground mt-2">
+                          Capacity {w.capacity}
+                        </div>
                       </>
                     )}
                   </div>

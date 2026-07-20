@@ -2,7 +2,7 @@ import { Search, Upload, FileText, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, DataTable, Badge } from "@/components/common/primitives";
 import { AppShell } from "@/components/layout/AppShell";
-import { DocumentsService } from "@/services/data";
+import { DocumentsService, type Document } from "@/services/data";
 import { useState } from "react";
 
 export function DocumentsAppPage() {
@@ -14,10 +14,13 @@ export function DocumentsAppPage() {
     queryFn: () => DocumentsService.getDocuments(),
   });
 
-  const rows = tag === "All" ? documents : documents.filter((d) => {
-    const fileType = (d.file_type ?? "").toLowerCase();
-    return fileType.includes(tag.toLowerCase());
-  });
+  const rows =
+    tag === "All"
+      ? documents
+      : documents.filter((d) => {
+          const fileType = (d.file_type ?? "").toLowerCase();
+          return fileType.includes(tag.toLowerCase());
+        });
 
   return (
     <AppShell title="Documents" subtitle="Contracts · Invoices · Reports · Policies">
@@ -25,14 +28,28 @@ export function DocumentsAppPage() {
         <div className="lg:col-span-1 space-y-4">
           <Card title="Folders" icon="folder">
             <div className="p-4 space-y-1 text-xs">
-              {["All Documents", "Contracts", "Invoices", "Reports", "Policies", "Shared with me"].map((f) => (
-                <div key={f} className="px-3 py-2 rounded hover:bg-secondary/40 text-white cursor-pointer">{f}</div>
+              {[
+                "All Documents",
+                "Contracts",
+                "Invoices",
+                "Reports",
+                "Policies",
+                "Shared with me",
+              ].map((f) => (
+                <div
+                  key={f}
+                  className="px-3 py-2 rounded hover:bg-secondary/40 text-white cursor-pointer"
+                >
+                  {f}
+                </div>
               ))}
             </div>
           </Card>
           <Card title="Tags" icon="sell">
             <div className="p-4 flex flex-wrap gap-2">
-              {["Signed", "Draft", "Final", "Review", "Paid"].map((t) => <Badge key={t}>{t}</Badge>)}
+              {["Signed", "Draft", "Final", "Review", "Paid"].map((t) => (
+                <Badge key={t}>{t}</Badge>
+              ))}
             </div>
           </Card>
         </div>
@@ -40,11 +57,20 @@ export function DocumentsAppPage() {
           <div className="flex gap-2 items-center">
             <div className="flex items-center gap-2 border border-border rounded-md px-4 py-2 bg-background flex-1">
               <Search size={18} className="text-muted-foreground" />
-              <input className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground" placeholder="Search documents..." />
+              <input
+                className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-muted-foreground"
+                placeholder="Search documents..."
+              />
             </div>
             <div className="flex gap-1">
               {tags.map((t) => (
-                <button key={t} onClick={() => setTag(t)} className={`text-xs px-3 py-1.5 rounded-md border ${tag === t ? "bg-white text-black border-white" : "border-border text-muted-foreground hover:text-white"}`}>{t}</button>
+                <button
+                  key={t}
+                  onClick={() => setTag(t)}
+                  className={`text-xs px-3 py-1.5 rounded-md border ${tag === t ? "bg-white text-black border-white" : "border-border text-muted-foreground hover:text-white"}`}
+                >
+                  {t}
+                </button>
               ))}
             </div>
             <button className="flex items-center gap-1.5 bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-2 rounded">
@@ -69,9 +95,36 @@ export function DocumentsAppPage() {
                 columns={[
                   { key: "name", label: "Name" },
                   { key: "file_type", label: "Type" },
-                  { key: "uploaded_by", label: "Owner", render: (r: any) => <span className="text-muted-foreground">{r.uploaded_by ? r.uploaded_by.slice(0, 8) + "..." : "—"}</span> },
-                  { key: "tags", label: "Tags", render: (r: any) => <div className="flex gap-1 flex-wrap">{(r.tags ?? []).map((t: string) => <Badge key={t}>{t}</Badge>)}</div> },
-                  { key: "created_at", label: "Updated", align: "right", render: (r: any) => <span className="font-mono text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</span> },
+                  {
+                    key: "uploaded_by",
+                    label: "Owner",
+                    render: (r: Document) => (
+                      <span className="text-muted-foreground">
+                        {r.uploaded_by ? r.uploaded_by.slice(0, 8) + "..." : "—"}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: "tags",
+                    label: "Tags",
+                    render: (r: Document) => (
+                      <div className="flex gap-1 flex-wrap">
+                        {(r.tags ?? []).map((t: string) => (
+                          <Badge key={t}>{t}</Badge>
+                        ))}
+                      </div>
+                    ),
+                  },
+                  {
+                    key: "created_at",
+                    label: "Updated",
+                    align: "right",
+                    render: (r: Document) => (
+                      <span className="font-mono text-muted-foreground">
+                        {new Date(r.created_at).toLocaleDateString()}
+                      </span>
+                    ),
+                  },
                 ]}
                 rows={rows}
               />

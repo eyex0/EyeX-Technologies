@@ -27,7 +27,7 @@ export const supervisorNode: NodeHandler = async (state: WorkflowState) => {
 
   const result = await generateText(
     `Classify this request: "${lastMessage}"
-History: ${state.history.map(h => `[${h.node}]: ${h.output.slice(0, 100)}`).join("\n")}
+History: ${state.history.map((h) => `[${h.node}]: ${h.output.slice(0, 100)}`).join("\n")}
 Current status: ${state.status}
 Plan steps remaining: ${state.planSteps.length - state.currentStep}
 

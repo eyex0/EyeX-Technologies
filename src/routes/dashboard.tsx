@@ -6,7 +6,11 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — EyeX Technologies" },
-      { name: "description", content: "Real-time business intelligence dashboard. Monitor revenue, customers, growth, and AI-powered insights." },
+      {
+        name: "description",
+        content:
+          "Real-time business intelligence dashboard. Monitor revenue, customers, growth, and AI-powered insights.",
+      },
       { property: "og:title", content: "Dashboard — EyeX Technologies" },
       { property: "og:description", content: "Real-time business intelligence dashboard." },
       { property: "og:type", content: "website" },

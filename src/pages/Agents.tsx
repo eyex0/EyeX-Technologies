@@ -5,13 +5,26 @@ import { Card, Badge } from "@/components/common/primitives";
 import { toast } from "sonner";
 import { Cpu, Play, Pause } from "lucide-react";
 
-function AgentCard({ agent, workspaceId, onToggle }: { agent: AgentConfigRead; workspaceId: string; onToggle: (id: string, enabled: boolean) => void }) {
+function AgentCard({
+  agent,
+  workspaceId,
+  onToggle,
+}: {
+  agent: AgentConfigRead;
+  workspaceId: string;
+  onToggle: (id: string, enabled: boolean) => void;
+}) {
   return (
     <div className="bento-card rounded-lg p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${agent.is_enabled ? "bg-emerald-500/10" : "bg-white/5"}`}>
-            <Cpu size={20} className={agent.is_enabled ? "text-emerald-400" : "text-muted-foreground"} />
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${agent.is_enabled ? "bg-emerald-500/10" : "bg-white/5"}`}
+          >
+            <Cpu
+              size={20}
+              className={agent.is_enabled ? "text-emerald-400" : "text-muted-foreground"}
+            />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-white">{agent.display_name}</h3>
@@ -21,15 +34,21 @@ function AgentCard({ agent, workspaceId, onToggle }: { agent: AgentConfigRead; w
         <button
           onClick={() => onToggle(agent.id, !agent.is_enabled)}
           className={`w-8 h-8 rounded-md flex items-center justify-center transition-colors ${
-            agent.is_enabled ? "bg-emerald-500/10 text-emerald-400" : "bg-white/5 text-muted-foreground"
+            agent.is_enabled
+              ? "bg-emerald-500/10 text-emerald-400"
+              : "bg-white/5 text-muted-foreground"
           }`}
         >
           {agent.is_enabled ? <Play size={14} /> : <Pause size={14} />}
         </button>
       </div>
       <div className="flex items-center gap-2 text-xs">
-        <Badge tone={agent.is_enabled ? "success" : "neutral"}>{agent.is_enabled ? "Active" : "Disabled"}</Badge>
-        {agent.model && <span className="text-muted-foreground font-mono text-[10px]">{agent.model}</span>}
+        <Badge tone={agent.is_enabled ? "success" : "neutral"}>
+          {agent.is_enabled ? "Active" : "Disabled"}
+        </Badge>
+        {agent.model && (
+          <span className="text-muted-foreground font-mono text-[10px]">{agent.model}</span>
+        )}
       </div>
       {agent.description && <p className="text-xs text-muted-foreground">{agent.description}</p>}
     </div>
@@ -38,7 +57,10 @@ function AgentCard({ agent, workspaceId, onToggle }: { agent: AgentConfigRead; w
 
 export function AgentsPage() {
   const queryClient = useQueryClient();
-  const { data: workspaces } = useQuery({ queryKey: ["workspaces"], queryFn: () => BackendApi.listWorkspaces() });
+  const { data: workspaces } = useQuery({
+    queryKey: ["workspaces"],
+    queryFn: () => BackendApi.listWorkspaces(),
+  });
   const workspaceId = workspaces?.workspaces?.[0]?.id ?? "";
 
   const { data: agents, isLoading } = useQuery({
@@ -76,7 +98,12 @@ export function AgentsPage() {
       ) : agents && agents.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {agents.map((agent) => (
-            <AgentCard key={agent.id} agent={agent} workspaceId={workspaceId} onToggle={handleToggle} />
+            <AgentCard
+              key={agent.id}
+              agent={agent}
+              workspaceId={workspaceId}
+              onToggle={handleToggle}
+            />
           ))}
         </div>
       ) : (

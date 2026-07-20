@@ -1,6 +1,6 @@
 # EyeX Tools Reference
 
-*Auto-generated from ToolRegistry — 28 tools across 8 agent roles*
+_Auto-generated from ToolRegistry — 28 tools across 8 agent roles_
 
 ## Overview
 
@@ -30,7 +30,7 @@ Search file contents using a regex pattern. Optionally filter by file glob (e.g.
 
 ### `edit_file`
 
-Perform an exact string replacement in a file. Replaces the first occurrence of 
+Perform an exact string replacement in a file. Replaces the first occurrence of
 
 ### `delete_file`
 
@@ -100,7 +100,7 @@ Execute Python code in an isolated subprocess and return stdout + stderr. All im
 
 ### `run_javascript`
 
-Execute JavaScript code using Node.js in an isolated subprocess. Returns stdout 
+Execute JavaScript code using Node.js in an isolated subprocess. Returns stdout
 
 ### `list_running_processes`
 
@@ -130,17 +130,17 @@ Describe the schema of a specific database table: columns, types, nullability, d
 
 ## Agent Tool Assignments
 
-| Agent Role | Tools | Count |
-|------------|-------|-------|
-| coder | `read_file`, `write_file`, `edit_file`, `delete_file`, `move_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `run_javascript`, `github_get_file_contents`, `github_list_branches`, `github_search_repos` | 14 |
-| devops | `read_file`, `write_file`, `edit_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `tail_file`, `list_running_processes`, `db_query`, `db_list_tables`, `db_describe_table`, `github_list_branches`, `github_list_pull_requests`, `github_get_pull_request`, `github_get_repo` | 17 |
-| documenter | `read_file`, `write_file`, `list_directory`, `search_files`, `grep_files` | 5 |
-| planner | `read_file`, `search_files`, `grep_files`, `list_directory` | 4 |
-| researcher | `read_file`, `search_files`, `grep_files`, `web_search`, `web_fetch`, `github_search_repos`, `github_get_repo`, `github_get_file_contents` | 8 |
-| reviewer | `read_file`, `search_files`, `grep_files`, `list_directory`, `tail_file` | 5 |
-| supervisor | *None* | 0 |
-| tester | `read_file`, `write_file`, `edit_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `run_javascript` | 9 |
+| Agent Role | Tools                                                                                                                                                                                                                                                                                                                     | Count |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| coder      | `read_file`, `write_file`, `edit_file`, `delete_file`, `move_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `run_javascript`, `github_get_file_contents`, `github_list_branches`, `github_search_repos`                                                                     | 14    |
+| devops     | `read_file`, `write_file`, `edit_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `tail_file`, `list_running_processes`, `db_query`, `db_list_tables`, `db_describe_table`, `github_list_branches`, `github_list_pull_requests`, `github_get_pull_request`, `github_get_repo` | 17    |
+| documenter | `read_file`, `write_file`, `list_directory`, `search_files`, `grep_files`                                                                                                                                                                                                                                                 | 5     |
+| planner    | `read_file`, `search_files`, `grep_files`, `list_directory`                                                                                                                                                                                                                                                               | 4     |
+| researcher | `read_file`, `search_files`, `grep_files`, `web_search`, `web_fetch`, `github_search_repos`, `github_get_repo`, `github_get_file_contents`                                                                                                                                                                                | 8     |
+| reviewer   | `read_file`, `search_files`, `grep_files`, `list_directory`, `tail_file`                                                                                                                                                                                                                                                  | 5     |
+| supervisor | _None_                                                                                                                                                                                                                                                                                                                    | 0     |
+| tester     | `read_file`, `write_file`, `edit_file`, `list_directory`, `search_files`, `grep_files`, `execute_command`, `run_python_code`, `run_javascript`                                                                                                                                                                            | 9     |
 
 ---
 
-*Generated on 2026-07-19 13:12:45*
+_Generated on 2026-07-19 13:12:45_

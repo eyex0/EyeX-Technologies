@@ -11,7 +11,10 @@ export function AboutPage() {
 
       <main className="pt-32">
         {/* Hero Section */}
-        <section className="max-w-[1200px] mx-auto px-6 mb-[6rem] text-center relative" data-fade-up>
+        <section
+          className="max-w-[1200px] mx-auto px-6 mb-[6rem] text-center relative"
+          data-fade-up
+        >
           <div className="inline-block px-4 py-1 mb-6 rounded-full border border-eye-border bg-eye-surface text-primary-brand font-mono text-[12px] tracking-[0.15em] uppercase">
             Established MMXIX
           </div>
@@ -19,9 +22,8 @@ export function AboutPage() {
             About EyeX Technologies
           </h1>
           <p className="text-[20px] leading-[1.6] text-eye-text max-w-2xl mx-auto">
-            Architecting the substrate for the next era of computational
-            sovereignty. High-precision infrastructure for the formidable
-            enterprise.
+            Architecting the substrate for the next era of computational sovereignty. High-precision
+            infrastructure for the formidable enterprise.
           </p>
         </section>
 
@@ -37,8 +39,8 @@ export function AboutPage() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              "Our mission is to decouple technical capability from geographic
-              limitation, creating a seamless global fabric of intelligence."
+              "Our mission is to decouple technical capability from geographic limitation, creating
+              a seamless global fabric of intelligence."
             </h2>
           </div>
         </section>
@@ -50,9 +52,7 @@ export function AboutPage() {
               <div className="text-primary-brand text-[72px] font-medium mb-2 font-bold leading-[1.1]">
                 120+
               </div>
-              <div className="text-eye-white text-lg mb-1 font-medium">
-                Research Force
-              </div>
+              <div className="text-eye-white text-lg mb-1 font-medium">Research Force</div>
               <div className="text-eye-text text-[14px] leading-[1.6]">
                 Dedicated PhDs in Neural Architecture
               </div>
@@ -61,9 +61,7 @@ export function AboutPage() {
               <div className="text-primary-brand text-[72px] font-medium mb-2 font-bold leading-[1.1]">
                 4
               </div>
-              <div className="text-eye-white text-lg mb-1 font-medium">
-                Global Hubs
-              </div>
+              <div className="text-eye-white text-lg mb-1 font-medium">Global Hubs</div>
               <div className="text-eye-text text-[14px] leading-[1.6]">
                 Distributed Infrastructure Nodes
               </div>
@@ -72,9 +70,7 @@ export function AboutPage() {
               <div className="text-primary-brand text-[72px] font-medium mb-2 font-bold leading-[1.1]">
                 ∞
               </div>
-              <div className="text-eye-white text-lg mb-1 font-medium">
-                Scalability
-              </div>
+              <div className="text-eye-white text-lg mb-1 font-medium">Scalability</div>
               <div className="text-eye-text text-[14px] leading-[1.6]">
                 Boundless Computational Commitment
               </div>
@@ -101,12 +97,9 @@ export function AboutPage() {
                   <h4 className="text-[72px] font-medium text-primary-brand mb-2 tracking-tight leading-[1.1]">
                     2019
                   </h4>
-                  <p className="text-eye-white font-medium">
-                    Founding in Cairo
-                  </p>
+                  <p className="text-eye-white font-medium">Founding in Cairo</p>
                   <p className="text-eye-text text-sm">
-                    Initiating the vision of edge intelligence in North
-                    Africa's tech hub.
+                    Initiating the vision of edge intelligence in North Africa's tech hub.
                   </p>
                 </div>
                 <div className="w-4 h-4 bg-primary-brand rounded-full z-10 my-4 md:my-0 shadow-[0_0_15px_#38BDF8]" />
@@ -120,12 +113,9 @@ export function AboutPage() {
                   <h4 className="text-[72px] font-medium text-primary-brand mb-2 tracking-tight leading-[1.1]">
                     2021
                   </h4>
-                  <p className="text-eye-white font-medium">
-                    Expansion to Milan
-                  </p>
+                  <p className="text-eye-white font-medium">Expansion to Milan</p>
                   <p className="text-eye-text text-sm">
-                    Strategic European node integration for low-latency
-                    enterprise operations.
+                    Strategic European node integration for low-latency enterprise operations.
                   </p>
                 </div>
               </div>
@@ -135,12 +125,9 @@ export function AboutPage() {
                   <h4 className="text-[72px] font-medium text-primary-brand mb-2 tracking-tight leading-[1.1]">
                     2024
                   </h4>
-                  <p className="text-eye-white font-medium">
-                    Launch of QORX Flagship
-                  </p>
+                  <p className="text-eye-white font-medium">Launch of QORX Flagship</p>
                   <p className="text-eye-text text-sm">
-                    The world's first fully autonomous AI infrastructure
-                    deployment system.
+                    The world's first fully autonomous AI infrastructure deployment system.
                   </p>
                 </div>
                 <div className="w-4 h-4 bg-primary-brand rounded-full z-10 my-4 md:my-0 shadow-[0_0_15px_#38BDF8]" />
@@ -156,8 +143,7 @@ export function AboutPage() {
                   </h4>
                   <p className="text-eye-white font-medium">Global Scale</p>
                   <p className="text-eye-text text-sm">
-                    Ubiquitous computational presence across every major
-                    technological corridor.
+                    Ubiquitous computational presence across every major technological corridor.
                   </p>
                 </div>
               </div>
@@ -175,12 +161,9 @@ export function AboutPage() {
               <div className="w-12 h-12 bg-primary-brand/10 border border-primary-brand/20 rounded-lg flex items-center justify-center mb-6 text-primary-brand group-hover:scale-110 transition-transform">
                 <Brain size={24} />
               </div>
-              <h5 className="text-eye-white font-medium mb-3">
-                Intelligence
-              </h5>
+              <h5 className="text-eye-white font-medium mb-3">Intelligence</h5>
               <p className="text-eye-text text-[14px] leading-[1.6]">
-                Sub-millisecond inference across a globally distributed mesh
-                network.
+                Sub-millisecond inference across a globally distributed mesh network.
               </p>
             </div>
             <div className="bento-card p-8 rounded-xl group" data-fade-up>
@@ -189,32 +172,25 @@ export function AboutPage() {
               </div>
               <h5 className="text-eye-white font-medium mb-3">Trust</h5>
               <p className="text-eye-text text-[14px] leading-[1.6]">
-                Encryption baked into the hardware layer. Security that never
-                sleeps.
+                Encryption baked into the hardware layer. Security that never sleeps.
               </p>
             </div>
             <div className="bento-card p-8 rounded-xl group" data-fade-up>
               <div className="w-12 h-12 bg-primary-brand/10 border border-primary-brand/20 rounded-lg flex items-center justify-center mb-6 text-primary-brand group-hover:scale-110 transition-transform">
                 <Layers size={24} />
               </div>
-              <h5 className="text-eye-white font-medium mb-3">
-                Simplicity
-              </h5>
+              <h5 className="text-eye-white font-medium mb-3">Simplicity</h5>
               <p className="text-eye-text text-[14px] leading-[1.6]">
-                Complex infrastructure reduced to a single, intuitive API
-                interaction.
+                Complex infrastructure reduced to a single, intuitive API interaction.
               </p>
             </div>
             <div className="bento-card p-8 rounded-xl group" data-fade-up>
               <div className="w-12 h-12 bg-primary-brand/10 border border-primary-brand/20 rounded-lg flex items-center justify-center mb-6 text-primary-brand group-hover:scale-110 transition-transform">
                 <Globe size={24} />
               </div>
-              <h5 className="text-eye-white font-medium mb-3">
-                Human Impact
-              </h5>
+              <h5 className="text-eye-white font-medium mb-3">Human Impact</h5>
               <p className="text-eye-text text-[14px] leading-[1.6]">
-                Advancing human potential through surgical precision in
-                technology.
+                Advancing human potential through surgical precision in technology.
               </p>
             </div>
           </div>
@@ -308,8 +284,6 @@ export function AboutPage() {
           </div>
         </section>
       </main>
-
-
     </>
   );
 }

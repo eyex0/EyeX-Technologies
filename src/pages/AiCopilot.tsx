@@ -29,16 +29,25 @@ export function AiCopilotPage() {
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
   }, [messages]);
 
+  interface CopilotResult {
+    success: boolean;
+    text?: string;
+    error?: string;
+  }
+
   const mutation = useMutation({
     mutationFn: (message: string) =>
-      chatWithCopilotFn({ data: { message, history } }) as Promise<any>,
-    onSuccess: (result: any) => {
+      chatWithCopilotFn({ data: { message, history } }) as Promise<CopilotResult>,
+    onSuccess: (result: CopilotResult) => {
       if (result?.success) {
         const assistantMsg: ChatMessage = { role: "assistant", text: result.text };
         setMessages((prev) => [...prev, assistantMsg]);
         setHistory((prev) => [...prev, { role: "assistant", text: result.text }]);
       } else {
-        setMessages((prev) => [...prev, { role: "assistant", text: `Error: ${result?.error ?? "Unknown error"}` }]);
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", text: `Error: ${result?.error ?? "Unknown error"}` },
+        ]);
       }
     },
     onError: (error: Error) => {
@@ -128,7 +137,10 @@ export function AiCopilotPage() {
           </div>
         </div>
 
-        <div ref={scrollRef} className="max-h-[480px] overflow-y-auto custom-scrollbar p-2 flex flex-col gap-6">
+        <div
+          ref={scrollRef}
+          className="max-h-[480px] overflow-y-auto custom-scrollbar p-2 flex flex-col gap-6"
+        >
           {messages.length === 0 ? (
             <>
               <section className="px-3 pt-4">
@@ -141,14 +153,23 @@ export function AiCopilotPage() {
                       <CheckCircle2 className="text-primary-brand text-xl w-5 h-5" />
                       <span className="text-sm text-on-surface">Data Scraper</span>
                     </div>
-                    <span className="text-[10px] text-primary-brand/60 uppercase font-mono">Completed</span>
+                    <span className="text-[10px] text-primary-brand/60 uppercase font-mono">
+                      Completed
+                    </span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-eye-surface/50 border border-primary-brand/20 rounded-lg group">
                     <div className="flex items-center gap-3">
-                      <Settings2 className="text-primary-brand text-xl w-5 h-5 animate-spin" style={{ animationDuration: "3s" }} />
-                      <span className="text-sm text-on-background font-medium">Analytic Engine</span>
+                      <Settings2
+                        className="text-primary-brand text-xl w-5 h-5 animate-spin"
+                        style={{ animationDuration: "3s" }}
+                      />
+                      <span className="text-sm text-on-background font-medium">
+                        Analytic Engine
+                      </span>
                     </div>
-                    <span className="text-[10px] text-primary-brand uppercase font-mono animate-pulse">Processing...</span>
+                    <span className="text-[10px] text-primary-brand uppercase font-mono animate-pulse">
+                      Processing...
+                    </span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-transparent border border-eye-border/50 rounded-lg group opacity-50">
                     <div className="flex items-center gap-3">
@@ -167,12 +188,18 @@ export function AiCopilotPage() {
                   </h3>
                   <div className="space-y-1">
                     <button
-                      onClick={() => { setInput("Revenue Cluster Analysis"); }}
+                      onClick={() => {
+                        setInput("Revenue Cluster Analysis");
+                      }}
                       className="w-full flex items-center justify-between p-3 hover:bg-surface-container-high/40 rounded-lg transition-all group text-left border border-transparent hover:border-eye-border"
                     >
                       <div className="flex flex-col">
-                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">Revenue Cluster Analysis</span>
-                        <span className="text-sm text-eye-text">Execute deep-scan on quarterly financials.</span>
+                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">
+                          Revenue Cluster Analysis
+                        </span>
+                        <span className="text-sm text-eye-text">
+                          Execute deep-scan on quarterly financials.
+                        </span>
                       </div>
                       <ArrowRight className="text-eye-text opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
                     </button>
@@ -185,12 +212,18 @@ export function AiCopilotPage() {
                   </h3>
                   <div className="space-y-1">
                     <button
-                      onClick={() => { setInput("Generate Q3 Summary"); }}
+                      onClick={() => {
+                        setInput("Generate Q3 Summary");
+                      }}
                       className="w-full flex items-center justify-between p-3 hover:bg-surface-container-high/40 rounded-lg transition-all group text-left border border-transparent hover:border-eye-border"
                     >
                       <div className="flex flex-col">
-                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">Generate Q3 Summary</span>
-                        <span className="text-sm text-eye-text">Compile all active insights into PDF.</span>
+                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">
+                          Generate Q3 Summary
+                        </span>
+                        <span className="text-sm text-eye-text">
+                          Compile all active insights into PDF.
+                        </span>
                       </div>
                       <FileText className="text-eye-text opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
                     </button>
@@ -203,12 +236,18 @@ export function AiCopilotPage() {
                   </h3>
                   <div className="space-y-1">
                     <button
-                      onClick={() => { setInput("Import Raw Cluster"); }}
+                      onClick={() => {
+                        setInput("Import Raw Cluster");
+                      }}
                       className="w-full flex items-center justify-between p-3 hover:bg-surface-container-high/40 rounded-lg transition-all group text-left border border-transparent hover:border-eye-border"
                     >
                       <div className="flex flex-col">
-                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">Import Raw Cluster</span>
-                        <span className="text-sm text-eye-text">Connect external AWS/Azure datasets.</span>
+                        <span className="text-base text-on-background group-hover:text-primary-brand transition-colors">
+                          Import Raw Cluster
+                        </span>
+                        <span className="text-sm text-eye-text">
+                          Connect external AWS/Azure datasets.
+                        </span>
                       </div>
                       <CloudDownload className="text-eye-text opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
                     </button>
@@ -219,12 +258,17 @@ export function AiCopilotPage() {
           ) : (
             <div className="px-3 py-4 space-y-4">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
-                    msg.role === "user"
-                      ? "bg-primary-brand/10 border border-primary-brand/20 text-on-background"
-                      : "bg-eye-surface border border-eye-border text-on-surface"
-                  }`}>
+                <div
+                  key={i}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
+                      msg.role === "user"
+                        ? "bg-primary-brand/10 border border-primary-brand/20 text-on-background"
+                        : "bg-eye-surface border border-eye-border text-on-surface"
+                    }`}
+                  >
                     <div className="whitespace-pre-wrap">{msg.text}</div>
                   </div>
                 </div>
@@ -244,15 +288,21 @@ export function AiCopilotPage() {
         <div className="h-12 bg-eye-surface border-t border-eye-border px-5 flex items-center justify-between">
           <div className="flex gap-6">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">↑↓</span>
+              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">
+                ↑↓
+              </span>
               <span className="text-[11px] text-eye-text">Navigate</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">ENTER</span>
+              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">
+                ENTER
+              </span>
               <span className="text-[11px] text-eye-text">Execute</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">ESC</span>
+              <span className="font-mono text-[10px] text-eye-text bg-eye-border px-1.5 py-0.5 rounded">
+                ESC
+              </span>
               <span className="text-[11px] text-eye-text">Close</span>
             </div>
           </div>

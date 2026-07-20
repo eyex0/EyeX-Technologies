@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 
-type Document = Database["public"]["Tables"]["documents"]["Row"];
+export type Document = Database["public"]["Tables"]["documents"]["Row"];
 type DocumentInsert = Database["public"]["Tables"]["documents"]["Insert"];
 type DocumentUpdate = Database["public"]["Tables"]["documents"]["Update"];
 
@@ -13,10 +13,7 @@ export interface DocumentsSummary {
 
 export const DocumentsService = {
   async getDocuments(organizationId?: string): Promise<Document[]> {
-    let query = supabase
-      .from("documents")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("documents").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -28,22 +25,14 @@ export const DocumentsService = {
   },
 
   async getDocument(id: string): Promise<Document | null> {
-    const { data, error } = await supabase
-      .from("documents")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const { data, error } = await supabase.from("documents").select("*").eq("id", id).single();
 
     if (error) throw error;
     return data;
   },
 
   async createDocument(document: DocumentInsert): Promise<Document> {
-    const { data, error } = await supabase
-      .from("documents")
-      .insert(document)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("documents").insert(document).select().single();
 
     if (error) throw error;
     return data;
@@ -62,10 +51,7 @@ export const DocumentsService = {
   },
 
   async deleteDocument(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("documents")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("documents").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -75,9 +61,7 @@ export const DocumentsService = {
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentUploads = documents.filter(
-      (d) => new Date(d.created_at) >= thirtyDaysAgo
-    ).length;
+    const recentUploads = documents.filter((d) => new Date(d.created_at) >= thirtyDaysAgo).length;
 
     const typeMap = new Map<string, number>();
     for (const doc of documents) {

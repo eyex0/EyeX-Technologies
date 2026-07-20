@@ -108,7 +108,7 @@ export function ApiPage() {
       queryClient.setQueryData(["api-keys"], updated);
       toast.success("API key revoked");
     },
-    [keys, queryClient]
+    [keys, queryClient],
   );
 
   const handleDeleteKey = useCallback(
@@ -118,7 +118,7 @@ export function ApiPage() {
       queryClient.setQueryData(["api-keys"], updated);
       toast.success("API key deleted");
     },
-    [keys, queryClient]
+    [keys, queryClient],
   );
 
   const handleCopy = useCallback((id: string, key: string) => {
@@ -147,19 +147,31 @@ export function ApiPage() {
           </div>
         </div>
         <nav className="flex-1 space-y-2">
-          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
+          <a
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
+            href="#"
+          >
             <LayoutDashboard className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">Dashboard</span>
           </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-brand border-l-2 border-primary-brand bg-surface-container-low transition-all" href="#">
+          <a
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-brand border-l-2 border-primary-brand bg-surface-container-low transition-all"
+            href="#"
+          >
             <Key className="w-5 h-5" />
             <span className="text-sm font-bold">API Management</span>
           </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
+          <a
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
+            href="#"
+          >
             <FileText className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">Documentation</span>
           </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group" href="#">
+          <a
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all group"
+            href="#"
+          >
             <Activity className="group-hover:text-primary-brand w-5 h-5" />
             <span className="text-sm">System Health</span>
           </a>
@@ -171,7 +183,11 @@ export function ApiPage() {
           </button>
           <div className="mt-6 p-4 rounded-xl glass-panel flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
-              <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCADlX9fn0WkHCWmyDGh8WzHmcD4apoXdAtufXqEkhWuXG3yx9tYqxBPHKklvJNhNeLad44KiUD-3AUZBPCeXybO1-u7-oazruKGqa2uB0Ft0RQ84p3Ce1ZYEtz-NwPTOmcoy5_rDiJlzGd20mJ2m-Gg_14Nv6bBheXqGC6IpbO_6Z7SNmg4KGvDHgBqbQTDVAXs1SYbffGt-jyNe_v5YegEjsu4ocgyGfUxWnkPWbVBdR0ifzM-Zxws7dIfvp-Lfunjk897pd8Plc" alt="Admin avatar" />
+              <img
+                className="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCADlX9fn0WkHCWmyDGh8WzHmcD4apoXdAtufXqEkhWuXG3yx9tYqxBPHKklvJNhNeLad44KiUD-3AUZBPCeXybO1-u7-oazruKGqa2uB0Ft0RQ84p3Ce1ZYEtz-NwPTOmcoy5_rDiJlzGd20mJ2m-Gg_14Nv6bBheXqGC6IpbO_6Z7SNmg4KGvDHgBqbQTDVAXs1SYbffGt-jyNe_v5YegEjsu4ocgyGfUxWnkPWbVBdR0ifzM-Zxws7dIfvp-Lfunjk897pd8Plc"
+                alt="Admin avatar"
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-white">Admin Core</span>
@@ -215,12 +231,16 @@ export function ApiPage() {
               <div className="h-1.5 w-full bg-eye-border rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary-brand rounded-full transition-all"
-                  style={{ width: `${keys.length > 0 ? (activeKeys.length / keys.length) * 100 : 0}%` }}
+                  style={{
+                    width: `${keys.length > 0 ? (activeKeys.length / keys.length) * 100 : 0}%`,
+                  }}
                 />
               </div>
               <div className="flex justify-between mt-2">
                 <span className="text-[10px] text-eye-text">
-                  {activeKeys.length === 0 ? "No active keys" : `${activeKeys.length} key(s) active`}
+                  {activeKeys.length === 0
+                    ? "No active keys"
+                    : `${activeKeys.length} key(s) active`}
                 </span>
               </div>
             </div>
@@ -372,7 +392,9 @@ export function ApiPage() {
                     <div className="flex items-center justify-between pt-4 border-t border-eye-border">
                       <div className="flex flex-col">
                         <span className="text-[10px] text-eye-text">STATUS</span>
-                        <span className={`text-xs font-bold ${k.active ? "text-white" : "text-eye-text"}`}>
+                        <span
+                          className={`text-xs font-bold ${k.active ? "text-white" : "text-eye-text"}`}
+                        >
                           {k.active ? "10,000 REQ/MIN" : "DISABLED"}
                         </span>
                       </div>
@@ -428,8 +450,11 @@ export function ApiPage() {
               <div>
                 <h4 className="text-sm font-bold text-white mb-2">Authentication</h4>
                 <p className="text-xs text-eye-text leading-relaxed">
-                  Include your API key in the <code className="bg-eye-bg px-1.5 py-0.5 rounded text-primary-brand font-mono">Authorization</code> header
-                  with every request:
+                  Include your API key in the{" "}
+                  <code className="bg-eye-bg px-1.5 py-0.5 rounded text-primary-brand font-mono">
+                    Authorization
+                  </code>{" "}
+                  header with every request:
                 </p>
                 <div className="mt-3 bg-eye-bg rounded border border-eye-border p-4 font-mono text-xs text-white/80">
                   <span className="text-primary-brand">Authorization</span>: Bearer eyex_live_***
@@ -439,8 +464,11 @@ export function ApiPage() {
                 <h4 className="text-sm font-bold text-white mb-2">Rate Limits</h4>
                 <p className="text-xs text-eye-text leading-relaxed">
                   Each API key allows up to 10,000 requests per minute. Exceeding this limit will
-                  return a <code className="bg-eye-bg px-1.5 py-0.5 rounded text-red-400 font-mono">429 Too Many Requests</code> response.
-                  Rate limit headers are included in every API response.
+                  return a{" "}
+                  <code className="bg-eye-bg px-1.5 py-0.5 rounded text-red-400 font-mono">
+                    429 Too Many Requests
+                  </code>{" "}
+                  response. Rate limit headers are included in every API response.
                 </p>
               </div>
               <div>
@@ -499,7 +527,9 @@ export function ApiPage() {
                 <div className="bg-green-500/10 border border-green-500/20 rounded-sm p-4 mb-4 flex items-start gap-3">
                   <Check className="text-green-400 w-5 h-5 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-xs font-bold text-green-400 mb-1">Key Created Successfully</p>
+                    <p className="text-xs font-bold text-green-400 mb-1">
+                      Key Created Successfully
+                    </p>
                     <p className="text-[11px] text-eye-text">
                       Copy this key now. It will not be shown again.
                     </p>

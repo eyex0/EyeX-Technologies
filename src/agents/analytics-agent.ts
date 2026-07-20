@@ -52,13 +52,16 @@ export class AnalyticsAgent extends BaseAgent {
     try {
       const prompt = `${this.formatContext(context)}
 Generate a dashboard configuration from the provided data.`;
-      const result = await this.generateStructured<{ widgets: unknown[] }>(prompt, ANALYTICS_SCHEMA);
+      const result = await this.generateStructured<{ widgets: unknown[] }>(
+        prompt,
+        ANALYTICS_SCHEMA,
+      );
       return this.success(
         `Generated ${result.widgets.length} dashboard widgets`,
         result as unknown as Record<string, unknown>,
       );
-    } catch (err: any) {
-      return this.error(`Analytics failed: ${err.message}`);
+    } catch (err) {
+      return this.error(`Analytics failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }

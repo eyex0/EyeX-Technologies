@@ -1,20 +1,47 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, BarChart3, Database, Sparkles, FileText,
-  Users, ShoppingBag, Megaphone, Wallet, Package,
-  Briefcase, Folder, Puzzle, Bell, Settings,
-  Menu, RefreshCw, Plus,
+  LayoutDashboard,
+  BarChart3,
+  Database,
+  Sparkles,
+  FileText,
+  Users,
+  ShoppingBag,
+  Megaphone,
+  Wallet,
+  Package,
+  Briefcase,
+  Folder,
+  Puzzle,
+  Bell,
+  Settings,
+  Menu,
+  RefreshCw,
+  Plus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
-  dashboard: LayoutDashboard, analytics: BarChart3, database: Database,
-  auto_awesome: Sparkles, description: FileText, groups: Users,
-  shopping_bag: ShoppingBag, campaign: Megaphone, account_balance: Wallet,
-  inventory_2: Package, badge: Briefcase, assignment: Briefcase,
-  folder: Folder, extension: Puzzle, notifications: Bell, settings: Settings,
-  memory: Database, history: BarChart3, credit_card: Wallet,
+  dashboard: LayoutDashboard,
+  analytics: BarChart3,
+  database: Database,
+  auto_awesome: Sparkles,
+  description: FileText,
+  groups: Users,
+  shopping_bag: ShoppingBag,
+  campaign: Megaphone,
+  account_balance: Wallet,
+  inventory_2: Package,
+  badge: Briefcase,
+  assignment: Briefcase,
+  folder: Folder,
+  extension: Puzzle,
+  notifications: Bell,
+  settings: Settings,
+  memory: Database,
+  history: BarChart3,
+  credit_card: Wallet,
 };
 
 type NavItem = { to: string; label: string; icon: string };
@@ -88,7 +115,9 @@ export function AppShell({
             <img src="/logo.svg" alt="EyeX Logo" className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-sm tracking-tight text-white leading-none">EYEX</span>
+            <span className="font-semibold text-sm tracking-tight text-white leading-none">
+              EYEX
+            </span>
             <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider leading-none mt-1">
               Business OS
             </span>
@@ -150,7 +179,9 @@ export function AppShell({
               <Menu size={16} />
             </button>
             <div>
-              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">{title}</h1>
+              <h1 className="text-lg md:text-xl font-semibold tracking-tight text-white">
+                {title}
+              </h1>
               {subtitle && (
                 <p className="text-muted-foreground mt-0.5 font-mono text-[10px] uppercase tracking-wider">
                   {subtitle}
@@ -161,7 +192,10 @@ export function AppShell({
           <div className="flex items-center gap-2">
             {actions ?? (
               <>
-                <button aria-label="Refresh" className="bento-card w-9 h-9 hidden sm:flex items-center justify-center rounded-md text-muted-foreground hover:text-white">
+                <button
+                  aria-label="Refresh"
+                  className="bento-card w-9 h-9 hidden sm:flex items-center justify-center rounded-md text-muted-foreground hover:text-white"
+                >
                   <RefreshCw size={16} />
                 </button>
                 <button className="bg-white hover:bg-white/90 text-black px-4 h-9 rounded-md font-semibold text-xs flex items-center gap-2 transition-colors">

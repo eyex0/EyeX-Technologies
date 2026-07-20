@@ -6,7 +6,11 @@ export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
       { title: "Admin — EyeX Technologies" },
-      { name: "description", content: "System administration dashboard. Monitor Python backend services, agents, and system health." },
+      {
+        name: "description",
+        content:
+          "System administration dashboard. Monitor Python backend services, agents, and system health.",
+      },
       { property: "og:title", content: "Admin — EyeX Technologies" },
       { property: "og:description", content: "System administration dashboard." },
       { property: "og:type", content: "website" },

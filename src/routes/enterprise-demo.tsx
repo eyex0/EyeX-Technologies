@@ -6,7 +6,10 @@ export const Route = createFileRoute("/enterprise-demo")({
   head: () => ({
     meta: [
       { title: "Enterprise Demo | EyeX Technologies" },
-      { name: "description", content: "Experience the EyeX platform with a realistic company scenario" },
+      {
+        name: "description",
+        content: "Experience the EyeX platform with a realistic company scenario",
+      },
     ],
   }),
   component: () => (

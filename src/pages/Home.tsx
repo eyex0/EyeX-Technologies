@@ -1,12 +1,4 @@
-import {
-  Users,
-  ShieldCheck,
-  BarChart3,
-  Globe,
-  Code,
-  Terminal,
-  ArrowRight,
-} from "lucide-react";
+import { Users, ShieldCheck, BarChart3, Globe, Code, Terminal, ArrowRight } from "lucide-react";
 
 export function HomePage() {
   return (
@@ -16,7 +8,10 @@ export function HomePage() {
         <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.1)_0%,rgba(56,189,248,0)_70%)] blur-[80px] z-[-1] pointer-events-none" />
         <div
           className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[80px] z-[-1] pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, rgba(56, 189, 248, 0) 70%)" }}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, rgba(56, 189, 248, 0) 70%)",
+          }}
         />
 
         {/* Hero Section */}
@@ -28,13 +23,13 @@ export function HomePage() {
             </span>
           </div>
           <h1 className="text-[72px] md:text-[84px] font-medium text-eye-white leading-[1] mb-8 tracking-[-0.04em]">
-            Intelligence,<br />
+            Intelligence,
+            <br />
             Architected.
           </h1>
           <p className="text-[20px] leading-[1.6] text-eye-text max-w-2xl mx-auto mb-12">
-            The foundational AI infrastructure layer for the world's most
-            ambitious companies. Secure, scalable, and built for the next
-            generation of intelligent systems.
+            The foundational AI infrastructure layer for the world's most ambitious companies.
+            Secure, scalable, and built for the next generation of intelligent systems.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a
@@ -63,9 +58,7 @@ export function HomePage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-eye-bg via-transparent to-transparent" />
             <div className="absolute bottom-12 left-12 max-w-md">
-              <p className="font-mono text-primary-brand mb-2">
-                INFRASTRUCTURE LAYER 01
-              </p>
+              <p className="font-mono text-primary-brand mb-2">INFRASTRUCTURE LAYER 01</p>
               <h3 className="text-[36px] font-medium text-eye-white leading-[1.2] tracking-[-0.01em]">
                 Built for physical reliability.
               </h3>
@@ -85,8 +78,8 @@ export function HomePage() {
                     Multi-Agent AI
                   </h3>
                   <p className="text-eye-text text-[14px] leading-[1.6] max-w-sm">
-                    Orchestrate autonomous workflows across distributed systems
-                    with unified state management.
+                    Orchestrate autonomous workflows across distributed systems with unified state
+                    management.
                   </p>
                 </div>
                 <div className="font-mono text-[10px] text-eye-text border border-eye-border px-2 py-1 rounded">
@@ -112,8 +105,7 @@ export function HomePage() {
                 Enterprise Security
               </h3>
               <p className="text-eye-text text-[14px] leading-[1.6] mb-8">
-                Zero-trust architecture purpose-built for LLM data privacy and
-                residency.
+                Zero-trust architecture purpose-built for LLM data privacy and residency.
               </p>
               <div className="space-y-3">
                 <div className="h-2 w-full bg-eye-border rounded-full overflow-hidden">
@@ -153,8 +145,8 @@ export function HomePage() {
                     Global Scale
                   </h3>
                   <p className="text-eye-text text-[14px] leading-[1.6]">
-                    Distributed edge clusters ensure low-latency inference
-                    regardless of user location.
+                    Distributed edge clusters ensure low-latency inference regardless of user
+                    location.
                   </p>
                   <div className="mt-6 flex gap-4">
                     <div className="px-3 py-1 bg-eye-surface border border-eye-border rounded font-mono text-[10px]">
@@ -193,8 +185,7 @@ export function HomePage() {
                 API-First
               </h3>
               <p className="text-eye-text text-[14px] leading-[1.6]">
-                Native support for REST and gRPC endpoints for seamless
-                integration.
+                Native support for REST and gRPC endpoints for seamless integration.
               </p>
               <div className="mt-6 font-mono text-[11px] text-primary-brand/80 bg-black/40 p-3 rounded border border-eye-border">
                 <span className="text-white">POST</span> /v1/orchestrate
@@ -212,9 +203,7 @@ export function HomePage() {
               </p>
               <div className="mt-6 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                <span className="font-mono text-[10px] text-eye-text">
-                  CLI READY
-                </span>
+                <span className="font-mono text-[10px] text-eye-text">CLI READY</span>
               </div>
             </div>
           </div>
@@ -228,9 +217,9 @@ export function HomePage() {
                 Engineered by architects, for architects.
               </h2>
               <p className="text-[20px] leading-[1.6] text-eye-text mb-8">
-                Our team consists of industry veterans who have built core
-                infrastructure for the world's leading technology providers. We
-                understand the mission-critical nature of your stack.
+                Our team consists of industry veterans who have built core infrastructure for the
+                world's leading technology providers. We understand the mission-critical nature of
+                your stack.
               </p>
               <div className="flex gap-4">
                 <div className="flex -space-x-3">
@@ -260,8 +249,7 @@ export function HomePage() {
               <div
                 className="w-full h-full"
                 style={{
-                  backgroundImage:
-                    "radial-gradient(#3abff8 1px, transparent 1px)",
+                  backgroundImage: "radial-gradient(#3abff8 1px, transparent 1px)",
                   backgroundSize: "32px 32px",
                 }}
               />
@@ -280,8 +268,6 @@ export function HomePage() {
           </div>
         </section>
       </main>
-
-
     </>
   );
 }

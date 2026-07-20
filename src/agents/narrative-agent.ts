@@ -22,8 +22,10 @@ Generate an executive summary or business narrative based on the data.
 Structure it with: Overview, Key Findings, Recommendations.`;
       const output = await this.generate(prompt);
       return this.success(output);
-    } catch (err: any) {
-      return this.error(`Narrative generation failed: ${err.message}`);
+    } catch (err) {
+      return this.error(
+        `Narrative generation failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 }

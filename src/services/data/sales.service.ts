@@ -18,10 +18,7 @@ export interface SalesSummary {
 
 export const SalesService = {
   async getOrders(organizationId?: string): Promise<Order[]> {
-    let query = supabase
-      .from("sales_orders")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("sales_orders").select("*").order("created_at", { ascending: false });
 
     if (organizationId) {
       query = query.eq("organization_id", organizationId);
@@ -33,22 +30,14 @@ export const SalesService = {
   },
 
   async getOrder(id: string): Promise<Order | null> {
-    const { data, error } = await supabase
-      .from("sales_orders")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const { data, error } = await supabase.from("sales_orders").select("*").eq("id", id).single();
 
     if (error) throw error;
     return data;
   },
 
   async createOrder(order: OrderInsert): Promise<Order> {
-    const { data, error } = await supabase
-      .from("sales_orders")
-      .insert(order)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("sales_orders").insert(order).select().single();
 
     if (error) throw error;
     return data;
@@ -67,10 +56,7 @@ export const SalesService = {
   },
 
   async deleteOrder(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("sales_orders")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("sales_orders").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -91,11 +77,7 @@ export const SalesService = {
   },
 
   async createProduct(product: ProductInsert): Promise<Product> {
-    const { data, error } = await supabase
-      .from("sales_products")
-      .insert(product)
-      .select()
-      .single();
+    const { data, error } = await supabase.from("sales_products").insert(product).select().single();
 
     if (error) throw error;
     return data;
@@ -114,10 +96,7 @@ export const SalesService = {
   },
 
   async deleteProduct(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("sales_products")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("sales_products").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -127,12 +106,15 @@ export const SalesService = {
 
     const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total), 0);
     const pendingOrders = orders.filter((o) => o.status === "pending").length;
-    const completedOrders = orders.filter((o) => o.status === "completed" || o.status === "delivered").length;
+    const completedOrders = orders.filter(
+      (o) => o.status === "completed" || o.status === "delivered",
+    ).length;
 
     const revenueByProduct: Record<string, number> = {};
     for (const order of orders) {
       if (order.status === "completed" || order.status === "delivered") {
-        revenueByProduct[order.order_number] = (revenueByProduct[order.order_number] || 0) + Number(order.total);
+        revenueByProduct[order.order_number] =
+          (revenueByProduct[order.order_number] || 0) + Number(order.total);
       }
     }
 

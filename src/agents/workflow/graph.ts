@@ -3,7 +3,13 @@ import { supervisorNode } from "./supervisor-node";
 import { plannerNode } from "./planner-node";
 import { researcherNode } from "./researcher-node";
 import { coderNode } from "./coder-node";
-import type { GraphEdge, NodeHandler, NodeMessage, WorkflowGraphConfig, WorkflowState } from "./types";
+import type {
+  GraphEdge,
+  NodeHandler,
+  NodeMessage,
+  WorkflowGraphConfig,
+  WorkflowState,
+} from "./types";
 
 export type NodeName = "supervisor" | "planner" | "researcher" | "coder";
 
@@ -31,10 +37,7 @@ export class WorkflowGraph {
     return this;
   }
 
-  async execute(
-    request: string,
-    initialState?: Partial<WorkflowState>,
-  ): Promise<WorkflowState> {
+  async execute(request: string, initialState?: Partial<WorkflowState>): Promise<WorkflowState> {
     const state: WorkflowState = {
       request,
       plan: null,

@@ -2,16 +2,34 @@ import { useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Badge } from "@/components/common/primitives";
 import {
-  Table, Database, DollarSign, ShoppingBag, Share2, Cloud,
-  BarChart3, Target, MessageSquare, FileText, Lightbulb, Package,
+  Table,
+  Database,
+  DollarSign,
+  ShoppingBag,
+  Share2,
+  Cloud,
+  BarChart3,
+  Target,
+  MessageSquare,
+  FileText,
+  Lightbulb,
+  Package,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  table_chart: Table, table_view: Table, database: Database,
-  payments: DollarSign, storefront: ShoppingBag, hub: Share2,
-  cloud: Cloud, analytics: BarChart3, ads_click: Target,
-  chat: MessageSquare, sticky_note_2: FileText, receipt_long: FileText,
+  table_chart: Table,
+  table_view: Table,
+  database: Database,
+  payments: DollarSign,
+  storefront: ShoppingBag,
+  hub: Share2,
+  cloud: Cloud,
+  analytics: BarChart3,
+  ads_click: Target,
+  chat: MessageSquare,
+  sticky_note_2: FileText,
+  receipt_long: FileText,
   insights: Lightbulb,
 };
 
@@ -23,11 +41,36 @@ interface IntegrationItem {
 }
 
 const INTEGRATIONS: IntegrationItem[] = [
-  { name: "Salesforce", icon: "cloud", desc: "Sync CRM contacts, deals, and activities", category: "CRM" },
-  { name: "HubSpot", icon: "hub", desc: "Import marketing contacts and campaign data", category: "CRM" },
-  { name: "Slack", icon: "chat", desc: "Send alerts and notifications to channels", category: "Communication" },
-  { name: "Microsoft Teams", icon: "chat", desc: "Collaborate on reports and dashboards", category: "Communication" },
-  { name: "Google Drive", icon: "cloud", desc: "Store and sync document exports", category: "Storage" },
+  {
+    name: "Salesforce",
+    icon: "cloud",
+    desc: "Sync CRM contacts, deals, and activities",
+    category: "CRM",
+  },
+  {
+    name: "HubSpot",
+    icon: "hub",
+    desc: "Import marketing contacts and campaign data",
+    category: "CRM",
+  },
+  {
+    name: "Slack",
+    icon: "chat",
+    desc: "Send alerts and notifications to channels",
+    category: "Communication",
+  },
+  {
+    name: "Microsoft Teams",
+    icon: "chat",
+    desc: "Collaborate on reports and dashboards",
+    category: "Communication",
+  },
+  {
+    name: "Google Drive",
+    icon: "cloud",
+    desc: "Store and sync document exports",
+    category: "Storage",
+  },
   { name: "Dropbox", icon: "cloud", desc: "Backup files and share reports", category: "Storage" },
 ];
 
@@ -63,9 +106,14 @@ export function IntegrationsPage() {
             <div key={i.name} className="bento-card rounded-lg p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center">
-                  {(() => { const Icon = ICON_MAP[i.icon] ?? Package; return <Icon className="h-5 w-5 text-white" />; })()}
+                  {(() => {
+                    const Icon = ICON_MAP[i.icon] ?? Package;
+                    return <Icon className="h-5 w-5 text-white" />;
+                  })()}
                 </div>
-                <Badge tone={isConnected ? "success" : "info"}>{isConnected ? "Connected" : "Available"}</Badge>
+                <Badge tone={isConnected ? "success" : "info"}>
+                  {isConnected ? "Connected" : "Available"}
+                </Badge>
               </div>
               <div>
                 <div className="text-white font-medium text-sm">{i.name}</div>

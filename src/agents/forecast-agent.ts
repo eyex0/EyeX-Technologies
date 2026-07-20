@@ -43,10 +43,13 @@ export class ForecastAgent extends BaseAgent {
     try {
       const prompt = `${this.formatContext(context)}
 Generate a forecast based on the provided historical data. Include projected values with confidence levels.`;
-      const result = await this.generateStructured<Record<string, unknown>>(prompt, FORECAST_SCHEMA);
-      return this.success(result.summary as string || "Forecast generated", result);
-    } catch (err: any) {
-      return this.error(`Forecast failed: ${err.message}`);
+      const result = await this.generateStructured<Record<string, unknown>>(
+        prompt,
+        FORECAST_SCHEMA,
+      );
+      return this.success((result.summary as string) || "Forecast generated", result);
+    } catch (err) {
+      return this.error(`Forecast failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }

@@ -16,12 +16,7 @@ import {
   MessageSquare,
   Activity,
 } from "lucide-react";
-import {
-  FinanceService,
-  CrmService,
-  SalesService,
-  HrService,
-} from "@/services/data";
+import { FinanceService, CrmService, SalesService, HrService } from "@/services/data";
 
 function formatCurrency(value: number): string {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
@@ -101,37 +96,71 @@ export function AnalyticsPage() {
       {/* SIDE NAVIGATION */}
       <aside className="h-screen w-64 fixed left-0 top-0 border-r border-eye-border bg-eye-bg flex flex-col py-6 z-[60]">
         <div className="px-6 mb-10">
-          <h1 className="text-2xl tracking-tighter leading-none font-medium" style={{ fontFamily: "var(--font-display)" }}>
+          <h1
+            className="text-2xl tracking-tighter leading-none font-medium"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             EyeX Pro
           </h1>
-          <p className="font-mono text-xs text-eye-text mt-1" style={{ fontFamily: "var(--font-mono)" }}>
+          <p
+            className="font-mono text-xs text-eye-text mt-1"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             Enterprise BI
           </p>
         </div>
         <nav className="flex-1 space-y-1">
-          <a className="flex items-center px-6 py-3 text-primary font-bold border-r-2 border-primary bg-primary/5 transition-all duration-300" href="#">
+          <a
+            className="flex items-center px-6 py-3 text-primary font-bold border-r-2 border-primary bg-primary/5 transition-all duration-300"
+            href="#"
+          >
             <LayoutDashboard className="w-5 h-5 mr-3" />
-            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>Dashboard</span>
+            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+              Dashboard
+            </span>
           </a>
-          <a className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200" href="#">
+          <a
+            className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200"
+            href="#"
+          >
             <Activity className="w-5 h-5 mr-3" />
-            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>Analytics</span>
+            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+              Analytics
+            </span>
           </a>
-          <a className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200" href="#">
+          <a
+            className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200"
+            href="#"
+          >
             <MessageSquare className="w-5 h-5 mr-3" />
-            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>AI Chat</span>
+            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+              AI Chat
+            </span>
           </a>
-          <a className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200" href="#">
+          <a
+            className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200"
+            href="#"
+          >
             <FileText className="w-5 h-5 mr-3" />
-            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>Documents</span>
+            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+              Documents
+            </span>
           </a>
-          <a className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200" href="#">
+          <a
+            className="flex items-center px-6 py-3 text-eye-text hover:text-white hover:bg-eye-surface transition-colors duration-200"
+            href="#"
+          >
             <Settings className="w-5 h-5 mr-3" />
-            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>Settings</span>
+            <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+              Settings
+            </span>
           </a>
         </nav>
         <div className="px-6 mt-auto">
-          <button className="w-full bg-[#FAFAFA] text-[#050505] py-3 rounded font-mono text-xs hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all" style={{ fontFamily: "var(--font-mono)" }}>
+          <button
+            className="w-full bg-[#FAFAFA] text-[#050505] py-3 rounded font-mono text-xs hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             Upgrade Power
           </button>
         </div>
@@ -146,18 +175,30 @@ export function AnalyticsPage() {
           <div className="h-4 w-[1px] bg-eye-border mx-2" />
           <div className="flex items-center bg-eye-surface border border-eye-border rounded px-3 py-1.5 focus-within:ring-1 focus-within:ring-primary transition-all">
             <Search className="w-4 h-4 text-eye-text mr-2" />
-            <input className="bg-transparent border-none focus:ring-0 text-sm text-white w-48 placeholder:text-eye-text" style={{ fontFamily: "var(--font-body)" }} placeholder="Search Systems" type="text" />
+            <input
+              className="bg-transparent border-none focus:ring-0 text-sm text-white w-48 placeholder:text-eye-text"
+              style={{ fontFamily: "var(--font-body)" }}
+              placeholder="Search Systems"
+              type="text"
+            />
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <button aria-label="Notifications" className="text-eye-text hover:text-primary transition-colors">
+          <button
+            aria-label="Notifications"
+            className="text-eye-text hover:text-primary transition-colors"
+          >
             <Bell className="w-5 h-5" />
           </button>
           <button aria-label="Help" className="text-eye-text hover:text-primary transition-colors">
             <HelpCircle className="w-5 h-5" />
           </button>
           <div className="w-8 h-8 rounded-full bg-[#78d1ff] overflow-hidden border border-eye-border">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDitNiwCP6Zy0ae-XXZ6CuzvnT7TjqAJ_cfSsKnanxxWVIY9EMNRx0b4NgMTeeeDH_VKoRUZmzmii38J8Wnz20qxbxagVFYiysMnM0flG9tscqVd1vYMAJPDAlKyGKkV3iYiV_hlECExrC0Im0rAxOfzfMUFyoAT9ezZQ92s81pii4Q_S2r_zYY-icRub07TQQ9N6uGKZW-2GgryBJoqI_qdwOzhWo2bcSJ1f3o0ym67l7DnuPB7eGfAXQSv3a_QdIKHYNTPkbje1E" alt="User avatar" />
+            <img
+              className="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDitNiwCP6Zy0ae-XXZ6CuzvnT7TjqAJ_cfSsKnanxxWVIY9EMNRx0b4NgMTeeeDH_VKoRUZmzmii38J8Wnz20qxbxagVFYiysMnM0flG9tscqVd1vYMAJPDAlKyGKkV3iYiV_hlECExrC0Im0rAxOfzfMUFyoAT9ezZQ92s81pii4Q_S2r_zYY-icRub07TQQ9N6uGKZW-2GgryBJoqI_qdwOzhWo2bcSJ1f3o0ym67l7DnuPB7eGfAXQSv3a_QdIKHYNTPkbje1E"
+              alt="User avatar"
+            />
           </div>
         </div>
       </header>
@@ -169,16 +210,23 @@ export function AnalyticsPage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-2 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded cursor-pointer transition-all">
               <Calendar className="w-4 h-4 text-primary" />
-              <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>Last 30 Days</span>
+              <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+                Last 30 Days
+              </span>
               <ChevronDown className="w-4 h-4 text-white" />
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded cursor-pointer transition-all">
               <BarChart3 className="w-4 h-4 text-primary" />
-              <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>All Metrics</span>
+              <span className="font-mono text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+                All Metrics
+              </span>
               <ChevronDown className="w-4 h-4 text-white" />
             </div>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 border border-eye-border rounded font-mono text-xs hover:border-primary hover:text-primary transition-all" style={{ fontFamily: "var(--font-mono)" }}>
+          <button
+            className="flex items-center gap-2 px-4 py-2 border border-eye-border rounded font-mono text-xs hover:border-primary hover:text-primary transition-all"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             <Download className="w-4 h-4" />
             Export Report
           </button>
@@ -200,23 +248,47 @@ export function AnalyticsPage() {
             ) : (
               <>
                 {/* Revenue */}
-                <div data-fade-up className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all">
+                <div
+                  data-fade-up
+                  className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all"
+                >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="font-mono text-xs text-eye-text uppercase" style={{ fontFamily: "var(--font-mono)" }}>Total Revenue</p>
-                      <h3 className="text-3xl font-medium text-white mt-1" style={{ fontFamily: "var(--font-display)" }}>
+                      <p
+                        className="font-mono text-xs text-eye-text uppercase"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Total Revenue
+                      </p>
+                      <h3
+                        className="text-3xl font-medium text-white mt-1"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
                         {formatCurrency(finance.data?.totalRevenue ?? 0)}
                       </h3>
                     </div>
-                    <span className="text-[#38BDF8] font-mono text-[10px] flex items-center bg-[#38BDF8]/10 px-2 py-0.5 rounded" style={{ fontFamily: "var(--font-mono)" }}>
+                    <span
+                      className="text-[#38BDF8] font-mono text-[10px] flex items-center bg-[#38BDF8]/10 px-2 py-0.5 rounded"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
                       <TrendingUp className="w-3 h-3 mr-1" />
                       Net: {formatCurrency(finance.data?.netIncome ?? 0)}
                     </span>
                   </div>
                   <div className="w-full h-12 mt-2">
                     <svg className="w-full h-full" viewBox="0 0 200 40">
-                      <path className="sparkline" d="M0,35 Q20,32 40,30 T80,15 T120,25 T160,10 T200,5" fill="none" stroke="#38BDF8" strokeWidth="2" />
-                      <path d="M0,35 Q20,32 40,30 T80,15 T120,25 T160,10 T200,5 L200,40 L0,40 Z" fill="url(#grad-blue)" opacity="0.1" />
+                      <path
+                        className="sparkline"
+                        d="M0,35 Q20,32 40,30 T80,15 T120,25 T160,10 T200,5"
+                        fill="none"
+                        stroke="#38BDF8"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M0,35 Q20,32 40,30 T80,15 T120,25 T160,10 T200,5 L200,40 L0,40 Z"
+                        fill="url(#grad-blue)"
+                        opacity="0.1"
+                      />
                       <defs>
                         <linearGradient id="grad-blue" x1="0%" x2="0%" y1="0%" y2="100%">
                           <stop offset="0%" stopColor="#38BDF8" stopOpacity="1" />
@@ -228,43 +300,83 @@ export function AnalyticsPage() {
                 </div>
 
                 {/* Total Customers */}
-                <div data-fade-up className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all">
+                <div
+                  data-fade-up
+                  className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all"
+                >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="font-mono text-xs text-eye-text uppercase" style={{ fontFamily: "var(--font-mono)" }}>Total Customers</p>
-                      <h3 className="text-3xl font-medium text-white mt-1" style={{ fontFamily: "var(--font-display)" }}>
+                      <p
+                        className="font-mono text-xs text-eye-text uppercase"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Total Customers
+                      </p>
+                      <h3
+                        className="text-3xl font-medium text-white mt-1"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
                         {formatNumber(crm.data?.totalCustomers ?? 0)}
                       </h3>
                     </div>
-                    <span className="text-[#4ade80] font-mono text-[10px] flex items-center bg-[#4ade80]/10 px-2 py-0.5 rounded" style={{ fontFamily: "var(--font-mono)" }}>
+                    <span
+                      className="text-[#4ade80] font-mono text-[10px] flex items-center bg-[#4ade80]/10 px-2 py-0.5 rounded"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
                       <TrendingDown className="w-3 h-3 mr-1" />
                       {crm.data?.activeCustomers ?? 0} active
                     </span>
                   </div>
                   <div className="w-full h-12 mt-2">
                     <svg className="w-full h-full" viewBox="0 0 200 40">
-                      <path className="sparkline" d="M0,10 Q30,15 60,8 T100,20 T140,12 T180,25 T200,30" fill="none" stroke="#4ade80" strokeWidth="2" />
+                      <path
+                        className="sparkline"
+                        d="M0,10 Q30,15 60,8 T100,20 T140,12 T180,25 T200,30"
+                        fill="none"
+                        stroke="#4ade80"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
                 </div>
 
                 {/* Sales Orders */}
-                <div data-fade-up className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all">
+                <div
+                  data-fade-up
+                  className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 relative overflow-hidden transition-all"
+                >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="font-mono text-xs text-eye-text uppercase" style={{ fontFamily: "var(--font-mono)" }}>Sales Revenue</p>
-                      <h3 className="text-3xl font-medium text-white mt-1" style={{ fontFamily: "var(--font-display)" }}>
+                      <p
+                        className="font-mono text-xs text-eye-text uppercase"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Sales Revenue
+                      </p>
+                      <h3
+                        className="text-3xl font-medium text-white mt-1"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
                         {formatCurrency(sales.data?.totalRevenue ?? 0)}
                       </h3>
                     </div>
-                    <span className="text-[#38BDF8] font-mono text-[10px] flex items-center bg-[#38BDF8]/10 px-2 py-0.5 rounded" style={{ fontFamily: "var(--font-mono)" }}>
+                    <span
+                      className="text-[#38BDF8] font-mono text-[10px] flex items-center bg-[#38BDF8]/10 px-2 py-0.5 rounded"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
                       <TrendingUp className="w-3 h-3 mr-1" />
                       {sales.data?.completedOrders ?? 0} completed
                     </span>
                   </div>
                   <div className="w-full h-12 mt-2">
                     <svg className="w-full h-full" viewBox="0 0 200 40">
-                      <path className="sparkline" d="M0,30 Q40,25 80,28 T120,15 T160,18 T200,10" fill="none" stroke="#38BDF8" strokeWidth="2" />
+                      <path
+                        className="sparkline"
+                        d="M0,30 Q40,25 80,28 T120,15 T160,18 T200,10"
+                        fill="none"
+                        stroke="#38BDF8"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -273,19 +385,43 @@ export function AnalyticsPage() {
           </div>
 
           {/* MAIN CHART */}
-          <div data-fade-up className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-8">
+          <div
+            data-fade-up
+            className="bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-8"
+          >
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h2 className="text-2xl text-white" style={{ fontFamily: "var(--font-display)" }}>Revenue Over Time</h2>
-                <p className="text-sm text-eye-text mt-1" style={{ fontFamily: "var(--font-body)" }}>System-wide node interactions across active clusters.</p>
+                <h2 className="text-2xl text-white" style={{ fontFamily: "var(--font-display)" }}>
+                  Revenue Over Time
+                </h2>
+                <p
+                  className="text-sm text-eye-text mt-1"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  System-wide node interactions across active clusters.
+                </p>
               </div>
               <div className="flex gap-2">
-                <button className="px-3 py-1 font-mono text-[10px] rounded border border-eye-border bg-eye-surface text-primary" style={{ fontFamily: "var(--font-mono)" }}>Nodes</button>
-                <button className="px-3 py-1 font-mono text-[10px] rounded border border-eye-border text-eye-text hover:text-white" style={{ fontFamily: "var(--font-mono)" }}>Clusters</button>
+                <button
+                  className="px-3 py-1 font-mono text-[10px] rounded border border-eye-border bg-eye-surface text-primary"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  Nodes
+                </button>
+                <button
+                  className="px-3 py-1 font-mono text-[10px] rounded border border-eye-border text-eye-text hover:text-white"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  Clusters
+                </button>
               </div>
             </div>
             <div className="h-[400px] w-full relative">
-              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 400">
+              <svg
+                className="w-full h-full overflow-visible"
+                preserveAspectRatio="none"
+                viewBox="0 0 1000 400"
+              >
                 <defs>
                   <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.2" />
@@ -297,50 +433,134 @@ export function AnalyticsPage() {
                   <line x1="0" x2="1000" y1="200" y2="200" />
                   <line x1="0" x2="1000" y1="300" y2="300" />
                 </g>
-                <path className="sparkline" d="M0,350 C100,320 150,380 250,250 C350,120 450,220 550,150 C650,80 750,120 850,50 C950,-20 1000,50 1000,50" fill="none" stroke="#38BDF8" strokeWidth="3" />
-                <path d="M0,350 C100,320 150,380 250,250 C350,120 450,220 550,150 C650,80 750,120 850,50 C950,-20 1000,50 1000,50 L1000,400 L0,400 Z" fill="url(#chartFill)" />
+                <path
+                  className="sparkline"
+                  d="M0,350 C100,320 150,380 250,250 C350,120 450,220 550,150 C650,80 750,120 850,50 C950,-20 1000,50 1000,50"
+                  fill="none"
+                  stroke="#38BDF8"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M0,350 C100,320 150,380 250,250 C350,120 450,220 550,150 C650,80 750,120 850,50 C950,-20 1000,50 1000,50 L1000,400 L0,400 Z"
+                  fill="url(#chartFill)"
+                />
                 <circle className="pulse-dot" cx="250" cy="250" fill="#38BDF8" r="4" />
                 <circle className="pulse-dot" cx="550" cy="150" fill="#38BDF8" r="4" />
                 <circle className="pulse-dot" cx="850" cy="50" fill="#38BDF8" r="4" />
               </svg>
             </div>
             <div className="flex justify-between mt-6 px-2">
-              <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>01 OCT</span>
-              <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>08 OCT</span>
-              <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>15 OCT</span>
-              <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>22 OCT</span>
-              <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>30 OCT</span>
+              <span
+                className="font-mono text-[10px] text-eye-text"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                01 OCT
+              </span>
+              <span
+                className="font-mono text-[10px] text-eye-text"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                08 OCT
+              </span>
+              <span
+                className="font-mono text-[10px] text-eye-text"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                15 OCT
+              </span>
+              <span
+                className="font-mono text-[10px] text-eye-text"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                22 OCT
+              </span>
+              <span
+                className="font-mono text-[10px] text-eye-text"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                30 OCT
+              </span>
             </div>
           </div>
 
           {/* LOWER GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* DEPARTMENT DISTRIBUTION (HR) */}
-            <div data-fade-up className="lg:col-span-4 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 flex flex-col">
-              <h2 className="text-xl text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>Department Distribution</h2>
+            <div
+              data-fade-up
+              className="lg:col-span-4 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6 flex flex-col"
+            >
+              <h2 className="text-xl text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>
+                Department Distribution
+              </h2>
               <div className="flex-1 flex items-center justify-center relative">
                 <div className="w-48 h-48 rounded-full border-[12px] border-eye-surface relative">
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" fill="none" r="40" stroke="#38BDF8" strokeDasharray="251.2" strokeDashoffset="150" strokeWidth="12" />
-                    <circle cx="50" cy="50" fill="none" opacity="0.6" r="40" stroke="#22d3ee" strokeDasharray="251.2" strokeDashoffset="200" strokeWidth="12" />
-                    <circle cx="50" cy="50" fill="none" opacity="0.4" r="40" stroke="#67e8f9" strokeDasharray="251.2" strokeDashoffset="230" strokeWidth="12" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      fill="none"
+                      r="40"
+                      stroke="#38BDF8"
+                      strokeDasharray="251.2"
+                      strokeDashoffset="150"
+                      strokeWidth="12"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      fill="none"
+                      opacity="0.6"
+                      r="40"
+                      stroke="#22d3ee"
+                      strokeDasharray="251.2"
+                      strokeDashoffset="200"
+                      strokeWidth="12"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      fill="none"
+                      opacity="0.4"
+                      r="40"
+                      stroke="#67e8f9"
+                      strokeDasharray="251.2"
+                      strokeDashoffset="230"
+                      strokeWidth="12"
+                    />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-lg text-white" style={{ fontFamily: "var(--font-display)" }}>
+                    <span
+                      className="text-lg text-white"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
                       {hr.data?.activeEmployees ?? 0}
                     </span>
-                    <span className="font-mono text-[10px] text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>Active Staff</span>
+                    <span
+                      className="font-mono text-[10px] text-eye-text"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      Active Staff
+                    </span>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 mt-8">
                 {hr.data?.departmentDistribution && hr.data.departmentDistribution.length > 0 ? (
                   hr.data.departmentDistribution.slice(0, 4).map((dept, i) => {
-                    const colors = ["bg-[#38BDF8]", "bg-[#22d3ee] opacity-60", "bg-[#67e8f9] opacity-40", "bg-eye-border"];
+                    const colors = [
+                      "bg-[#38BDF8]",
+                      "bg-[#22d3ee] opacity-60",
+                      "bg-[#67e8f9] opacity-40",
+                      "bg-eye-border",
+                    ];
                     return (
                       <div key={dept.department} className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${colors[i % colors.length]}`} />
-                        <span className="font-mono text-[11px] text-white" style={{ fontFamily: "var(--font-mono)" }}>
+                        <span
+                          className="font-mono text-[11px] text-white"
+                          style={{ fontFamily: "var(--font-mono)" }}
+                        >
                           {dept.department} ({dept.count})
                         </span>
                       </div>
@@ -350,7 +570,12 @@ export function AnalyticsPage() {
                   <>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-[#38BDF8]" />
-                      <span className="font-mono text-[11px] text-white" style={{ fontFamily: "var(--font-mono)" }}>No data</span>
+                      <span
+                        className="font-mono text-[11px] text-white"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        No data
+                      </span>
                     </div>
                   </>
                 )}
@@ -358,10 +583,20 @@ export function AnalyticsPage() {
             </div>
 
             {/* DATA TABLE: Top Sales */}
-            <div data-fade-up className="lg:col-span-8 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6">
+            <div
+              data-fade-up
+              className="lg:col-span-8 bg-eye-surface border border-eye-border hover:border-eye-border-hover rounded-lg p-6"
+            >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl text-white" style={{ fontFamily: "var(--font-display)" }}>Sales Summary</h2>
-                <span className="font-mono text-[10px] text-primary cursor-pointer hover:underline" style={{ fontFamily: "var(--font-mono)" }}>View All Sales</span>
+                <h2 className="text-xl text-white" style={{ fontFamily: "var(--font-display)" }}>
+                  Sales Summary
+                </h2>
+                <span
+                  className="font-mono text-[10px] text-primary cursor-pointer hover:underline"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  View All Sales
+                </span>
               </div>
               {sales.isLoading ? (
                 <SkeletonTable />
@@ -369,20 +604,61 @@ export function AnalyticsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="text-left border-b border-eye-border">
-                      <th className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider" style={{ fontFamily: "var(--font-mono)" }}>Order</th>
-                      <th className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right" style={{ fontFamily: "var(--font-mono)" }}>Revenue</th>
-                      <th className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right" style={{ fontFamily: "var(--font-mono)" }}>% of Total</th>
-                      <th className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right" style={{ fontFamily: "var(--font-mono)" }}>Trend</th>
+                      <th
+                        className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Order
+                      </th>
+                      <th
+                        className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Revenue
+                      </th>
+                      <th
+                        className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        % of Total
+                      </th>
+                      <th
+                        className="pb-4 font-mono text-eye-text text-[11px] uppercase tracking-wider text-right"
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Trend
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-eye-border/50">
                     {sales.data.topProducts.map((item) => {
-                      const pct = sales.data!.totalRevenue > 0 ? ((item.revenue / sales.data!.totalRevenue) * 100).toFixed(1) : "0";
+                      const pct =
+                        sales.data!.totalRevenue > 0
+                          ? ((item.revenue / sales.data!.totalRevenue) * 100).toFixed(1)
+                          : "0";
                       return (
-                        <tr key={item.name} className="group hover:bg-eye-surface/50 transition-colors">
-                          <td className="py-4 font-mono text-[13px] text-white" style={{ fontFamily: "var(--font-mono)" }}>{item.name}</td>
-                          <td className="py-4 text-right font-mono text-white" style={{ fontFamily: "var(--font-mono)" }}>{formatCurrency(item.revenue)}</td>
-                          <td className="py-4 text-right font-mono text-white" style={{ fontFamily: "var(--font-mono)" }}>{pct}%</td>
+                        <tr
+                          key={item.name}
+                          className="group hover:bg-eye-surface/50 transition-colors"
+                        >
+                          <td
+                            className="py-4 font-mono text-[13px] text-white"
+                            style={{ fontFamily: "var(--font-mono)" }}
+                          >
+                            {item.name}
+                          </td>
+                          <td
+                            className="py-4 text-right font-mono text-white"
+                            style={{ fontFamily: "var(--font-mono)" }}
+                          >
+                            {formatCurrency(item.revenue)}
+                          </td>
+                          <td
+                            className="py-4 text-right font-mono text-white"
+                            style={{ fontFamily: "var(--font-mono)" }}
+                          >
+                            {pct}%
+                          </td>
                           <td className="py-4 text-right">
                             <TrendingUp className="w-4 h-4 text-[#38BDF8] inline" />
                           </td>
@@ -400,12 +676,41 @@ export function AnalyticsPage() {
 
         {/* FOOTER */}
         <footer className="w-full border-t border-eye-border mt-12 py-6 px-6 flex justify-between items-center bg-eye-bg">
-          <span className="font-mono text-xs text-eye-text" style={{ fontFamily: "var(--font-mono)" }}>© 2024 EyeX Technologies. All rights reserved.</span>
+          <span
+            className="font-mono text-xs text-eye-text"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            © 2024 EyeX Technologies. All rights reserved.
+          </span>
           <div className="flex gap-6">
-            <a className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all" style={{ fontFamily: "var(--font-mono)" }} href="#">System Status</a>
-            <a className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all" style={{ fontFamily: "var(--font-mono)" }} href="#">Privacy Policy</a>
-            <a className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all" style={{ fontFamily: "var(--font-mono)" }} href="#">Legal</a>
-            <a className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all" style={{ fontFamily: "var(--font-mono)" }} href="#">Terms of Service</a>
+            <a
+              className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all"
+              style={{ fontFamily: "var(--font-mono)" }}
+              href="#"
+            >
+              System Status
+            </a>
+            <a
+              className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all"
+              style={{ fontFamily: "var(--font-mono)" }}
+              href="#"
+            >
+              Privacy Policy
+            </a>
+            <a
+              className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all"
+              style={{ fontFamily: "var(--font-mono)" }}
+              href="#"
+            >
+              Legal
+            </a>
+            <a
+              className="font-mono text-xs text-eye-text hover:text-white hover:underline transition-all"
+              style={{ fontFamily: "var(--font-mono)" }}
+              href="#"
+            >
+              Terms of Service
+            </a>
           </div>
         </footer>
       </main>
@@ -414,11 +719,19 @@ export function AnalyticsPage() {
       <div className="fixed bottom-8 right-8 z-[100]">
         <div className="bg-eye-surface border border-eye-border px-4 py-3 rounded-full flex items-center shadow-2xl backdrop-blur-xl">
           <div className="w-2 h-2 rounded-full bg-primary pulse-dot mr-3" />
-          <span className="font-mono text-[12px] text-white" style={{ fontFamily: "var(--font-mono)" }}>
+          <span
+            className="font-mono text-[12px] text-white"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             {crm.data?.activeCustomers ?? 0} Active Customers
           </span>
           <div className="h-4 w-[1px] bg-eye-border mx-3" />
-          <span className="font-mono text-[10px] text-eye-text uppercase" style={{ fontFamily: "var(--font-mono)" }}>Real-Time Sync</span>
+          <span
+            className="font-mono text-[10px] text-eye-text uppercase"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            Real-Time Sync
+          </span>
         </div>
       </div>
     </>

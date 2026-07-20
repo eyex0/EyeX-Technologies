@@ -7,6 +7,13 @@ import { DynamicDashboard, DashboardConfig } from "@/components/dashboard/Dynami
 import { RefreshCw, Upload, Database, Globe, Package, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 
+interface DataSource {
+  name: string;
+  type: string;
+  enabled: boolean;
+  last_synced_at: string | null;
+}
+
 export function DataSourcesPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,16 +40,21 @@ export function DataSourcesPage() {
     setError(null);
     setGeneratedDashboard(null);
 
+    interface UploadResult {
+      dashboard?: { config?: DashboardConfig; layout?: DashboardConfig };
+    }
+
     try {
       const result = await UploadService.processUpload(file, file.name);
-      setGeneratedDashboard((result.dashboard as any).config ?? (result.dashboard as any).layout);
+      const typed = result as unknown as UploadResult;
+      setGeneratedDashboard(typed.dashboard?.config ?? typed.dashboard?.layout ?? null);
     } catch (err: unknown) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Failed to process upload");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
     }
   };
@@ -91,7 +103,9 @@ export function DataSourcesPage() {
           >
             <Upload className="h-[22px] w-[22px] text-white" />
             <span className="text-sm text-white font-medium">Upload File</span>
-            <span className="text-[10px] font-mono text-muted-foreground uppercase">CSV / Excel</span>
+            <span className="text-[10px] font-mono text-muted-foreground uppercase">
+              CSV / Excel
+            </span>
           </button>
           {[
             { icon: "database", label: "Connect Database" },
@@ -100,22 +114,35 @@ export function DataSourcesPage() {
             const iconMap: Record<string, typeof Database> = { database: Database, api: Globe };
             const Icon = iconMap[a.icon] ?? Package;
             return (
-              <button key={a.label} className="bento-card rounded-lg p-5 flex flex-col gap-3 items-start hover:bg-secondary/20 transition">
+              <button
+                key={a.label}
+                className="bento-card rounded-lg p-5 flex flex-col gap-3 items-start hover:bg-secondary/20 transition"
+              >
                 <Icon className="h-[22px] w-[22px] text-white" />
                 <span className="text-sm text-white font-medium">{a.label}</span>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">Configure</span>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                  Configure
+                </span>
               </button>
             );
           })}
         </div>
       )}
 
-      <Card title="Connected Sources" icon="hub" action={
-        <div className="flex gap-2">
-          <button className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground hover:text-white">Refresh</button>
-          <button className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded">Connect</button>
-        </div>
-      }>
+      <Card
+        title="Connected Sources"
+        icon="hub"
+        action={
+          <div className="flex gap-2">
+            <button className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground hover:text-white">
+              Refresh
+            </button>
+            <button className="bg-white text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded">
+              Connect
+            </button>
+          </div>
+        }
+      >
         {sourcesLoading ? (
           <div className="flex items-center justify-center py-12 gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -129,12 +156,31 @@ export function DataSourcesPage() {
           </div>
         ) : (
           <DataTable
-            columns={[
-              { key: "name", label: "Source" },
-              { key: "type", label: "Type" },
-              { key: "enabled", label: "Status", render: (r: any) => <Badge tone={r.enabled ? "success" : "danger"}>{r.enabled ? "Active" : "Disabled"}</Badge> },
-              { key: "last_synced_at", label: "Last Sync", align: "right", render: (r: any) => <span className="font-mono text-muted-foreground">{r.last_synced_at ? new Date(r.last_synced_at).toLocaleDateString() : "Never"}</span> },
-            ] as any}
+            columns={
+              [
+                { key: "name", label: "Source" },
+                { key: "type", label: "Type" },
+                {
+                  key: "enabled",
+                  label: "Status",
+                  render: (r: DataSource) => (
+                    <Badge tone={r.enabled ? "success" : "danger"}>
+                      {r.enabled ? "Active" : "Disabled"}
+                    </Badge>
+                  ),
+                },
+                {
+                  key: "last_synced_at",
+                  label: "Last Sync",
+                  align: "right",
+                  render: (r: DataSource) => (
+                    <span className="font-mono text-muted-foreground">
+                      {r.last_synced_at ? new Date(r.last_synced_at).toLocaleDateString() : "Never"}
+                    </span>
+                  ),
+                },
+              ] as const
+            }
             rows={sources}
           />
         )}

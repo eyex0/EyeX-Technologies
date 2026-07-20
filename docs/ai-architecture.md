@@ -21,41 +21,49 @@ AgentOrchestrator
 ## Agents
 
 ### SQL Agent
+
 - Converts natural language to SQL queries
 - Uses database schema from `schema-cache` for context
 - Validates generated SQL before execution
 
 ### Forecast Agent
+
 - Time-series forecasting with Prophet/NeuralProphet
 - Supports multiple forecast horizons
 - Returns accuracy metrics with predictions
 
 ### Root Cause Agent
+
 - Analyzes metric anomalies
 - Identifies contributing dimensions and factors
 - Generates hypothesis-driven analysis
 
 ### Narrative Agent
+
 - Generates human-readable business narratives
 - Structures output as executive summaries
 - Supports multiple tones (analytical, strategic, operational)
 
 ### Insight Agent
+
 - Extracts actionable KPIs from data
 - Compares against historical benchmarks
 - Ranks insights by significance
 
 ### Data Quality Agent
+
 - Validates data completeness and accuracy
 - Checks for anomalies and outliers
 - Generates quality scores
 
 ### Pre-Mortem Agent
+
 - Identifies risks before changes
 - Analyzes potential failure modes
 - Recommends mitigation strategies
 
 ### Action Agent
+
 - Recommends specific business actions
 - Prioritizes based on impact and effort
 - Links to relevant data sources
@@ -79,6 +87,7 @@ packages/agents/src/prompts/
 ## Token Budget Management
 
 Each agent run has a token budget:
+
 - `maxTokens`: Maximum tokens allowed
 - `usedTokens`: Tokens consumed so far
 - `consume(n)`: Deducts `n` tokens; returns `false` if exceeded
@@ -86,6 +95,7 @@ Each agent run has a token budget:
 ## Streaming
 
 Agents support streaming responses via async generators:
+
 ```typescript
 async function* streamRun(context: AgentContext): AsyncGenerator<string>
 ```

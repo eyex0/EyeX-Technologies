@@ -63,7 +63,11 @@ export function HrPage() {
                   items={[
                     { label: "Headcount", value: String(employees.length), icon: "groups" },
                     { label: "Active", value: String(activeCount), icon: "check_circle" },
-                    { label: "Avg salary", value: `$${(avgSalary / 1000).toFixed(0)}k`, icon: "payments" },
+                    {
+                      label: "Avg salary",
+                      value: `$${(avgSalary / 1000).toFixed(0)}k`,
+                      icon: "payments",
+                    },
                     { label: "Departments", value: String(departments.length), icon: "business" },
                   ]}
                 />
@@ -73,8 +77,7 @@ export function HrPage() {
                     {
                       key: "first_name",
                       label: "Name",
-                      render: (r: (typeof employees)[number]) =>
-                        `${r.first_name} ${r.last_name}`,
+                      render: (r: (typeof employees)[number]) => `${r.first_name} ${r.last_name}`,
                     },
                     { key: "position", label: "Role" },
                     {
@@ -88,9 +91,7 @@ export function HrPage() {
                       key: "status",
                       label: "Status",
                       render: (r: (typeof employees)[number]) => (
-                        <Badge tone={r.status === "active" ? "success" : "warn"}>
-                          {r.status}
-                        </Badge>
+                        <Badge tone={r.status === "active" ? "success" : "warn"}>{r.status}</Badge>
                       ),
                     },
                   ]}
@@ -137,9 +138,7 @@ export function HrPage() {
                     label: "Status",
                     align: "right",
                     render: (r: (typeof payroll)[number]) => (
-                      <Badge tone={r.status === "processed" ? "success" : "warn"}>
-                        {r.status}
-                      </Badge>
+                      <Badge tone={r.status === "processed" ? "success" : "warn"}>{r.status}</Badge>
                     ),
                   },
                 ]}
@@ -162,8 +161,7 @@ export function HrPage() {
                   {
                     key: "first_name",
                     label: "Employee",
-                    render: (r: (typeof employees)[number]) =>
-                      `${r.first_name} ${r.last_name}`,
+                    render: (r: (typeof employees)[number]) => `${r.first_name} ${r.last_name}`,
                   },
                   { key: "position", label: "Type" },
                   { key: "hire_date", label: "Since" },
@@ -192,7 +190,10 @@ export function HrPage() {
                   "Q3 2025 — Complete",
                   "Q2 2025 — Complete",
                 ].map((r) => (
-                  <div key={r} className="text-sm text-white border-b border-border pb-3 last:border-0">
+                  <div
+                    key={r}
+                    className="text-sm text-white border-b border-border pb-3 last:border-0"
+                  >
                     {r}
                   </div>
                 ))}

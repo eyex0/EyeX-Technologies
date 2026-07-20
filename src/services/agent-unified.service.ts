@@ -23,7 +23,10 @@ async function isPythonBackendAvailable(): Promise<boolean> {
 }
 
 export const AgentService = {
-  async chat(message: string, history: { role: string; text: string }[]): Promise<UnifiedChatResult> {
+  async chat(
+    message: string,
+    history: { role: string; text: string }[],
+  ): Promise<UnifiedChatResult> {
     const backendAvailable = await isPythonBackendAvailable();
 
     if (backendAvailable) {

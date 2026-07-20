@@ -120,10 +120,7 @@ export const InventoryService = {
   },
 
   async deleteProduct(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("inventory_products")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("inventory_products").delete().eq("id", id);
 
     if (error) throw error;
   },
@@ -133,10 +130,7 @@ export const InventoryService = {
     const warehouses = await this.getWarehouses(organizationId);
     const suppliers = await this.getSuppliers(organizationId);
 
-    const totalValue = products.reduce(
-      (sum, p) => sum + Number(p.unit_price) * p.quantity,
-      0
-    );
+    const totalValue = products.reduce((sum, p) => sum + Number(p.unit_price) * p.quantity, 0);
     const lowStockAlerts = products.filter((p) => p.quantity <= p.reorder_level).length;
 
     return {

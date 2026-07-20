@@ -1,3 +1,4 @@
+import type React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BackendApi, type AdminStats, type SystemStatus } from "@/services/backend-api.service";
 import {
@@ -16,7 +17,17 @@ interface DetailedHealth {
   agents: Record<string, { status: string; tools_count: number; enabled: boolean }>;
 }
 
-function StatCard({ title, value, icon: Icon, subtitle }: { title: string; value: string | number; icon: any; subtitle?: string }) {
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  subtitle,
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ComponentType<{ className?: string }>;
+  subtitle?: string;
+}) {
   return (
     <div className="glass-panel p-5 relative overflow-hidden">
       <div className="flex justify-between items-start mb-4">
@@ -121,7 +132,10 @@ export function AdminPage() {
                   </div>
                 ) : health.data?.services ? (
                   Object.entries(health.data.services).map(([name, svc]) => (
-                    <div key={name} className="flex items-center justify-between py-2 border-b border-outline-variant/20 last:border-0">
+                    <div
+                      key={name}
+                      className="flex items-center justify-between py-2 border-b border-outline-variant/20 last:border-0"
+                    >
                       <div className="flex items-center gap-3">
                         {svc.status === "healthy" || svc.status === "ok" ? (
                           <CheckCircle2 className="w-4 h-4 text-green-400" />
@@ -154,7 +168,10 @@ export function AdminPage() {
                   </div>
                 ) : health.data?.agents ? (
                   Object.entries(health.data.agents).map(([name, agent]) => (
-                    <div key={name} className="flex items-center justify-between py-2 border-b border-outline-variant/20 last:border-0">
+                    <div
+                      key={name}
+                      className="flex items-center justify-between py-2 border-b border-outline-variant/20 last:border-0"
+                    >
                       <div className="flex items-center gap-3">
                         {agent.enabled ? (
                           <CheckCircle2 className="w-4 h-4 text-green-400" />
@@ -162,11 +179,17 @@ export function AdminPage() {
                           <XCircle className="w-4 h-4 text-red-400" />
                         )}
                         <div>
-                          <span className="text-sm font-bold text-on-surface capitalize">{name}</span>
-                          <p className="text-[10px] font-mono text-outline">{agent.tools_count} tools</p>
+                          <span className="text-sm font-bold text-on-surface capitalize">
+                            {name}
+                          </span>
+                          <p className="text-[10px] font-mono text-outline">
+                            {agent.tools_count} tools
+                          </p>
                         </div>
                       </div>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 border ${agent.enabled ? "text-green-400 border-green-400/20 bg-green-400/10" : "text-red-400 border-red-400/20 bg-red-400/10"}`}>
+                      <span
+                        className={`text-[10px] font-mono px-2 py-0.5 border ${agent.enabled ? "text-green-400 border-green-400/20 bg-green-400/10" : "text-red-400 border-red-400/20 bg-red-400/10"}`}
+                      >
                         {agent.enabled ? "ACTIVE" : "DISABLED"}
                       </span>
                     </div>
@@ -184,7 +207,10 @@ export function AdminPage() {
               <h2 className="text-base font-bold text-on-surface mb-6">Tools Usage</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Object.entries(stats.data.tools_used).map(([tool, count]) => (
-                  <div key={tool} className="flex justify-between items-center p-3 bg-surface-container-low border border-outline-variant/20">
+                  <div
+                    key={tool}
+                    className="flex justify-between items-center p-3 bg-surface-container-low border border-outline-variant/20"
+                  >
                     <span className="text-sm font-mono text-on-surface">{tool}</span>
                     <span className="text-sm font-bold text-primary-brand">{count}</span>
                   </div>

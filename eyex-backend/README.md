@@ -1,7 +1,9 @@
 # EyeX Technologies — AI Backend
+
 # Python project scaffold for multi-agent LangGraph workflows.
 
 ## Tech Stack
+
 - **Python 3.12**
 - **FastAPI** — async REST framework
 - **LangGraph** — multi-agent DAG orchestration
@@ -58,12 +60,12 @@ eyex-backend/
 
 ## API Endpoints
 
-| Method | Path                | Description          |
-|--------|---------------------|----------------------|
-| GET    | /api/v1/health      | Health check         |
-| POST   | /api/v1/auth/register | User registration  |
-| POST   | /api/v1/auth/login  | Login                |
-| POST   | /api/v1/auth/refresh | Refresh token       |
+| Method | Path                  | Description       |
+| ------ | --------------------- | ----------------- |
+| GET    | /api/v1/health        | Health check      |
+| POST   | /api/v1/auth/register | User registration |
+| POST   | /api/v1/auth/login    | Login             |
+| POST   | /api/v1/auth/refresh  | Refresh token     |
 
 ## Environment Variables
 
