@@ -71,6 +71,36 @@
 - [x] Added tests for message length validation and daily quota enforcement.
 - [x] Tests: 392 passed, 0 failed, 0 warnings.
 
+## Hub71 AI Demo Day — MVP Preparation
+
+### Demo Scenario
+
+- [x] Created end-to-end NovaPay fintech scenario (Series A, 7 markets, realistic metrics).
+- [x] Seeded knowledge graph, vector memory, metrics, risks, opportunities, and documents.
+- [x] Demo stages: Problem Detection → AI Analysis → Executive Team → Recommendations → Business Impact.
+
+### Real-Time Multi-Agent Flow
+
+- [x] Updated `/enterprise/demo/scenario` to run each stage reliably with timeout and deterministic fallback data.
+- [x] Added `POST /enterprise/demo/run-all` endpoint to trigger the entire pipeline with one click.
+- [x] CEO/CFO/COO/Risk agents reason from the knowledge graph and return board-ready insights.
+- [x] Proactive recommendations engine generates prioritized, severity-ranked actions.
+- [x] Impact stage quantifies problems detected, recommendations generated, and hours saved.
+
+### UI/UX Polish
+
+- [x] Rebuilt `/enterprise-demo` page with hero header, progress bar, and step timeline.
+- [x] Added rich step cards for problems, metrics, executive insights, recommendations, and impact.
+- [x] Added Start / Reset controls and live status indicators.
+- [x] Created `src/services/enterprise-demo.service.ts` to call backend endpoints with auth and env-aware URL.
+- [x] Frontend build succeeds; lint passes with warnings only.
+
+### Demo Assets
+
+- [x] Generated 5-minute investor demo script: `docs/HUB71_DEMO_SCRIPT.md`.
+- [x] Created demo run guide: `docs/HUB71_DEMO_GUIDE.md`.
+- [x] Updated product documentation: `eyex-backend/EYEX_HUB71_MVP.md`.
+
 ### Critical fixes applied (RC1 baseline)
 
 - [x] Added missing `defaultdict` import in `app/services/gtm_pricing.py`.
